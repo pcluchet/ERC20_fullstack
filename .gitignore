@@ -1,4 +1,4 @@
 node_modules/
-./Pwallet/android/build
-./network/bin_macos
-./network/bin_linux
+Pwallet/android/build
+network/bin_macos
+network/bin_linux
