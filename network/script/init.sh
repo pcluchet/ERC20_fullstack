@@ -9,11 +9,7 @@ C_CYAN="\033[36;01m"
 C_NO="\033[0m"
 
 os=$(uname)
-if [[ ${os} == Linux ]]; then
-	export PATH=$GOPATH/src/github.com/hyperledger/fabric/build/bin:$PWD/bin_linux:$PATH
-else
-	export PATH=$GOPATH/src/github.com/hyperledger/fabric/build/bin:$PWD/bin_macos:$PATH
-fi
+export PATH=$GOPATH/src/github.com/hyperledger/fabric/build/bin:$PWD/bin:$PATH
 export FABRIC_CFG_PATH="$PWD"
 CHANNEL_NAME=ptwist
 
@@ -36,8 +32,8 @@ function _err {
 function generate {	
 	cryptogen generate --config=./crypto-config.yaml || _err "crypto material"
 	configtxgen -profile OneOrgOrdererGenesis -outputBlock ./config/genesis.block || _err "orderer genesis block"
-	configtxgen -profile OneOrgChannel -outputCreateChannelTx ./config/channel.tx -channelID $CHANNEL_NAME || "channel configuration transaction" 
-	configtxgen -profile OneOrgChannel -outputAnchorPeersUpdate ./config/MEDSOSMSPanchors.tx -channelID $CHANNEL_NAME -asOrg MEDSOSMSP || "anchor peer update for MEDSOSMSP"
+	configtxgen -profile OneOrgChannel -outputCreateChannelTx ./config/channel.tx -channelID $CHANNEL_NAME || _err "channel configuration transaction" 
+	configtxgen -profile OneOrgChannel -outputAnchorPeersUpdate ./config/MEDSOSMSPanchors.tx -channelID $CHANNEL_NAME -asOrg MEDSOSMSP || _err "anchor peer update for MEDSOSMSP"
 }
 
 ################################################################################
