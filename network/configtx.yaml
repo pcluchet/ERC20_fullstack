@@ -1,0 +1,54 @@
+# Ptwist Network
+
+Organizations:
+
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: crypto-config/ordererOrganizations/example.com/msp
+
+    - &MEDSOS
+        Name: MEDSOSMSP
+        ID: MEDSOSMSP
+        MSPDir: crypto-config/peerOrganizations/MEDSOS.example.com/msp
+        AnchorPeers:
+            - Host: peer0.MEDSOS.example.com
+              Port: 7051
+
+Application: &ApplicationDefaults
+
+    Organizations:
+
+Orderer: &OrdererDefaults
+
+    OrdererType: solo
+    Addresses:
+        - orderer.example.com:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Kafka:
+        Brokers:
+            - 127.0.0.1:9092
+    Organizations:
+
+Profiles:
+
+    OneOrgOrdererGenesis:
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *MEDSOS
+    OneOrgChannel:
+        Consortium: SampleConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *MEDSOS
+

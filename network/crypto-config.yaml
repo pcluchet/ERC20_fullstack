@@ -1,0 +1,15 @@
+# Ptwist Network
+
+OrdererOrgs:
+  - Name: Orderer
+    Domain: example.com
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  - Name: MEDSOS
+    Domain: MEDSOS.example.com
+    Template:
+      Count: 2
+    Users:
+      Count: 0

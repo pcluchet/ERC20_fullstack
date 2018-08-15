@@ -1,0 +1,30 @@
+{
+  "name": "Pwallet",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "native-base": "2.5.2",
+    "react": "16.4.1",
+    "react-native": "0.56.0",
+    "react-native-camera": "^1.1.4",
+    "react-native-elements": "0.18.5",
+    "react-native-fontawesome": "5.7.0",
+    "react-native-qrcode": "0.2.7",
+    "react-native-swiper": "1.5.13",
+    "react-native-textinput-effects": "0.4.2",
+    "react-timer-mixin": "0.13.3"
+  },
+  "devDependencies": {
+    "babel-jest": "23.4.2",
+    "babel-preset-react-native": "5.0.2",
+    "jest": "23.4.2",
+    "react-test-renderer": "16.4.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
