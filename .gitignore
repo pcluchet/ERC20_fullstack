@@ -1,4 +1,8 @@
+network/bin
+network/bin_linux
+network/bin_macos
+network/config/
+network/crypto-config/
+
 node_modules/
 Pwallet/android/build
-network/bin_macos
-network/bin_linux

@@ -1,3 +1,5 @@
+
+export GOPATH=/usr/local/gopath
 cd ./io
 ./build_container.sh
 cd ../network
