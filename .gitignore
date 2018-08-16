@@ -4,5 +4,6 @@ network/bin_macos
 network/config/
 network/crypto-config/
 
+go/
 node_modules/
 Pwallet/android/build
