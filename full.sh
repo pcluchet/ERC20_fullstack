@@ -1,5 +1,4 @@
 
-export GOPATH=../go/
 cd ./io
 ./build_container.sh
 cd ../network
