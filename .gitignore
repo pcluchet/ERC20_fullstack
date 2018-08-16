@@ -3,7 +3,7 @@ network/bin_linux
 network/bin_macos
 network/config/
 network/crypto-config/
+network/go/
 
-go/
 node_modules/
 Pwallet/android/build
