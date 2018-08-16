@@ -25,11 +25,19 @@ function up {
 }
 
 function createChannel {
-	docker exec -e "CORE_PEER_LOCALMSPID=MEDSOSMSP" -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@MEDSOS.example.com/msp" peer0.MEDSOS.example.com peer channel create -o orderer.example.com:7050 -c ptwist -f /etc/hyperledger/configtx/channel.tx
+	docker exec \
+		-e "CORE_PEER_LOCALMSPID=MEDSOSMSP" \
+		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@MEDSOS.example.com/msp" peer0.MEDSOS.example.com peer channel create \
+		-o orderer.example.com:7050 \
+		-c ptwist \
+		-f /etc/hyperledger/configtx/channel.tx
 }
 
 function addPeers {
-	docker exec -e "CORE_PEER_LOCALMSPID=MEDSOSMSP" -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@MEDSOS.example.com/msp" peer0.MEDSOS.example.com peer channel join -b ptwist.block
+	docker exec \
+		-e "CORE_PEER_LOCALMSPID=MEDSOSMSP" \
+		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@MEDSOS.example.com/msp" peer0.MEDSOS.example.com peer channel join \
+		-b ptwist.block
 }
 
 ################################################################################
