@@ -56,7 +56,8 @@ mv bin/ network/bin/
 ### GO DEPENDENCIES
 ##################################################
 
-export GOPATH=/usr/local/gopath
+mkdir go
+export GOPATH=${PWD}/go
 go get \
     github.com/hyperledger/fabric/core/chaincode/lib/cid \
     github.com/hyperledger/fabric/core/chaincode/shim \

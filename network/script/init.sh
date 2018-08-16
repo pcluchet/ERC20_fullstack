@@ -9,8 +9,8 @@ C_CYAN="\033[36;01m"
 C_NO="\033[0m"
 
 os=$(uname)
-export PATH=/usr/local/gopath/src/github.com/hyperledger/fabric/build/bin:"${PWD}/bin:${PATH}"
-export FABRIC_CFG_PATH="$PWD"
+export PATH=${PWD}/../go/src/github.com/hyperledger/fabric/build/bin:"${PWD}/bin:${PATH}"
+export FABRIC_CFG_PATH="${PWD}"
 CHANNEL_NAME=ptwist
 
 ################################################################################
