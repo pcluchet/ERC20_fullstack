@@ -1,0 +1,241 @@
+version: '2'
+
+volumes:
+  orderer.ptwist.com:
+  ca.medsos.com:
+  ca.bffcom:
+  ca.lucerne.com:
+  peer0.medsos.com:
+  peer1.medsos.com:
+  peer0.bff.com:
+  peer1.bff.com:
+  peer0.lucerne.com:
+  peer1.lucerne.com:
+
+networks:
+  ptwist:
+
+services:
+  
+################################################################################
+### medsos
+################################################################################
+  
+  ca.medsos.com:
+    container_name: ca.medsos.com
+    extends:
+      file:   base/ca-base.yaml
+      service: ca.medsos.com
+    networks:
+      - ptwist
+
+  api.medsos.com:
+    container_name: api.medsos.com
+    extends:
+      file:   base/api-base.yaml
+      service: api.medsos.com
+    networks:
+      - ptwist
+
+  peer0.medsos.com:
+    container_name: peer0.medsos.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.medsos.com
+    networks:
+      - ptwist
+
+  couchdb.peer0.medsos:
+    container_name: couchdb.peer0.medsos
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 5984:5984
+    networks:
+      - ptwist
+
+  peer1.medsos.com:
+    container_name: peer1.medsos.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.medsos.com
+    networks:
+      - ptwist
+
+  couchdb.peer1.medsos:
+    container_name: couchdb.peer1.medsos
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 6984:5984
+    networks:
+      - ptwist
+
+################################################################################
+### bff 
+################################################################################
+
+  ca.bff.com:
+    container_name: ca.bff.com
+    extends:
+      file:   base/ca-base.yaml
+      service: ca.bff.com
+    networks:
+      - ptwist
+
+  api.bff.com:
+    container_name: api.bff.com
+    extends:
+      file:   base/api-base.yaml
+      service: api.bff.com
+    networks:
+      - ptwist
+
+  peer0.bff.com:
+    container_name: peer0.bff.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.bff.com
+    networks:
+      - ptwist
+
+  couchdb.peer0.bff:
+    container_name: couchdb.peer0.bff
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 7984:5984
+    networks:
+      - ptwist
+
+  peer1.bff.com:
+    container_name: peer1.bff.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.bff.com
+    networks:
+      - ptwist
+
+  couchdb.peer1.bff:
+    container_name: couchdb.peer1.bff
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 8984:5984
+    networks:
+      - ptwist
+
+################################################################################
+### lucerne 
+################################################################################
+  
+  ca.lucerne.com:
+    container_name: ca.lucerne.com
+    extends:
+      file:   base/ca-base.yaml
+      service: ca.lucerne.com
+    networks:
+      - ptwist
+
+  api.lucerne.com:
+    container_name: api.lucerne.com
+    extends:
+      file:   base/api-base.yaml
+      service: api.lucerne.com
+    networks:
+      - ptwist
+
+
+  peer0.lucerne.com:
+    container_name: peer0.lucerne.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.lucerne.com
+    networks:
+      - ptwist
+
+  couchdb.peer0.lucerne:
+    container_name: couchdb.peer0.lucerne
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 9984:5984
+    networks:
+      - ptwist
+
+  peer1.lucerne.com:
+    container_name: peer1.lucerne.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.lucerne.com
+    networks:
+      - ptwist
+
+  couchdb.peer1.lucerne:
+    container_name: couchdb.peer1.lucerne
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 10984:5984
+    networks:
+      - ptwist
+
+################################################################################
+### PTWIST 
+################################################################################
+
+  orderer.ptwist.com:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer.ptwist.com
+    container_name: orderer.ptwist.com
+    networks:
+      - ptwist
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:$IMAGE_TAG
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      #- CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_LEVEL=INFO
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.medsos.com:7051
+      - CORE_PEER_LOCALMSPID=medsosMSP
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/medsos.com/users/Admin@medsos.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/github.com/chaincode
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - orderer.ptwist.com
+      - ca.medsos.com
+      - ca.bff.com
+      - ca.lucerne.com
+      - peer0.medsos.com
+      - peer1.medsos.com
+      - peer0.bff.com
+      - peer1.bff.com
+      - peer0.lucerne.com
+      - peer1.lucerne.com
+    networks:
+      - ptwist

@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+
+  api.medsos.com:
+    image: hub/medsos_api
+    environment:
+      - ORDERER_ADDR=grpc://orderer.ptwist.com:7050
+      - PEER_ADDR=grpc://peer0.medsos.com:7051
+      - PEER_LISTENER_ADDR=grpc://peer0.medsos.com:7053
+      - COUCHDB_ADDR=http://couchdb.peer0.medsos:5984
+      - CA_ADDR=http://ca.medsos.com:7054
+    working_dir: /usr/src/app/
+    command: bash -c "npm start"
+    ports:
+      - 8080:8080
+
+  api.bff.com:
+    image: hub/bff_api
+    environment:
+      - ORDERER_ADDR=grpc://orderer.ptwist.com:7050
+      - PEER_ADDR=grpc://peer0.bff.com:7051
+      - PEER_LISTENER_ADDR=grpc://peer0.bff.com:7053
+      - COUCHDB_ADDR=http://couchdb.peer0.bff:5984
+      - CA_ADDR=http://ca.bff.com:7054
+    working_dir: /usr/src/app/
+    command: bash -c "npm start"
+    ports:
+      - 9080:8080
+
+  api.lucerne.com:
+    image: hub/lucerne_api
+    environment:
+      - ORDERER_ADDR=grpc://orderer.lucerne.com:7050
+      - PEER_ADDR=grpc://peer0.lucerne.com:7051
+      - PEER_LISTENER_ADDR=grpc://peer0.lucerne.com:7053
+      - COUCHDB_ADDR=http://couchdb.peer0.lucerne:5984
+      - CA_ADDR=http://ca.lucerne.com:7054
+    working_dir: /usr/src/app/
+    command: bash -c "npm start"
+    ports:
+      - 10080:8080
+

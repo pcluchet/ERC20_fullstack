@@ -1,0 +1,45 @@
+version: '2'
+
+services:
+  
+  ca.medsos.com:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.medsos.com
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.medsos.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/4239aa0dcd76daeeb8ba0cda701851d14504d31aad1b2ddddbac6a57365e497c_sk
+    command: bash -c '. /etc/hyperledger/fabric-ca-server/scripts/ca-env.sh && fabric-ca-server start -b admin:adminpw'
+    volumes:
+      - ../crypto-config/peerOrganizations/medsos.com/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ../scripts:/etc/hyperledger/fabric-ca-server/scripts
+    ports:
+      - "7054:7054"
+
+  ca.bff.com:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.bff.com
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.bff.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/4239aa0dcd76daeeb8ba0cda701851d14504d31aad1b2ddddbac6a57365e497c_sk
+    command: bash -c '. /etc/hyperledger/fabric-ca-server/scripts/ca-env.sh && fabric-ca-server start -b admin:adminpw'
+    volumes:
+      - ../crypto-config/peerOrganizations/bff.com/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ../scripts:/etc/hyperledger/fabric-ca-server/scripts
+    ports:
+      - "8054:7054"
+
+  ca.lucerne.com:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.lucerne.com
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.lucerne.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/4239aa0dcd76daeeb8ba0cda701851d14504d31aad1b2ddddbac6a57365e497c_sk
+    command: bash -c '. /etc/hyperledger/fabric-ca-server/scripts/ca-env.sh && fabric-ca-server start -b admin:adminpw'
+    volumes:
+      - ../crypto-config/peerOrganizations/lucerne.com/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ../scripts:/etc/hyperledger/fabric-ca-server/scripts
+    ports:
+      - "9054:7054"

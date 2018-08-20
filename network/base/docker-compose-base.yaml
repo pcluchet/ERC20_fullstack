@@ -1,0 +1,171 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+services:
+
+  orderer.ptwist.com:
+    container_name: orderer.ptwist.com
+    image: hyperledger/fabric-orderer:$IMAGE_TAG
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+    - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ../crypto-config/ordererOrganizations/ptwist.com/orderers/orderer.ptwist.com/msp:/var/hyperledger/orderer/msp
+    - orderer.ptwist.com:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  peer0.medsos.com:
+    container_name: peer0.medsos.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.medsos.com
+      - CORE_PEER_ADDRESS=peer0.medsos.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.medsos.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.medsos.com:7051
+      - CORE_PEER_LOCALMSPID=medsosMSP
+      # COUCHDB
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.medsos:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/medsos.com/peers/peer0.medsos.com/msp:/etc/hyperledger/fabric/msp
+        - peer0.medsos.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+      - 7053:7053
+
+  peer1.medsos.com:
+    container_name: peer1.medsos.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.medsos.com
+      - CORE_PEER_ADDRESS=peer1.medsos.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.medsos.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.medsos.com:7051
+      - CORE_PEER_LOCALMSPID=medsosMSP
+      # COUCHDB
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.medsos:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/medsos.com/peers/peer1.medsos.com/msp:/etc/hyperledger/fabric/msp
+        - peer1.medsos.com:/var/hyperledger/production
+    ports:
+      - 8051:7051
+      - 8053:7053
+
+  peer0.bff.com:
+    container_name: peer0.bff.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.bff.com
+      - CORE_PEER_ADDRESS=peer0.bff.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.bff.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.bff.com:7051
+      - CORE_PEER_LOCALMSPID=bffMSP
+      # COUCHDB
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.bff:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/bff.com/peers/peer0.bff.com/msp:/etc/hyperledger/fabric/msp
+        - peer0.bff.com:/var/hyperledger/production
+    ports:
+      - 9051:7051
+      - 9053:7053
+
+  peer1.bff.com:
+    container_name: peer1.bff.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.bff.com
+      - CORE_PEER_ADDRESS=peer1.bff.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.bff.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.bff.com:7051
+      - CORE_PEER_LOCALMSPID=bffMSP
+      # COUCHDB
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.bff:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/bff.com/peers/peer1.bff.com/msp:/etc/hyperledger/fabric/msp
+        - peer1.bff.com:/var/hyperledger/production
+    ports:
+      - 10051:7051
+      - 10053:7053
+
+  peer0.lucerne.com:
+    container_name: peer0.lucerne.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.lucerne.com
+      - CORE_PEER_ADDRESS=peer0.lucerne.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.lucerne.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.lucerne.com:7051
+      - CORE_PEER_LOCALMSPID=lucerneMSP
+      # COUCHDB
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.lucerne:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/lucerne.com/peers/peer0.lucerne.com/msp:/etc/hyperledger/fabric/msp
+        - peer0.lucerne.com:/var/hyperledger/production
+    ports:
+      - 11051:7051
+      - 11053:7053
+
+  peer1.lucerne.com:
+    container_name: peer1.lucerne.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.lucerne.com
+      - CORE_PEER_ADDRESS=peer1.lucerne.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.lucerne.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.lucerne.com:7051
+      - CORE_PEER_LOCALMSPID=lucerneMSP
+      # COUCHDB
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.lucerne:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/lucerne.com/peers/peer1.lucerne.com/msp:/etc/hyperledger/fabric/msp
+        - peer1.lucerne.com:/var/hyperledger/production
+    ports:
+      - 12051:7051
+      - 12053:7053

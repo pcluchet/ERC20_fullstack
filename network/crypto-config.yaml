@@ -1,14 +1,37 @@
-# Ptwist Network
-
+# ---------------------------------------------------------------------------
+# "OrdererOrgs" - Definition of organizations managing orderer nodes
+# ---------------------------------------------------------------------------
 OrdererOrgs:
+
   - Name: Orderer
-    Domain: example.com
+    Domain: ptwist.com
     Specs:
       - Hostname: orderer
 
+# ---------------------------------------------------------------------------
+# "PeerOrgs" - Definition of organizations managing peer nodes
+# ---------------------------------------------------------------------------
 PeerOrgs:
-  - Name: MEDSOS
-    Domain: MEDSOS.example.com
+
+  - Name: medsos 
+    Domain: medsos.com
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 0
+  
+  - Name: bff
+    Domain: bff.com
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 0
+
+  - Name: lucerne
+    Domain: lucerne.com
+    EnableNodeOUs: true
     Template:
       Count: 2
     Users:
