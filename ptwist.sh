@@ -10,16 +10,33 @@ C_NO="\033[0m"
 
 set -e 
 
+readonly port=(8080 9080 10080)
+readonly orgs=(medsos bff lucerne)
+
 ################################################################################
 ###                                FUNCTIONS                                 ###
 ################################################################################
 
-function up {
-	for index in medsos bff lucerne; do
-		cd io/$index/api ; ./build_container.sh ; cd -
+function create_images {
+	for index in `seq 0 2`; do
+		cd io/${orgs[$index]}/api ; ./build_container.sh ; cd -
 	done
+}
 
+function launch_containers {
 	cd network ; ./scripts/generate.sh ; ./scripts/up.sh
+}
+
+function init_apis {
+	for index in `seq 0 2`; do
+		docker exec api.${orgs[$index]}.com node create_db.js
+		docker exec api.${orgs[$index]}.com node enrollAdmin.js
+
+		echo 
+		cbkey="$(curl --data 'username=centralbank' --data 'password=cbpassword'      http://localhost:${port[$index]}/register | jq -r '.pubkey')"
+		echo "${orgs[$index]} central_bank key: ${cbkey}"
+		echo
+	done
 }
 
 function down {
@@ -36,7 +53,9 @@ function usage {
 
 case $1 in
 	up )
-		up ;;
+		create_images
+		launch_containers
+		init_apis ;;
 	down )
 		down ;;
 	* )
