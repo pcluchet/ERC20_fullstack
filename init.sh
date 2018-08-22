@@ -27,9 +27,24 @@ function		success()
 
 function		check_bin()
 {
-	path=$(which ${1})
+	which ${1} > /dev/null
 	if [[ $? -ne 0 ]]; then
-		fail "Cannot find ${1} program."
+		fail "Cannot find ${1} program"
+	fi
+}
+
+function		docker_pull()
+{
+	docker images | grep hyperledger/fabric-${1} | grep ${2} > /dev/null
+	if [[ $? -ne 0 ]]; then
+		docker pull hyperledger/fabric-${1}:${2} > /dev/null
+		if [[ $? -ne 0 ]]; then
+			fail "Cannot pull \"${1}\" docker image"
+		fi
+		docker tag hyperledger/fabric-${1}:${2} hyperledger/fabric-${1} > /dev/null
+		if [[ $? -ne 0 ]]; then
+			fail "Cannot tag \"${1}\" docker image"
+		fi
 	fi
 }
 
@@ -48,6 +63,7 @@ check_bin	node
 check_bin	jq
 check_bin	go
 check_bin	npm
+check_bin	curl
 success "Dependencies found"
 
 ##################################################
@@ -80,3 +96,15 @@ go get \
     github.com/hyperledger/fabric/protos/peer \
 	|| fail "Cannot get go dependecies"
 success "Go dependencies imported"
+
+##################################################
+### DOCKER IMAGES
+##################################################
+
+docker_pull	peer	1.2.0
+docker_pull	orderer	1.2.0
+docker_pull	ccenv	1.2.0
+docker_pull	tools	1.2.0
+docker_pull	couchdb	0.4.10
+docker_pull	ca		1.2.0
+success "Docker images pulled"
