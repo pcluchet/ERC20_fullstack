@@ -8,39 +8,50 @@ C_PINK="\033[35;01m"
 C_CYAN="\033[36;01m"
 C_NO="\033[0m"
 
-set -e 
+source "./network/scripts/lib.sh"
 
-readonly port=(8080 9080 10080)
-readonly orgs=(medsos bff lucerne)
+export IMAGETAG="latest"
+export COMPOSE_FILE="./network/docker-compose.yaml"
+export PATH=${PATH}:"./network/bin_osx"
+export FABRIC_CFG_PATH="./network"
+export CHANNEL_NAME="ptwist"
+export LANGUAGE="golang"
+export CC_SRC_PATH="github.com/chaincode/ERC20/chaincode"
+export ERC20_CC_SRC_PATH="github.com/chaincode/ERC20"
+export INVOICING_CC_SRC_PATH="github.com/chaincode/invoicing"
 
 ################################################################################
 ###                                FUNCTIONS                                 ###
 ################################################################################
 
 function create_images {
-	for index in `seq 0 2`; do
-		cd io/${orgs[$index]}/api ; ./build_container.sh ; cd -
+	for org in medsos bff lucerne; do
+		cd io/${org}/api
+		
+		./build_container.sh
+		result=$?
+		_err ${result} "Failed to create images"
+		
+		cd $OLDPWD
 	done
 }
 
-function launch_containers {
-	cd network ; ./scripts/generate.sh ; ./scripts/up.sh
+function network_up {
+	mkdir -p ./network/crypto-config ./network/channel-artifacts
+	./network/scripts/generate.sh
+
+	echo
+	docker-compose -f ${COMPOSE_FILE} up -d
+	result=$?
+	_err $result "Unable to start network"
+	
+	docker exec cli scripts/up.sh ${CHANNEL_NAME} ${LANGUAGE} ${ERC20_CC_SRC_PATH} ${INVOICING_CC_SRC_PATH}
+
 }
 
-function init_apis {
-	for index in `seq 0 2`; do
-		docker exec api.${orgs[$index]}.com node create_db.js
-		docker exec api.${orgs[$index]}.com node enrollAdmin.js
-
-		echo 
-		cbkey="$(curl --data 'username=centralbank' --data 'password=cbpassword'      http://localhost:${port[$index]}/register | jq -r '.pubkey')"
-		echo "${orgs[$index]} central_bank key: ${cbkey}"
-		echo
-	done
-}
-
-function down {
-	cd network ; ./scripts/down.sh
+function network_down {
+	rm -rf ./network/channel-artifacts ./network/crypto-config
+	./network/scripts/down.sh
 }
 
 function usage {
@@ -53,11 +64,11 @@ function usage {
 
 case $1 in
 	up )
+		./network/scripts/init.sh
 		create_images
-		launch_containers
-		init_apis ;;
+		network_up ;;
 	down )
-		down ;;
+		network_down ;;
 	* )
 		usage ;;
 esac
