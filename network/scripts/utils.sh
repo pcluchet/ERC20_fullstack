@@ -27,15 +27,6 @@ setOrdererGlobals() {
   CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/ptwist.com/users/Admin@ptwist.com/msp
 }
 
-setGlobals() {
-	PEER=$1
-	ORG=$2
-	
-	CORE_PEER_LOCALMSPID="${ORG}MSP"
-	CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/${ORG}.com/peers/peer${PEER}.${ORG}.com/tls/ca.crt
-	CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/${ORG}.com/users/Admin@${ORG}.com/msp
-	CORE_PEER_ADDRESS=peer${PEER}.${ORG}.com:7051
-}
 
 updateAnchorPeers() {
   PEER=$1
@@ -61,41 +52,7 @@ updateAnchorPeers() {
 }
 
 ## Sometimes Join takes time hence RETRY at least 5 times
-joinChannelWithRetry() {
-  PEER=$1
-  ORG=$2
-  setGlobals $PEER $ORG
 
-  set -x
-  peer channel join -b $CHANNEL_NAME.block >&log.txt
-  res=$?
-  set +x
-  cat log.txt
-  if [ $res -ne 0 -a $COUNTER -lt $MAX_RETRY ]; then
-    COUNTER=$(expr $COUNTER + 1)
-    echo "peer${PEER}.${ORG} failed to join the channel, Retry after $DELAY seconds"
-    sleep $DELAY
-    joinChannelWithRetry $PEER $ORG
-  else
-    COUNTER=1
-  fi
-  verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.${ORG} has failed to join channel '$CHANNEL_NAME' "
-}
-
-installChaincode() {
-  PEER=$1
-  ORG=$2
-  setGlobals $PEER $ORG
-  VERSION=${3:-1.0}
-  set -x
-  peer chaincode install -n ${CHAINCODE_NAME} -v ${VERSION} -l ${LANGUAGE} -p ${CC_SRC_PATH} >&log.txt
-  res=$?
-  set +x
-  cat log.txt
-  verifyResult $res "Chaincode installation on peer${PEER}.${ORG} has failed"
-  echo "===================== Chaincode is installed on peer${PEER}.${ORG} ===================== "
-  echo
-}
 
 instantiateChaincode() {
   PEER=$1
