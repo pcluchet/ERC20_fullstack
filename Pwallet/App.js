@@ -10,7 +10,7 @@ import Camera from 'react-native-camera';
 //import BarcodeScanner from 'react-native-barcodescanner';
 
 
-const APIURL = "http://192.168.1.20:8085";
+const APIURL = "http://192.168.1.20:8080";
 const CHANNEL = "ptwist";
 const CHAINCODE = "ERC20";
 const INVOICINGCHAINCODE = "facture";
@@ -40,9 +40,47 @@ export const getUserBalance = (username, password, pubkey) => {
             return responseJson;
         })
         .catch((error) => {
+
+            console.error("ERROR HAPPENED :" + error);
+        });
+}
+
+export const getLatestTransfers = (username, password, pubkey) => {
+  
+    var argarray = [];
+    argarray.push(encodeURI(pubkey));
+    return fetch(`${APIURL}/query`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          func: "latest",
+
+          args : JSON.stringify(argarray),
+          username: username,
+          password: password,
+          channel: CHANNEL,
+          chaincode : CHAINCODE,
+        }),
+        })
+        .then((response) => {
+          console.log(response);
+          return response.json()})
+        .then((responseJson) => {
+
+          console.log("RESPJSON :" + responseJson)
+            return responseJson;
+        })
+        .catch((error) => {
+
+            console.error("ERROR HAPPENED :" + error);
             console.error(error);
         });
 }
+
+
 
 export const AuthLogin = (username, pwd) => {
     return fetch(`${APIURL}/auth`, {
@@ -267,9 +305,12 @@ export default class App extends Component {
     super(props)
       
     this.interval = setInterval(() => {
+      if (this.state.logged)
+      {
       this.ft_getbalance();
       //this.ft_getAllowancesFrom();
-      //this.ft_getAllowancesTo();
+      this.ft_getlatest();
+      }
     }, 6500);
 
 
@@ -278,7 +319,7 @@ export default class App extends Component {
     this.state = {
       qrcode: '',
       password : 'hello',
-      pubkey : "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEd6Re3BXULHVzupsmGpMbAFagoJfSrwS6EsCL6zo32HcJTpC2U8WuAYpMU0hJMRf73C9qapgah/ZxCThxM+U80g==",
+      pubkey : "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE99PqGQ5/K5w7FVUf6Utr1G8es+X0+hZEwj2/VGdmcXFJz0qkgADsi54jxjOPWjzUGZjJB17oey9zzwJJdhLx0w==",
       logged : false,
       name: '',
       username: 'kevin',
@@ -363,8 +404,6 @@ return true;
     this.state.scanningBill = false;
 
   }
-  
- 
   
   onBarCodeRead = (e) => {
     console.log("READ QRCODE = "+e.data);
@@ -542,26 +581,29 @@ return true;
     var allowancesTo = this.getText("To", this.state.allowancesTo)
 
     return (
-      <View style={styles.container}>
-        <Text style={styles.headerStyle}>Balance</Text>
+      <View style={[{flex : 0.5}, styles.container]}>
+        <Text style={styles.headerSty}>Balance</Text>
         <View style={{ position: 'absolute', top: 10, right: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
         </View>
 
 
-        <View style={[{flex: 3}, styles.elementsContainer]}>
-        <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
-          <Text style={styles.textInput}> {this.state.balance} </Text>
+        <View style={[{flex: 1}, styles.elementsContainer]}>
+        <View style={{flex: 0.2, backgroundColor: '#FFFFFF'}}>
+          <Text style={styles.balancevalue}> {this.state.balance} </Text>
         </View>
+
         {/*
         <View style={{flex: 1, backgroundColor: '#d9d9d9'}}>
           <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold', marginTop: '2%'}}>
             Allowances From
           </Text>
-          <ScrollView  style={styles.scrollview}>
+        */}
+          <ScrollView  style={[{flex : 6}, styles.scrollview, {backgroundColor: '#FFFFFF'}]}>
             <Text style={{fontSize: 20, textAlign: 'left', fontWeight: '100'}}>
-            {allowancesFrom}
+            {this.state.latesttransfers}
             </Text>
           </ScrollView>
+        {/*
         </View>
         <View style={{flex: 1, backgroundColor: '#e6e6e6'}}>
           <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold', marginTop: '2%'}}>
@@ -635,6 +677,60 @@ return true;
           json => this.setState({
             balance: this.ft_balanceOfSafe(json),
         }))
+            .catch(error => console.error(error))
+      }
+  }
+
+  getsymbol = (currtx) => {
+      if (currtx.value.From == this.state.pubkey)
+        return "↖ Debit"
+      else
+        return "↘ Credit"
+  }
+
+  getfromorto = (currtx) => {
+      if (currtx.value.From == this.state.pubkey)
+        return "To : " + this.trimAddr(currtx.value.To)
+      else
+        return "From : " + this.trimAddr(currtx.value.From)
+  }
+
+
+   timeConverter = (UNIX_timestamp) => {
+    var a = new Date(UNIX_timestamp * 1000);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    var min = a.getMinutes();
+    var sec = a.getSeconds();
+    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+    return time;
+  }
+
+ft_getlatest = () => {
+    if (this.state.username !== "") {
+        getLatestTransfers(this.state.username, this.state.password, this.state.pubkey).then(
+          json => {
+
+            let textlatest = ""
+            let obj = JSON.parse(json.response)
+
+          var arrayLength = obj.length;
+          for (var i = arrayLength - 1; i > 0; i--) {
+            //alert(myStringArray[i]);
+            //textlatest += "Transaction id : " + this.trimAddr(obj[i].txid) + "\n"
+            textlatest += this.getsymbol(obj[i]) + "  \n" + this.timeConverter(obj[i].timestamp) + "\n"
+            textlatest += this.getfromorto(obj[i]) + "\n"
+            textlatest += "Amount : " + obj[i].value.Value + "\n"
+            textlatest += "\n\n"
+          //Do something
+          }
+            this.setState({
+            latesttransfers: textlatest,
+        })}
+      )
             .catch(error => console.error(error))
       }
   }
@@ -1186,6 +1282,13 @@ const styles = StyleSheet.create({
     fontWeight: '100',
     marginBottom: 24
   },
+
+  headerSty: {
+    fontSize: 28,
+    textAlign: 'center',
+    fontWeight: '100',
+  },
+
   elementsContainer: {
     backgroundColor: '#ecf5fd',
     marginTop: 24,
@@ -1200,6 +1303,13 @@ const styles = StyleSheet.create({
     fontSize: 42,
     fontWeight: '200',
   },
+
+  balancevalue: {
+    textAlign: 'center',
+    fontSize: 42,
+    fontWeight: '200',
+  },
+
   button: {
     marginTop: 48,
     flex: 1,
@@ -1220,7 +1330,6 @@ const styles = StyleSheet.create({
     borderRadius : 3,
     alignSelf : 'stretch',
     margin : 5,
-    flex: 1,
  },
  preview: {
   flex: 1,

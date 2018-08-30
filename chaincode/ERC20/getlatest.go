@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
@@ -11,7 +12,7 @@ func CountHistory(stub shim.ChaincodeStubInterface, args []string) (int, error) 
 		return 0, fmt.Errorf("Incorrect arguments. Expecting a key")
 	}
 
-	value, err := stub.GetHistoryForKey(args[0])
+	value, err := stub.GetHistoryForKey(fmt.Sprintf("%s%s", args[0], "_transfers"))
 
 	if err != nil {
 		return 0, fmt.Errorf("Failed to get asset: %s with error: %s", args[0], err)
@@ -37,7 +38,7 @@ func getlatest(stub shim.ChaincodeStubInterface, args []string) (string, error) 
 		return "", fmt.Errorf("Failed to get history : %s", errc)
 	}
 
-	value, err := stub.GetHistoryForKey(args[0])
+	value, err := stub.GetHistoryForKey(fmt.Sprintf("%s%s", args[0], "_transfers"))
 
 	if err != nil {
 		return "", fmt.Errorf("Failed to get asset: %s with error: %s", args[0], err)
@@ -65,6 +66,7 @@ func getlatest(stub shim.ChaincodeStubInterface, args []string) (string, error) 
 		timestamp := now.Timestamp.Seconds
 
 		marshaled := fmt.Sprintf("{\"txid\" : \"%s\", \"timestamp\" : %d, \"value\" : %s }", txid, timestamp, value)
+		marshaled = strings.Replace(marshaled, "\"", "\\\"", -1)
 
 		//marshaled := fmt.Sprintf("%s", now)
 
