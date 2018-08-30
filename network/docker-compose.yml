@@ -89,7 +89,7 @@ services:
 
   api.MEDSOS.example.com:
     container_name: api.MEDSOS.example.com
-    image: hub/node_api
+    image: erc20_fs/node_api
     environment:
       - ORDERER_ADDR=grpc://orderer.example.com:7050
       - PEER_ADDR=grpc://peer0.MEDSOS.example.com:7051
@@ -107,6 +107,18 @@ services:
     networks:
       - ptwist
 
+  merchantapp:
+    container_name: merchantapp
+    image: erc20_fs/merchantapp
+    working_dir: /
+    # commd: peer node start --peer-chaincodedev=true
+    ports:
+      - 8086:8086
+    #volumes:
+    depends_on:
+      - api.MEDSOS.example.com
+    networks:
+      - ptwist
 
   peer1.MEDSOS.example.com:
     container_name: peer1.MEDSOS.example.com

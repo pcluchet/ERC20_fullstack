@@ -1,1 +1,1 @@
-docker build -t hub/node_api .
+docker build -t erc20_fs/node_api .

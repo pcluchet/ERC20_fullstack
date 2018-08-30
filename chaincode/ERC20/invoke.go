@@ -55,7 +55,8 @@ func (t *SimpleAsset) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 		ret, err = _set(argv)
 	case "history":
 		ret, err = gethistory(stub, argv)
-
+	case "latest":
+		ret, err = getlatest(stub, argv)
 	case "balanceOf":
 		ret, err = balanceOf(argv)
 	case "allowance":
