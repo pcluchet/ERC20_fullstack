@@ -53,6 +53,8 @@ func getlatest(stub shim.ChaincodeStubInterface, args []string) (string, error) 
 	i = 0
 
 	fmt.Printf("count=%d\n", count)
+	var stacking bool
+	stacking = false
 	for value.HasNext() {
 		now, err := value.Next()
 		if err != nil {
@@ -66,13 +68,15 @@ func getlatest(stub shim.ChaincodeStubInterface, args []string) (string, error) 
 
 		//marshaled := fmt.Sprintf("%s", now)
 
-		var separator string
-		separator = ","
-		if i == count-9 {
-			separator = ""
-		}
-
 		if i > count-10 {
+
+			var separator string
+			separator = ","
+			if !stacking {
+				separator = ""
+			}
+			stacking = true
+
 			history = fmt.Sprintf("%s%s%s", history, separator, marshaled)
 		}
 		i++

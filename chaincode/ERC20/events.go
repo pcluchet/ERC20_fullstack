@@ -22,7 +22,12 @@ func event(from string, to string, value uint64, typeofEvent string) error {
 	}
 	if typeofEvent == "transfer" {
 		last10_key = fmt.Sprintf("%s_transfers", from)
+		last10_key_to := fmt.Sprintf("%s_transfers", to)
 		if err = STUB.PutState(last10_key, ret); err != nil {
+			return err
+		}
+
+		if err = STUB.PutState(last10_key_to, ret); err != nil {
 			return err
 		}
 	}
