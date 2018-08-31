@@ -713,7 +713,8 @@ ft_getlatest = () => {
     if (this.state.username !== "") {
         getLatestTransfers(this.state.username, this.state.password, this.state.pubkey).then(
           json => {
-
+if (json.status == "ok")
+{
             let textlatest = ""
             let obj = JSON.parse(json.response)
 
@@ -729,7 +730,9 @@ ft_getlatest = () => {
           }
             this.setState({
             latesttransfers: textlatest,
-        })}
+        })
+      }
+      }
       )
             .catch(error => console.error(error))
       }
