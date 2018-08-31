@@ -117,6 +117,8 @@ curl --data "channel=ptwist" --data "chaincode=ERC20" --data "func=transfer" --d
 ```
 
 
+/!\ There is currently no front-end methode to register new users, to register a new user you must use the API directly with curl, example above /!\
+
 # Mobile App
 The mobile app is a wallet, which also has a feature to pay an invoice specifically, via invoicing chaincode.
 It uses react native, so to run it you should install it, see here : https://facebook.github.io/react-native/docs/getting-started.html
