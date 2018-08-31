@@ -5,7 +5,7 @@ session_start();
 <?php
 
 //SETTINGS//
-$APIURL = "http://localhost:8085";
+$APIURL = "http://api.MEDSOS.example.com:8080";
 $login = $_SESSION["username"];
 $password = $_SESSION["password"];
 

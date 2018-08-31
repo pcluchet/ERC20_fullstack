@@ -113,7 +113,7 @@ services:
     working_dir: /
     # commd: peer node start --peer-chaincodedev=true
     ports:
-      - 8086:8086
+      - 80:80
     #volumes:
     depends_on:
       - api.MEDSOS.example.com

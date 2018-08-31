@@ -28,6 +28,7 @@ else
 </head>
 
 <body>
+<?php echo $_SESSION["username"] ?>
 <script src="js/script.js"></script>
 <?php include "parts/header.php" ?>
 <div id="maincontainer">

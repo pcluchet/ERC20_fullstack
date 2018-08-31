@@ -1,11 +1,14 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 // Start the session
 session_start();
 ?>
 <?php
 
 //SETTINGS//
-$APIURL = "http://localhost:8085";
+$APIURL = "http://api.MEDSOS.example.com:8080";
 $login = $_SESSION["username"];
 $password = $_SESSION["password"];
 
@@ -74,6 +77,7 @@ $server_output = curl_exec($ch);
 curl_close ($ch);
 
 $resp = json_decode($server_output, true);
+var_dump($resp);
 
 if ($resp['status'] == "200")
 {
