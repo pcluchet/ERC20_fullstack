@@ -32,7 +32,7 @@ curl_setopt($ch, CURLOPT_URL,$APIURL."/query");
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS,
             "channel=ptwist&".
-            "chaincode=facture&".
+            "chaincode=invoicing&".
             "func=get&".
             "username=$login&".
             "password=$password&".

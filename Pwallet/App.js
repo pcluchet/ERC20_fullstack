@@ -13,7 +13,7 @@ import Camera from 'react-native-camera';
 const APIURL = "http://192.168.1.20:8080";
 const CHANNEL = "ptwist";
 const CHAINCODE = "ERC20";
-const INVOICINGCHAINCODE = "facture";
+const INVOICINGCHAINCODE = "invoicing";
 
 export const getUserBalance = (username, password, pubkey) => {
   

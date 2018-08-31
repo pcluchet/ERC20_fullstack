@@ -58,16 +58,12 @@ curl_setopt($ch, CURLOPT_URL,$APIURL."/invoke");
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS,
             "channel=ptwist&".
-            "chaincode=facture&".
+            "chaincode=invoicing&".
             "func=createBill&".
             "username=$login&".
             "password=$password&".
             "args=$parsedargs"
         );
-
-// In real life you should use something like:
-// curl_setopt($ch, CURLOPT_POSTFIELDS, 
-//          http_build_query(array('postvar1' => 'value1')));
 
 // Receive server response ...
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -77,7 +73,6 @@ $server_output = curl_exec($ch);
 curl_close ($ch);
 
 $resp = json_decode($server_output, true);
-var_dump($resp);
 
 if ($resp['status'] == "200")
 {
