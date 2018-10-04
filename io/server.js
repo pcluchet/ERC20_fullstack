@@ -47,7 +47,14 @@ var users = require('./db/users');
 app.get('/query/', (req, res) => {
 //app.post('/query/', (req, res) => {
 
-  users.comparepwd(req.body.username, req.body.password, function (err, result) {
+	const	username = req.header("username");
+	const	password = req.header("password");
+
+	if (!username)
+		returnResponse(res, 403, "Username not specified");
+	if (!password)
+		returnResponse(res, 403, "Password not specified");
+	users.comparepwd(username, password, function (err, result) {
     if (err) {
 		returnResponse(res, 403, "Username or password invalid");
         //res.send('{"status" : 403, "payload" : "", "message" : "Username or password invalid" }');
@@ -106,7 +113,7 @@ app.get('/query/', (req, res) => {
 
         //console.log(req.body.param2);
         var query = require('./query.1.js');
-        query.cc_query(req.body.username, request, channel, peerAddr, ordererAddr, peerListenerAddr).then(
+        query.cc_query(username, request, channel, peerAddr, ordererAddr, peerListenerAddr).then(
           (result) => {
 
             console.log(result);
@@ -121,7 +128,7 @@ app.get('/query/', (req, res) => {
       }
       else
       {
-		returnResponse(res, 403, "Username.passwor invalid");
+		returnResponse(res, 403, "Username or password invalid");
 		//res.send('{"status" : 403, "payload" : "", "message" : "Username or password invalid" }');
       }
     }
@@ -133,8 +140,14 @@ app.get('/query/', (req, res) => {
 //TODO
 // HTTP POST
 app.post('/invoke/', (req, res) => {
+	const	username = req.header("username");
+	const	password = req.header("password");
 
-  users.comparepwd(req.body.username, req.body.password, function (err, result) {
+	if (!username)
+		returnResponse(res, 403, "Username not specified");
+	if (!password)
+		returnResponse(res, 403, "Password not specified");
+  users.comparepwd(username, password, function (err, result) {
     if (err) {
 		returnResponse(res, 403, "Username or password invalid");
         //res.send('{"status" : 403, "payload" : "", "message" : "Username or password invalid" }');
@@ -193,7 +206,7 @@ app.post('/invoke/', (req, res) => {
   //console.log(req.body.param2);
 
   var query = require('./invoke.1.js');
-  query.cc_invoke(req.body.username, request, channel, peerAddr, ordererAddr, peerListenerAddr).then(
+  query.cc_invoke(username, request, channel, peerAddr, ordererAddr, peerListenerAddr).then(
     (result) => {
 
       console.log(result);
@@ -227,22 +240,13 @@ app.post('/listpeers/', (req, res) => {
 
 // HTTP POST
 app.post('/register/', (req, res) => {
+	const	username = req.header("username");
+	const	password = req.header("password");
 
-
-  var usr = req.body.username;
-  if (!usr)
-  { 
-	  returnResponse(res, 412, "Username not specified");
-    //TODO : handle error
-  }
-
-  var password = req.body.password;
-  if (!password)
-  { 
-	  returnResponse(res, 412, "Password not specified");
-    //TODO : handle error
-  }
-
+	if (!username)
+		returnResponse(res, 403, "Username not specified");
+	if (!password)
+		returnResponse(res, 403, "Password not specified");
 
 //  var caAddr = "http://localhost:7054";
 
@@ -250,7 +254,7 @@ app.post('/register/', (req, res) => {
   console.log("caAddr=", caAddr);
   //console.log(req.body.param2);
   var query = require('./registerUser.1.js');
-  query.ca_register(usr, caAddr).then(
+  query.ca_register(username, caAddr).then(
     (result) => {
       console.log("res:"+result);
 
@@ -262,7 +266,7 @@ app.post('/register/', (req, res) => {
       }
 
       var user = {  
-        email: usr,
+        email: username,
         password: password,
         pubkey : JSON.parse(result).pubkey,
     };
@@ -304,8 +308,15 @@ app.post('/register/', (req, res) => {
 //TODO
 // HTTP GET
 app.post('/auth/', (req, res) => {
+	const	username = req.header("username");
+	const	password = req.header("password");
 
-  users.comparepwd_pub(req.body.username, req.body.password, function (err, result) {
+	if (!username)
+		returnResponse(res, 403, "Username not specified");
+	if (!password)
+		returnResponse(res, 403, "Password not specified");
+
+  users.comparepwd_pub(username, password, function (err, result) {
     if (err) {
 		returnResponse(res, 403, "Username or password invalid");
         //res.send('{"status" : 403, "payload" : "", "message" : "Username or password invalid" }');
