@@ -10,7 +10,7 @@ import Camera from 'react-native-camera';
 //import BarcodeScanner from 'react-native-barcodescanner';
 
 
-const APIURL = "http://192.168.1.20:8080";
+const APIURL = "http://192.168.1.21:8080";
 const CHANNEL = "ptwist";
 const CHAINCODE = "ERC20";
 const INVOICINGCHAINCODE = "invoicing";
@@ -41,7 +41,7 @@ export const getUserBalance = (username, password, pubkey) => {
         })
         .catch((error) => {
 
-            console.error("ERROR HAPPENED :" + error);
+            console.log("ERROR HAPPENED :" + error);
         });
 }
 
@@ -57,7 +57,6 @@ export const getLatestTransfers = (username, password, pubkey) => {
         },
         body: JSON.stringify({
           func: "latest",
-
           args : JSON.stringify(argarray),
           username: username,
           password: password,
@@ -75,8 +74,8 @@ export const getLatestTransfers = (username, password, pubkey) => {
         })
         .catch((error) => {
 
-            console.error("ERROR HAPPENED :" + error);
-            console.error(error);
+            console.log("ERROR HAPPENED :" + error);
+            console.log(error);
         });
 }
 
@@ -99,7 +98,7 @@ export const AuthLogin = (username, pwd) => {
             return responseJson;
         })
         .catch((error) => {
-            console.error(error);
+            console.log("ERR ICI :" + error);
         });
 }
 
@@ -121,7 +120,7 @@ export const getAllowancesFrom = (username) => {
             return responseJson;
         })
         .catch((error) => {
-            console.error(error);
+            console.log("ERR LA :" + error);
         });
 }
 
@@ -142,7 +141,7 @@ export const getAllowancesTo = (username) => {
             return responseJson;
         })
         .catch((error) => {
-            console.error(error);
+            console.log(error);
         });
 }
 
@@ -170,7 +169,7 @@ export const TransferTokens = (username, password, to, amount) => {
           return responseJson;
       })
       .catch((error) => {
-          console.error(error);
+          console.log(error);
       });
       /*
     return fetch(`${APIURL}`, {
@@ -191,7 +190,7 @@ export const TransferTokens = (username, password, to, amount) => {
             return responseJson;
         })
         .catch((error) => {
-            console.error(error);
+            console.log(error);
         });
         */
 
@@ -220,7 +219,7 @@ export const PayBill = (username, password, billid) => {
           return responseJson;
       })
       .catch((error) => {
-          console.error(error);
+          console.log(error);
       });
       /*
     return fetch(`${APIURL}`, {
@@ -241,7 +240,7 @@ export const PayBill = (username, password, billid) => {
             return responseJson;
         })
         .catch((error) => {
-            console.error(error);
+            console.log(error);
         });
         */
 
@@ -269,7 +268,7 @@ export const ApproveTokens = (username, spender, tokens) => {
             return responseJson;
         })
         .catch((error) => {
-            console.error(error);
+            console.log(error);
         });
 
 }
@@ -295,7 +294,7 @@ export const TransferTokensFrom = (username, to, amount, from) => {
             return responseJson;
         })
         .catch((error) => {
-            console.error(error);
+            console.log(error);
         });
 
 }
@@ -466,8 +465,9 @@ return true;
   loadContacts() {
     console.log("CONTACTLIST = " + this.state.contactlist);
     var clist = JSON.parse(this.state.contactlist) ;
-    if (clist )
+    if (clist)
     {
+      console.log("IN THE IFFFFF");
     return clist.map(user => (
        <Picker.Item label={user.username} value={user.pubkey} key={user.username}/>
     ))
@@ -478,6 +478,43 @@ return true;
   }
   }
   
+  gencontactpicker = () =>{
+    var k = this.loadContacts();
+    if (k)
+    {
+      return (
+      
+         <Picker
+        selectedValue={this.state.selectedUserType}
+      onValueChange={(itemValue, itemIndex) => 
+          {
+            this.setState({selectedUserType: itemValue});
+            this.setState({transferto: itemValue});
+          }
+          }>
+    <Picker.Item label='Please select a contact...' value='0' />  
+    {k} 
+    </Picker>
+);
+
+    }
+    else
+    {
+
+   return (
+         <Picker
+        selectedValue={this.state.selectedUserType}
+      onValueChange={(itemValue, itemIndex) => 
+          {
+            this.setState({selectedUserType: itemValue});
+            this.setState({transferto: itemValue});
+          }
+          }>
+    <Picker.Item label='Please select a contact...' value='0' />  
+    </Picker>
+    );
+    }
+  }
   
   transfer = () => {
     return (
@@ -497,16 +534,7 @@ return true;
         </View>
         */}
         <View style={{flex: 1, backgroundColor: '#e6e6e6'}}>
-        <Picker
-        selectedValue={this.state.selectedUserType}
-      onValueChange={(itemValue, itemIndex) => 
-          {
-            this.setState({selectedUserType: itemValue});
-            this.setState({transferto: itemValue});
-          }
-          }>
-      {this.loadContacts()}
-    </Picker>
+     {this.gencontactpicker()}     
     {/*
           <TextInput style={styles.textInput}
             placeholder="To"
@@ -549,7 +577,7 @@ return true;
       if (this.state.username !== "") {
         getAllowancesFrom(this.state.username)
         .then((json) => this.setState({allowancesFrom: this.ft_balanceOfSafe(json)}))
-        .catch(error => console.error(error))
+        .catch(error => console.log(error))
       }
     }
     
@@ -557,7 +585,7 @@ return true;
       if (this.state.username !== "") {
         getAllowancesTo(this.state.username)
         .then((json) => this.setState({allowancesTo: this.ft_balanceOfSafe(json)}))
-        .catch(error => console.error(error))
+        .catch(error => console.log(error))
       }
     }
     
@@ -677,7 +705,7 @@ return true;
           json => this.setState({
             balance: this.ft_balanceOfSafe(json),
         }))
-            .catch(error => console.error(error))
+            .catch(error => console.log(error))
       }
   }
 
@@ -719,7 +747,7 @@ if (json.status == "ok")
             let obj = JSON.parse(json.response)
 
           var arrayLength = obj.length;
-          for (var i = arrayLength - 1; i > 0; i--) {
+          for (var i = arrayLength - 1 ; i >= 0; i--) {
             //alert(myStringArray[i]);
             //textlatest += "Transaction id : " + this.trimAddr(obj[i].txid) + "\n"
             textlatest += this.getsymbol(obj[i]) + "  \n" + this.timeConverter(obj[i].timestamp) + "\n"
@@ -727,6 +755,7 @@ if (json.status == "ok")
             textlatest += "Amount : " + obj[i].value.Value + "\n"
             textlatest += "\n\n"
           //Do something
+          //so i did
           }
             this.setState({
             latesttransfers: textlatest,
@@ -734,7 +763,7 @@ if (json.status == "ok")
       }
       }
       )
-            .catch(error => console.error(error))
+            .catch(error => console.log(error))
       }
   }
 
@@ -1034,6 +1063,7 @@ LogOut = () => {
   this.setState({balance : 0});
   this.setState({username : ''});
   this.setState({contactlist : '[]'});
+  this.setState({latesttransfers: ' '});
   console.log("logged :" + this.state.logged);
 }
 
@@ -1071,7 +1101,7 @@ ft_paybill = () => {
             //balance: this.ft_balanceOfSafe(json),
 
     }
-    ).catch(error => console.error(error))
+    ).catch(error => console.log(error))
 
 
     }
@@ -1084,6 +1114,13 @@ ft_transfer = () => {
         if (this.state.transferfrom == "")
         {
           console.log("transfer normal");
+          if (this.state.transferto == "0")
+          {
+              alert("You must specify a user ❌");
+              this.setState({transferPending : false});
+          }
+          else
+
         TransferTokens(this.state.username, this.state.password, this.state.transferto, this.state.transferamount) .then(json => {
 
             console.log("DEBUG: jsontransfer :" + json);
@@ -1097,13 +1134,13 @@ ft_transfer = () => {
               alert("Transfer failed! ❌");
             }
 
-            this.ft_resetfields_transfer(["transferfrom", "transferto", "transferamount"]);
+            this.ft_resetfields_transfer(["transferfrom", "transferamount"]);
           this.setState({transferPending : false});
             //this.refresh_balance();
             //balance: this.ft_balanceOfSafe(json),
 
     }
-    ).catch(error => console.error(error))
+    ).catch(error => console.log(error))
 
         //this.setState({ isLoading: false })
         //this.setState({ name: k })
@@ -1134,7 +1171,7 @@ ft_transfer = () => {
 
     }
     )
-            .catch(error => console.error(error))
+            .catch(error => console.log(error))
 
         //this.setState({ isLoading: false })
         //this.setState({ name: k })
@@ -1161,7 +1198,7 @@ ft_approve = () => {
       this.ft_resetfields_transfer(["spenderApprove", "tokensApprove"]);
       this.setState({transferPending : false});
   })
-  .catch(err => console.error("Error ", err))
+  .catch(err => console.log("Error ", err))
 
   console.log("END")
 }
