@@ -44,7 +44,7 @@ var users = require('./db/users');
 
 
 // HTTP GET
-app.get('/query/', (req, res) => {
+app.get('/query/:channel/:chaincode/:function/', (req, res) => {
 //app.post('/query/', (req, res) => {
 
 	const	username = req.header("username");
@@ -65,19 +65,19 @@ app.get('/query/', (req, res) => {
       if (result) {
         console.log('succesfully identified');
 
-        var cc = req.body.chaincode;
+        var cc = req.params.chaincode;
         if (!cc) {
 			returnResponse(res, 412, "Chaincode not specified");
           //TODO : handle error
         }
 
-        var channel = req.body.channel;
+        var channel = req.params.channel;
         if (!channel) {
 			returnResponse(res, 412, "Channel not specified");
           //TODO : handle error
         }
 
-        var func = req.body.func;
+        var func = req.params.function;
         if (!func) {
 			returnResponse(res, 412, "Function name not specified");
           //TODO : handle error
@@ -139,7 +139,7 @@ app.get('/query/', (req, res) => {
 
 //TODO
 // HTTP POST
-app.post('/invoke/', (req, res) => {
+app.post('/invoke/:channel/:chaincode/:function/', (req, res) => {
 	const	username = req.header("username");
 	const	password = req.header("password");
 
@@ -158,25 +158,25 @@ app.post('/invoke/', (req, res) => {
       if (result) {
         console.log('succesfully identified');
 
-  var cc = req.body.chaincode;
+  var cc = req.params.chaincode;
   if (!cc) {
 		returnResponse(res, 412, "Chaincode not specified");
     //TODO : handle error
   }
 
-  var channel = req.body.channel;
+  var channel = req.params.channel;
   if (!channel) {
 		returnResponse(res, 412, "Channel not specified");
     //TODO : handle error
   }
 
-  var func = req.body.func;
+  var func = req.params.function;
   if (!func) {
 		returnResponse(res, 412, "Function name not specified");
     //TODO : handle error
   }
 
-  var args = req.body.args;
+  var args = req.params.args;
   if (!args) {
 		returnResponse(res, 412, "Arguments not specified");
     //TODO : handle error
@@ -307,7 +307,7 @@ app.post('/register/', (req, res) => {
 
 //TODO
 // HTTP GET
-app.post('/auth/', (req, res) => {
+app.get('/auth/', (req, res) => {
 	const	username = req.header("username");
 	const	password = req.header("password");
 

@@ -1,0 +1,11 @@
+Env values needed to run the API :
+	ORDERER_ADDR=grpc://orderer.example.com:7050
+      - PEER_ADDR=grpc://peer0.MEDSOS.example.com:7051
+      - PEER_LISTENER_ADDR=grpc://peer0.MEDSOS.example.com:7053
+      - COUCHDB_ADDR=http://couchdb:5984
+      - CA_ADDR=http://ca.example.com:7054
+
+
+Example of query :
+
+curl --data-urlencode 'args=["null"]'  http://localhost:8080/query/ptwist/ERC20/balanceOf/ -H "username: kevins" -H "password: 423" -X GET
