@@ -1,0 +1,230 @@
+---
+swagger: "2.0"
+info:
+  description: "Test of swagger server generation"
+  version: "1.0.0"
+  title: "Fabric API"
+  contact:
+    email: "apiteam@swagger.io"
+tags:
+- name: "Fabric API"
+  description: "Modular API to interract with hyperledger fabric"
+  externalDocs:
+    description: "Find out more"
+    url: "http://swagger.io"
+paths:
+  /users/{username}:
+    get:
+      tags:
+      - "auth"
+      summary: "retreive a user infos"
+      description: ""
+      operationId: "getUserInfos"
+      produces:
+      - "application/json"
+      - "text/plain"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "Username of the user you want to authenticate"
+        required: true
+        type: "string"
+        format: "uuid"
+      - name: "X-request-password"
+        in: "header"
+        description: "Password of the user"
+        required: true
+        type: "string"
+        format: "string"
+      responses:
+        200:
+          description: "Username was found"
+          schema:
+            $ref: "#/definitions/inline_response_200"
+        401:
+          description: "username/pw missing or incorrect"
+          schema:
+            type: "string"
+        404:
+          description: "username not found"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Auth"
+    post:
+      tags:
+      - "register"
+      summary: "Register a new user for this organisation"
+      description: ""
+      operationId: "register"
+      produces:
+      - "application/json"
+      - "text/plain"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "Username of the new user"
+        required: true
+        type: "string"
+        format: "uuid"
+      - name: "X-request-password"
+        in: "header"
+        description: "Password of the new user"
+        required: true
+        type: "string"
+        format: "string"
+      responses:
+        200:
+          description: "Username succesfully enrolled"
+          schema:
+            $ref: "#/definitions/inline_response_200_1"
+        409:
+          description: "Username already exist"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Register"
+  /ledger/{channel}/{chaincode}/{function}:
+    get:
+      tags:
+      - "query"
+      summary: "query (retreive mode) the chaincode"
+      description: ""
+      operationId: "query"
+      produces:
+      - "application/json"
+      - "text/plain"
+      parameters:
+      - name: "X-request-username"
+        in: "header"
+        description: "username"
+        required: true
+        type: "string"
+        format: "string"
+      - name: "X-request-password"
+        in: "header"
+        description: "Password of the user"
+        required: true
+        type: "string"
+        format: "string"
+      - name: "channel"
+        in: "path"
+        description: "channel in which the transaction will occur"
+        required: true
+        type: "string"
+        format: "string"
+      - name: "chaincode"
+        in: "path"
+        description: "Name of the chaincode to invoke"
+        required: true
+        type: "string"
+        format: "string"
+      - name: "function"
+        in: "path"
+        description: "function to invoke in given chaincode"
+        required: true
+        type: "string"
+        format: "string"
+      - name: "params"
+        in: "header"
+        description: "parameters sent to the chaincode"
+        required: true
+        type: "array"
+        items:
+          type: "string"
+        collectionFormat: "csv"
+      responses:
+        200:
+          description: "Invoke was succesfully sent to the ledger, however, this does\
+            \ not means the chaincode itself validated the transaction, you must check\
+            \ the response for that"
+          schema:
+            $ref: "#/definitions/inline_response_200_2"
+        401:
+          description: "username/pw missing or incorrect"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Query"
+    post:
+      tags:
+      - "invoke"
+      summary: "Invoke (commit mode) a the chaincode"
+      description: ""
+      operationId: "invoke"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "application/json"
+      - "text/plain"
+      parameters:
+      - name: "X-request-username"
+        in: "header"
+        description: "username"
+        required: true
+        type: "string"
+        format: "string"
+      - name: "X-request-password"
+        in: "header"
+        description: "Password of the user"
+        required: true
+        type: "string"
+        format: "string"
+      - name: "channel"
+        in: "path"
+        description: "channel in which the transaction will occur"
+        required: true
+        type: "string"
+        format: "string"
+      - name: "chaincode"
+        in: "path"
+        description: "Name of the chaincode to invoke"
+        required: true
+        type: "string"
+        format: "string"
+      - name: "function"
+        in: "path"
+        description: "function to invoke in given chaincode"
+        required: true
+        type: "string"
+        format: "string"
+      - name: "params"
+        in: "header"
+        description: "parameters sent to the chaincode"
+        required: true
+        type: "array"
+        items:
+          type: "string"
+        collectionFormat: "csv"
+      responses:
+        200:
+          description: "Invoke was succesfully sent to the ledger, however, this does\
+            \ not means the chaincode itself validated the transaction, you must check\
+            \ the response for that"
+          schema:
+            $ref: "#/definitions/inline_response_200_2"
+        401:
+          description: "username/pw missing or incorrect"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Invoke"
+definitions:
+  inline_response_200_1:
+    properties:
+      pubkey:
+        type: "string"
+        description: "The public key of the just enrolled user"
+    example:
+      pubkey: "pubkey"
+  inline_response_200:
+    properties:
+      pubkey:
+        type: "string"
+        description: "The public key of the given user"
+    example:
+      pubkey: "pubkey"
+  inline_response_200_2:
+    properties:
+      payload:
+        type: "string"
+        description: "The payload returned by the chaincode"
+    example:
+      payload: "payload"
