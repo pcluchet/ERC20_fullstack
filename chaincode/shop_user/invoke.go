@@ -33,10 +33,10 @@ func gethistory(stub shim.ChaincodeStubInterface, args []string) (string, error)
 }
 
 func (t *SimpleAsset) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
-	var fct string
-	var argv []string
-	var ret string
-	var err error
+	var err		error
+	var fct		string
+	var argv	[]string
+	var ret		string
 
 	fct, argv = stub.GetFunctionAndParameters()
 	STUB = stub
@@ -54,7 +54,7 @@ func (t *SimpleAsset) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 	case "history":
 		ret, err = gethistory(stub, argv)
 	default:
-		err = fmt.Errorf("Illegal function called \n")
+		err = fmt.Errorf("Illegal function called \"%s\"\n", fct)
 	}
 
 	if err != nil {
