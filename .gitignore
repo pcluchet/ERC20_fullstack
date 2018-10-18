@@ -1,9 +1,9 @@
 network/bin
 network/bin_linux
 network/bin_macos
-network/config/
-network/crypto-config/
-network/go/
+network/config/*
+network/crypto-config/*
+network/go/*
 
 node_modules/
 Pwallet/android/build

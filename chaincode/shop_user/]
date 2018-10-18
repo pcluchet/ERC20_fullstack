@@ -1,0 +1,18 @@
+package main
+
+import "github.com/hyperledger/fabric/core/chaincode/shim"
+
+type SimpleAsset struct {
+}
+
+type UserInfos	struct {
+	Amount		uint64
+	Allowances	map[string]uint64
+}
+
+var STUB shim.ChaincodeStubInterface
+var LOG *shim.ChaincodeLogger
+var ledgerDevKeys map[string]bool = map[string]bool{
+	"totalSupply": true,
+	"transfer":    true,
+	"approval":    true}
