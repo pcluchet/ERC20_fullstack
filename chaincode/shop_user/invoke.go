@@ -39,10 +39,6 @@ func (t *SimpleAsset) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 	var err error
 
 	fct, argv = stub.GetFunctionAndParameters()
-	if fct != "balanceOf" && fct != "whoOwesMe" && fct != "whoOweI" { // TEMP
-		fmt.Println("---------------> Invoke <---------------")
-	}
-
 	STUB = stub
 	LOG = shim.NewLogger("Pcoin")
 	LOG.SetLevel(shim.LogInfo)
@@ -53,28 +49,10 @@ func (t *SimpleAsset) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 		ret, err = _get(argv)
 	case "set":
 		ret, err = _set(argv)
+	case "new":
+		ret, err = userNew(argv)
 	case "history":
 		ret, err = gethistory(stub, argv)
-	case "latest":
-		ret, err = getlatest(stub, argv)
-	case "balanceOf":
-		ret, err = balanceOf(argv)
-	case "allowance":
-		ret, err = allowance(argv)
-	case "transfer":
-		ret, err = transfer(argv)
-	case "transferFrom":
-		ret, err = transferFrom(argv)
-	case "approve":
-		ret, err = approve(argv)
-	case "totalSupply":
-		ret, err = totalSupply()
-	case "listUsers":
-		ret, err = listUsers()
-	case "whoOwesMe":
-		ret, err = whoOwesMe()
-	case "whoOweI":
-		ret, err = whoOweI()
 	default:
 		err = fmt.Errorf("Illegal function called \n")
 	}

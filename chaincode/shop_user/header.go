@@ -10,6 +10,9 @@ import "github.com/hyperledger/fabric/core/chaincode/shim"
 /// STRUCTURES
 ////////////////////////////////////////////////////////////////////////////////
 
+type SimpleAsset struct {
+}
+
 //////////////////////////////////////////////////
 /// USER SELL
 //////////////////////////////////////////////////
@@ -20,7 +23,7 @@ type Item		struct {
 	Price		uint64
 }
 
-type UserSell	struct {
+type UserSale	struct {
 	ItemMap		map[string]bool
 	Items		[]Item
 }
@@ -29,31 +32,30 @@ type UserSell	struct {
 /// USER OWE
 //////////////////////////////////////////////////
 
-type Owe		struct {
+type UserSold	struct {
 	User		string
-	Item		Item[]
-}
-
-type UserOwe	struct {
-	OweList		[]Owe
+	ItemId		string
+	Status		uint8
 }
 
 //////////////////////////////////////////////////
 /// USER
 //////////////////////////////////////////////////
 
-type UserInfos	struct {
-	Sell		UserSell
-	Owe			UserOwe
+type UserInfo	struct {
+	Sale		UserSale
+	Sold		[]UserSold
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// GLOBALS
 ////////////////////////////////////////////////////////////////////////////////
 
-var STUB shim.ChaincodeStubInterface
-var LOG *shim.ChaincodeLogger
-var ledgerDevKeys map[string]bool = map[string]bool{
-	"totalSupply": true,
-	"transfer":    true,
-	"approval":    true}
+var STUB	shim.ChaincodeStubInterface
+var LOG		*shim.ChaincodeLogger
+var STATUS	map[string]uint8 = map[string]uint8 {
+	"waiting":		0,
+	"processing":	1,
+	"sending":		2,
+	"sent":			3,
+	"received":		4}
