@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
@@ -66,7 +65,7 @@ func getlatest(stub shim.ChaincodeStubInterface, args []string) (string, error) 
 		timestamp := now.Timestamp.Seconds
 
 		marshaled := fmt.Sprintf("{\"txid\" : \"%s\", \"timestamp\" : %d, \"value\" : %s }", txid, timestamp, value)
-		marshaled = strings.Replace(marshaled, "\"", "\\\"", -1)
+		//marshaled = strings.Replace(marshaled, "\"", "\\\"", -1)
 
 		//marshaled := fmt.Sprintf("%s", now)
 

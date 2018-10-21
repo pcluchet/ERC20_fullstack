@@ -13,6 +13,10 @@ module.exports.invoke = function invoke (req, res, next) {
   var _function = req.swagger.params['function'].value;
   var params = req.swagger.params['params'].value;
 
+  //only strings in params, cause weird issues otherwise
+  params.every(function(element, index, array) {
+    array[index] = element.toString();
+  });
   console.log(params);
 
   users.comparepwd(xRequestUsername, xRequestPassword, function (err, result) {
