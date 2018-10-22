@@ -40,9 +40,18 @@ channel.addOrderer(order);
 
 //
 var member_user = null;
-var store_path = path.join(__dirname, 'hfc-key-store');
+var store_path = path.join(__dirname, '../hfc-key-store');
 console.log('Store path:'+store_path);
 var tx_id = null;
+
+function isJson(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
 
 // create the key value store as defined in the fabric-client/config/default.json 'key-value-store' setting
 return Fabric_Client.newDefaultKeyValueStore({ path: store_path
@@ -100,7 +109,7 @@ return Fabric_Client.newDefaultKeyValueStore({ path: store_path
 		} else {
 			console.error('Transaction proposal was bad');
 		}
-	if (true) {//isProposalGood) {
+	if ( isProposalGood) {
 		console.log(util.format(
 			'{ status: %s, payload : "%s", message : "%s" }',
 			proposalResponses[0].response.status, proposalResponses[0].response.payload , proposalResponses[0].response.message));
@@ -170,8 +179,9 @@ return Fabric_Client.newDefaultKeyValueStore({ path: store_path
 
 		return Promise.all(promises);
 	} else {
+		console.log("Error :", proposalResponses[0].message);
 		//console.error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
-		throw new Error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
+		throw new Error('Failed to send Proposal, chaincode responded with :' + proposalResponses[0].message);
 	}
 }).then((results) => {
 	//console.log('Send transaction promise and event listener promise have completed');
@@ -191,11 +201,18 @@ return Fabric_Client.newDefaultKeyValueStore({ path: store_path
 	}
 }).catch((err) => {
 	//console.error('Failed to invoke successfully :: ' + err);
-	message = 'Failed :: ' + err;
+	message = '' + err;
 	status = 500;
 }).then(() => {
 	//console.log(util.format( '{status : "%s", response : "%s", message : "%s" }', status, response, message));
-	ret = util.format( '{"status" : "%s", "payload" : "%s", "message" : "%s" }', status, payload, message);
+	if (isJson(payload))
+	{
+		ret = util.format( '{"status" : "%s", "payload" : %s, "message" : %s }', status, payload, JSON.stringify(message));
+	}
+	else
+	{
+		ret = util.format( '{"status" : "%s", "payload" : %s, "message" : %s }', status, JSON.stringify(payload), JSON.stringify(message));
+	}
 	console.log(ret);
 	return ret;
 });

@@ -9,20 +9,20 @@ import "strconv"
 
 func (self Transaction) ParseTransfer() (Transaction, error) {
 	if self.From == self.To {
-		return Transaction{}, fmt.Errorf("Transfer: illegal operation")
+		return Transaction{}, fmt.Errorf("Transfer: illegal operation, one can't transfer tokens to himself")
 	}
 	if self.Amount <= self.User.Amount {
 		return self, nil
 	}
 
-	return Transaction{}, fmt.Errorf("Transfer: permission denied")
+	return Transaction{}, fmt.Errorf("Transfer: permission denied, (insufficient funds ?)")
 }
 
-func	getTransferTx(argv []string) (Transaction, error) {
-	var publicKey	string
-	var amount		uint64
-	var user		UserInfos
-	var err			error
+func getTransferTx(argv []string) (Transaction, error) {
+	var publicKey string
+	var amount uint64
+	var user UserInfos
+	var err error
 
 	if publicKey, err = getPublicKey(); err != nil {
 		return Transaction{}, err
@@ -37,13 +37,12 @@ func	getTransferTx(argv []string) (Transaction, error) {
 	return (Transaction{publicKey, argv[0], amount, user}).ParseTransfer()
 }
 
-
 /* ************************************************************************** */
 /*		PUBLIC																  */
 /* ************************************************************************** */
 
 func transfer(argv []string) (string, error) {
-	var tx	Transaction
+	var tx Transaction
 	var err error
 
 	if err = parseArgv(argv, "transfer", 2); err != nil {
