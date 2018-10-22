@@ -28,7 +28,7 @@ if (process.argv.length != 3) {
 */
 //
 var fabric_client = new Fabric_Client();
-var status = "ok";
+var status = "200";
 var message = "";
 var response = "";
 var ret = "";
@@ -44,6 +44,17 @@ var member_user = null;
 var store_path = path.join(__dirname, '../hfc-key-store');
 //console.log('Store path:'+store_path);
 var tx_id = null;
+
+
+function isJson(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
 
 // create the key value store as defined in the fabric-client/config/default.json 'key-value-store' setting
 return Fabric_Client.newDefaultKeyValueStore({ path: store_path
@@ -65,7 +76,7 @@ return Fabric_Client.newDefaultKeyValueStore({ path: store_path
 		member_user = user_from_store;
 	} else {
 		//throw new Error(`Failed to get ${process.argv[2]}.... run registerUser.js`);
-		status = "failed";
+		status = "500";
 		message = "user not found";
 	}
 
@@ -88,7 +99,7 @@ return Fabric_Client.newDefaultKeyValueStore({ path: store_path
 	//console.log(query_responses[0].response.status);
 	if (query_responses && query_responses.length == 1) {
 		if (query_responses[0] instanceof Error) {
-		status = "failed";
+		status = "500";
 		message = query_responses[0];
 
 //			console.error("error from query = ", query_responses[0]);
@@ -99,18 +110,29 @@ return Fabric_Client.newDefaultKeyValueStore({ path: store_path
 	} else {
 		//console.log("No payloads were returned from query");
 
-		status = "failed";
+		status = "500";
 		message = "no payload returned from query";
 
 	}
 }).catch((err) => {
-		status = "failed";
+		status = "500";
 		message = err;
 
 	//console.error('Failed to query successfully :: ' + err);
 }).then(() => {
+	var msg = "";
+	if (message.message)
+		msg = message.message;
+	if (isJson(response))
+	{
+		ret = util.format( '{"status" : "%s", "response" : %s, "message" : %s }', status, response, JSON.stringify(msg));
+	}
+	else
+	{
+		ret = util.format( '{"status" : "%s", "response" : %s, "message" : %s }', status, JSON.stringify(response), JSON.stringify(msg));
+	}
 	//console.log(util.format( '{status : "%s", response : "%s", message : "%s" }', status, response, message));
-	ret = util.format( '{"status" : "%s", "response" : "%s", "message" : "%s" }', status, response, message);
+	//ret = util.format( '{"status" : "%s", "response" : "%s", "message" : "%s" }', status, response, message);
 	console.log(ret);
 	return ret;
 });

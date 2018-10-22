@@ -211,7 +211,7 @@ return Fabric_Client.newDefaultKeyValueStore({ path: store_path
 	}
 	else
 	{
-		ret = util.format( '{"status" : "%s", "payload" : %s, "message" : %s }', status, JSON.stringify(payload), JSON.stringify(message));
+		ret = util.format( '{"status" : "%s", "payload" : %s, "message" : %s }', status, JSON.stringify(payload.toString()), JSON.stringify(message));
 	}
 	console.log(ret);
 	return ret;

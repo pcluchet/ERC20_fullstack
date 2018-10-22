@@ -137,7 +137,7 @@ paths:
             \ not means the chaincode itself validated the transaction, you must check\
             \ the response for that"
           schema:
-            $ref: "#/definitions/inline_response_200_2"
+            $ref: "#/definitions/inline_response_200_3"
         401:
           description: "username/pw missing or incorrect"
           schema:
@@ -227,4 +227,16 @@ definitions:
         type: "string"
         description: "The payload returned by the chaincode"
     example:
+      status: "200"
       payload: "payload"
+      message: ""
+  inline_response_200_3:
+    properties:
+      payload:
+        type: "string"
+        description: "The payload returned by the chaincode"
+    example:
+      status: "200"
+      response: "response"
+      message: ""
+

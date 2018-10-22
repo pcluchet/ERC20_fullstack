@@ -15,6 +15,11 @@ module.exports.query = function query (req, res, next) {
   var _function = req.swagger.params['function'].value;
   var params = req.swagger.params['params'].value;
 
+  //only strings in params, cause weird issues otherwise
+  params.every(function(element, index, array) {
+    array[index] = element.toString();
+  });
+
   users.comparepwd(xRequestUsername, xRequestPassword, function (err, result) {
     if (err) {
 
@@ -60,9 +65,6 @@ module.exports.query = function query (req, res, next) {
             console.log(result);
             res.writeHead(200, { "Content-Type": "application/json" });
             return res.end(result);
-
-			      //returnResponse(res, 200, result);
-            //res.send(result);
           }
         );
 
