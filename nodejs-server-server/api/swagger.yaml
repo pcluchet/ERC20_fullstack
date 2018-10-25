@@ -130,7 +130,7 @@ paths:
         type: "array"
         items:
           type: "string"
-        collectionFormat: "csv"
+        collectionFormat: "pipes"
       responses:
         200:
           description: "Invoke was succesfully sent to the ledger, however, this does\
@@ -193,7 +193,7 @@ paths:
         type: "array"
         items:
           type: "string"
-        collectionFormat: "csv"
+        collectionFormat: "pipes"
       responses:
         200:
           description: "Invoke was succesfully sent to the ledger, however, this does\
