@@ -37,8 +37,8 @@ $args = array();
 //$args[] = addslashes($jsondata);
 
 //print_r("uesh".$jsondata);
-$parsedargs = json_encode($jsondata);
-$parsedargs = "[".$parsedargs."]";
+$parsedargs = $jsondata;
+//$parsedargs = "[".$parsedargs."]";
 
 //print_r("parsed".$parsedargs);
 
@@ -47,6 +47,8 @@ $parsedargs = "[".$parsedargs."]";
 
 
 
+$channel = "ptwist";
+$chaincode = "invoicing";
 
 //
 //Now calling API
@@ -54,16 +56,22 @@ $parsedargs = "[".$parsedargs."]";
 
 $ch = curl_init();
 
-curl_setopt($ch, CURLOPT_URL,$APIURL."/invoke");
+curl_setopt($ch, CURLOPT_URL,$APIURL."/ledger/$channel/$chaincode/createBill");
 curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Content-Type: application/json',
+    "X-request-username: $login",
+    "X-request-password: $password",
+    "params: $parsedargs"
+));
+
+/*
 curl_setopt($ch, CURLOPT_POSTFIELDS,
-            "channel=ptwist&".
-            "chaincode=invoicing&".
-            "func=createBill&".
             "username=$login&".
             "password=$password&".
             "args=$parsedargs"
         );
+*/
 
 // Receive server response ...
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -71,6 +79,9 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $server_output = curl_exec($ch);
 
 curl_close ($ch);
+
+error_log($server_output);
+error_log($parsedargs);
 
 $resp = json_decode($server_output, true);
 

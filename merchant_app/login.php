@@ -24,7 +24,7 @@ session_start();
 <body >
     <div id="login">
 <form action="login_process.php" method="post" >
-    <label for="uname"><b>Username</b></label>
+    <label for="uname"><b>_Username</b></label>
     <input type="text" placeholder="Enter Username" name="uname" required>
     <br>
     <label for="psw"><b>Password</b></label>

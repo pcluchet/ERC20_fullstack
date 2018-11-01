@@ -10,7 +10,7 @@ import Camera from 'react-native-camera';
 //import BarcodeScanner from 'react-native-barcodescanner';
 
 
-const APIURL = "http://192.168.1.21:8080";
+const APIURL = "http://192.168.1.65:8080";
 const CHANNEL = "ptwist";
 const CHAINCODE = "ERC20";
 const INVOICINGCHAINCODE = "invoicing";
@@ -19,12 +19,16 @@ export const getUserBalance = (username, password, pubkey) => {
   
     var argarray = [];
     argarray.push(encodeURI(pubkey));
-    return fetch(`${APIURL}/query`, {
-        method: 'POST',
+    return fetch(`${APIURL}/ledger/${CHANNEL}/${CHAINCODE}/balanceOf`, {
+        method: 'GET',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
+          'X-request-username': username,
+          'X-request-password': password,
+          'params': pubkey 
         },
+        /*
         body: JSON.stringify({
           func: "balanceOf",
 
@@ -34,10 +38,10 @@ export const getUserBalance = (username, password, pubkey) => {
           channel: CHANNEL,
           chaincode : CHAINCODE,
         }),
+        */
         })
-        .then((response) => response.json())
-        .then((responseJson) => {
-            return responseJson;
+        .then((response) => {
+            return response;
         })
         .catch((error) => {
 
@@ -47,14 +51,18 @@ export const getUserBalance = (username, password, pubkey) => {
 
 export const getLatestTransfers = (username, password, pubkey) => {
   
-    var argarray = [];
-    argarray.push(encodeURI(pubkey));
-    return fetch(`${APIURL}/query`, {
-        method: 'POST',
+    //var argarray = [];
+    //argarray.push(encodeURI(pubkey));
+    return fetch(`${APIURL}/ledger/${CHANNEL}/${CHAINCODE}/latest`, {
+        method: 'GET',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
+          'X-request-username': username,
+          'X-request-password': password,
+          'params': pubkey 
         },
+        /*
         body: JSON.stringify({
           func: "latest",
           args : JSON.stringify(argarray),
@@ -63,14 +71,10 @@ export const getLatestTransfers = (username, password, pubkey) => {
           channel: CHANNEL,
           chaincode : CHAINCODE,
         }),
+        */
         })
         .then((response) => {
-          console.log(response);
-          return response.json()})
-        .then((responseJson) => {
-
-          console.log("RESPJSON :" + responseJson)
-            return responseJson;
+            return response;
         })
         .catch((error) => {
 
@@ -82,20 +86,22 @@ export const getLatestTransfers = (username, password, pubkey) => {
 
 
 export const AuthLogin = (username, pwd) => {
-    return fetch(`${APIURL}/auth`, {
-        method: 'POST',
+    return fetch(`${APIURL}/users/${username}`, {
+        method: 'GET',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
+          'X-request-password': pwd
         },
+        /*
         body: JSON.stringify({
           username: username,
           password: pwd,
         }),
+        */
         })
-        .then((response) => response.json())
-        .then((responseJson) => {
-            return responseJson;
+        .then((response) => {
+            return response;
         })
         .catch((error) => {
             console.log("ERR ICI :" + error);
@@ -149,12 +155,17 @@ export const TransferTokens = (username, password, to, amount) => {
   var argarray = [];
   argarray[0] = to;
   argarray[1] = amount;
-  return fetch(`${APIURL}/invoke`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+    return fetch(`${APIURL}/ledger/${CHANNEL}/${CHAINCODE}/transfer`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'X-request-username': username,
+          'X-request-password': password,
+          'params': argarray[0] + '|' + argarray[1] 
+        },
+
+      /*
       body: JSON.stringify({
         func: "transfer",
         args : JSON.stringify(argarray),
@@ -163,10 +174,10 @@ export const TransferTokens = (username, password, to, amount) => {
         channel: CHANNEL,
         chaincode : CHAINCODE,
       }),
+      */
       })
-      .then((response) => response.json())
-      .then((responseJson) => {
-          return responseJson;
+      .then((response) => {
+          return response;
       })
       .catch((error) => {
           console.log(error);
@@ -197,26 +208,20 @@ export const TransferTokens = (username, password, to, amount) => {
 }
 
 export const PayBill = (username, password, billid) => {
-  var argarray = [];
-  argarray[0] = billid;
-  return fetch(`${APIURL}/invoke`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        func: "payBill",
-        args : JSON.stringify(argarray),
-        username: username,
-        password: password,
-        channel: CHANNEL,
-        chaincode : INVOICINGCHAINCODE,
-      }),
-      })
-      .then((response) => response.json())
-      .then((responseJson) => {
-          return responseJson;
+  //var argarray = [];
+  //argarray[0] = billid;
+    return fetch(`${APIURL}/ledger/${CHANNEL}/${INVOICINGCHAINCODE}/payBill`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'X-request-username': username,
+          'X-request-password': password,
+          'params': billid 
+        },
+     })
+      .then((response) => {
+          return response;
       })
       .catch((error) => {
           console.log(error);
@@ -317,11 +322,11 @@ export default class App extends Component {
 
     this.state = {
       qrcode: '',
-      password : 'hello',
-      pubkey : "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE99PqGQ5/K5w7FVUf6Utr1G8es+X0+hZEwj2/VGdmcXFJz0qkgADsi54jxjOPWjzUGZjJB17oey9zzwJJdhLx0w==",
-      logged : false,
+      password : 'cbpassword',
+      pubkey : "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEteL3xbiv2NCEn8G7uyzYtOb6ozyeSCKsUPL6MlDs3fnyyUpqzzzudhz7hJLnTLvt35o2OSLhT+k7Y5AcYzG/3g==",
+      logged : true,
       name: '',
-      username: 'kevin',
+      username: 'centralbank',
       contactlist: '',
       balance: '0',
       transferamount: '', // nom de la bière
@@ -692,8 +697,9 @@ return true;
 
   ft_balanceOfSafe = (json) => {
     console.log("BALANCE RECEIVED = "+ JSON.stringify(json))
-        if (json.status == "ok" && json.response != "") {
-            return json.response;
+    var jsonresp = JSON.parse(json._bodyText);
+        if (json.status == 200 && jsonresp.response != "") {
+            return jsonresp.response;
         }
         else
             return "0"
@@ -741,10 +747,11 @@ ft_getlatest = () => {
     if (this.state.username !== "") {
         getLatestTransfers(this.state.username, this.state.password, this.state.pubkey).then(
           json => {
-if (json.status == "ok")
+if (json.status == 200)
 {
             let textlatest = ""
-            let obj = JSON.parse(json.response)
+            let obj = JSON.parse(json._bodyText)
+            obj = obj.response;
 
           var arrayLength = obj.length;
           for (var i = arrayLength - 1 ; i >= 0; i--) {
@@ -754,8 +761,6 @@ if (json.status == "ok")
             textlatest += this.getfromorto(obj[i]) + "\n"
             textlatest += "Amount : " + obj[i].value.Value + "\n"
             textlatest += "\n\n"
-          //Do something
-          //so i did
           }
             this.setState({
             latesttransfers: textlatest,
@@ -965,6 +970,39 @@ other guy
     );
 }
 
+  createbill = () => {
+    return (
+      <View style={styles.container}>
+      <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold', marginTop: '2%'}}>
+            Bill creation :
+          </Text>
+          <Text style={{fontSize: 20, textAlign: 'left', fontWeight: '100'}}>
+          Bill total : {this.state.billtotal}{"\n"} 
+          Bill address : {this.state.billaddress} 
+          </Text>
+          <View style={{flex: 0.3, backgroundColor: '#4CB676'}}>
+            <TouchableOpacity onPress={this.ft_paybill}>
+            <Text style={{marginTop: '5%', textAlign: 'center', fontSize: 42, fontWeight: '100'}}>
+              Pay this bill
+            </Text>
+          </TouchableOpacity>
+
+          </View>
+      <View style={{flex: 0.3, backgroundColor: '#4CB676'}}>
+            <TouchableOpacity onPress={() => this.setState({ scanningBill : true })}>
+            <Text style={{marginTop: '5%', textAlign: 'center', fontSize: 42, fontWeight: '100'}}>
+              scan a bill
+            </Text>
+          </TouchableOpacity>
+
+          </View>
+
+      </View>
+
+    );
+}
+
+
 
 
 scancontact = () => {
@@ -1025,22 +1063,17 @@ scanbill = () => {
 }
 
 
-
-
-
-
-
-
 Login = () => {
   console.log("login trigger");
   console.log("lop before:" + this.state.logged);
   AuthLogin(this.state.username, this.state.password).then(
-    (responseJson) => {
-            console.log("RESPONSE LOGIN = " + JSON.stringify(responseJson));
-            if (responseJson.status == "ok")
+    (response) => {
+            console.log("RESPONSE LOGIN = " + JSON.stringify(response));
+            if (response.status == 200)
             {
-
-                this.setState({pubkey : responseJson.pubkey});
+                var respjson = JSON.parse(response._bodyText);
+                //console.log("JSON rr = " + JSON.stringify(respjson));
+                this.setState({pubkey : respjson.pubkey});
                 this.setState({logged : true});
                 console.log("Login success, pubkey = " + this.state.pubkey)
                           
@@ -1081,9 +1114,10 @@ ft_paybill = () => {
           console.log("bill pay normal");
         PayBill(this.state.username, this.state.password, this.state.billaddress) .then(json => {
 
-            console.log("DEBUG: jsontransfer :" + json);
-            console.log("DEBUG: jsontransferst :" + json.result);
-            if (json.status == "200")
+            console.log("DEBUG: jsontransfer :" + JSON.stringify(json));
+            //console.log("DEBUG: jsontransferst :" + json.result);
+            var respjson = JSON.parse(json._bodyText);
+            if (json.status == 200 && respjson.status == "200")
             {
               alert("Payment successfull ! ✅");
             }
@@ -1123,9 +1157,9 @@ ft_transfer = () => {
 
         TransferTokens(this.state.username, this.state.password, this.state.transferto, this.state.transferamount) .then(json => {
 
-            console.log("DEBUG: jsontransfer :" + json);
-            console.log("DEBUG: jsontransferst :" + json.result);
-            if (json.status == "200")
+            console.log("DEBUG: ransfer :" + JSON.stringify(json));
+            var jsonresp = JSON.parse(json._bodyText);
+            if (json.status == 200 && jsonresp.status == "200")
             {
               alert("Transfer successfull ! ✅");
             }

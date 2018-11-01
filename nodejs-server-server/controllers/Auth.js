@@ -11,7 +11,11 @@ module.exports.getUserInfos = function getUserInfos (req, res, next) {
 
   users.comparepwd_pub(username, xRequestPassword, function (err, result) {
     if (err) {
-		returnResponse(res, 403, "Username or password invalid");
+
+    res.writeHead(401, { "Content-Type": "text/plain" });
+    return res.end("Unauthorized");
+
+		//returnResponse(res, 403, "Username or password invalid");
         //res.send('{"status" : 403, "payload" : "", "message" : "Username or password invalid" }');
       //throw err;
     }

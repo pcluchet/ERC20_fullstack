@@ -14,8 +14,8 @@ $password = $_SESSION["password"];
 
 
 
-$parsedargs = json_encode($jsondata);
-$parsedargs = "[\"".$_GET['billid']."\"]";
+//$parsedargs = json_encode($jsondata);
+$parsedargs = $_GET['billid'];
 
 //print_r($parsedargs);
 
@@ -26,10 +26,14 @@ $parsedargs = "[\"".$_GET['billid']."\"]";
 //Now calling API
 //
 
+
+$channel = "ptwist";
+$chaincode = "invoicing";
+
 $ch = curl_init();
 
-curl_setopt($ch, CURLOPT_URL,$APIURL."/query");
-curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_URL,$APIURL."/ledger/$channel/$chaincode/get");
+/*
 curl_setopt($ch, CURLOPT_POSTFIELDS,
             "channel=ptwist&".
             "chaincode=invoicing&".
@@ -38,6 +42,13 @@ curl_setopt($ch, CURLOPT_POSTFIELDS,
             "password=$password&".
             "args=$parsedargs"
         );
+        */
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            "X-request-username: $login",
+            "X-request-password: $password",
+            "params: $parsedargs"
+        ));
 
 // In real life you should use something like:
 // curl_setopt($ch, CURLOPT_POSTFIELDS, 
@@ -50,11 +61,13 @@ $server_output = curl_exec($ch);
 
 //echo $server_output;
 
+//echo $server_output;
+
 curl_close ($ch);
 
 $resp = json_decode($server_output, true);
 
-if ($resp['status'] == "ok" && $resp['response'] == "paid")
+if ($resp['status'] == "200" && $resp['response'] == "paid")
 {
     echo "paid";
 }
