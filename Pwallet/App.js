@@ -11,7 +11,7 @@ import Dimensions from 'Dimensions';
 //import BarcodeScanner from 'react-native-barcodescanner';
 
 
-const APIURL = "http://192.168.1.65:8080";
+const APIURL = "http://192.168.1.77:8080";
 const CHANNEL = "ptwist";
 const CHAINCODE = "ERC20";
 const INVOICINGCHAINCODE = "invoicing";
@@ -253,6 +253,28 @@ export const PayBill = (username, password, billid) => {
 }
 
 
+export const createBill = (username, password, billitmlist) => {
+  //var argarray = [];
+  //argarray[0] = billid;
+    return fetch(`${APIURL}/ledger/${CHANNEL}/${INVOICINGCHAINCODE}/createBill`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'X-request-username': username,
+          'X-request-password': password,
+          'params': billitmlist 
+        },
+     })
+      .then((response) => {
+          return response;
+      })
+      .catch((error) => {
+          console.log(error);
+      });
+     }
+
+
 
 export const ApproveTokens = (username, spender, tokens) => {
 
@@ -322,15 +344,15 @@ export default class App extends Component {
 
 
     this.state = {
-      data:[
-        {id:4, productName:'Product 4', shortDescription:'shortDescription 4', qty:1, price:500 },
-        {id:5, productName:'Product 5', shortDescription:'shortDescription 5', qty:1, price:1000},
-        {id:6, productName:'Product 6', shortDescription:'shortDescription 6', qty:1, price:1000},
-      ],
+      data:[],
+      ongoinginvoice : [],
+      ongoingbillid : "none",
+      ongoingbilltotal : 0,
+      invoiceEdit : true,
       qrcode: '',
-      password : 'cbpassword',
+      password : '',
       pubkey : "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEteL3xbiv2NCEn8G7uyzYtOb6ozyeSCKsUPL6MlDs3fnyyUpqzzzudhz7hJLnTLvt35o2OSLhT+k7Y5AcYzG/3g==",
-      logged : true,
+      logged : false,
       name: '',
       username: 'centralbank',
       contactlist: '',
@@ -1009,10 +1031,70 @@ _addItm = () => {
   this.setState({data : data});
 }
 
+_createInvoice = () => {
+  var data = this.state.data;
+
+  var pararray = [];
+
+  for (var i = 0; i < this.state.data.length; i++) 
+  {
+    var itm = {"Name" : "i", "Amount" : 0, "Count" : 0};
+    itm.Name = this.state.data[i].productName;
+    itm.Amount = Number(this.state.data[i].price);
+    itm.Count = this.state.data[i].qty;
+    pararray.push(itm);
+  };
+  console.log("ITEMLIST SENT TO CC :" + JSON.stringify(pararray));
+  var itmlist = JSON.stringify(pararray);
+
+
+  createBill(this.state.username, this.state.password, itmlist) .then(json => {
+
+
+            console.log("DEBUG: jsont CREAT BILL :" + JSON.stringify(json));
+            //console.log("DEBUG: jsontransferst :" + json.result);
+            var respjson = JSON.parse(json._bodyText);
+            if (json.status == 200 && respjson.status == "200")
+            {
+              this.setState({ongoingbillid : respjson.payload});
+              this.setState({ongoingbilltotal : this._getTotalPrice()});
+              this.setState({invoiceEdit : false});
+              this.setState({invoiceEdit : false});
+              this.setState({ongoinginvoice : this.state.data});
+              this.setState({data : []});
+
+              alert("Bill creation successfull ! ✅");
+            }
+            else
+            {
+              alert("Bill creation failed! ❌");
+            }
+    }
+  );
+}
+
+_invoiceDisplay = () => {
+  this.setState({invoiceEdit : false});
+}
+
+_invoiceEdit = () => {
+
+  this.setState({invoiceEdit : true});
+}
+
+
 _getTotalPrice = () => {
   var total = 0;
   for (var i = 0; i < this.state.data.length; i++) {
       total += this.state.data[i].qty * this.state.data[i].price;
+  };
+  return total;
+}
+
+_displayGetTotalPrice = () => {
+  var total = 0;
+  for (var i = 0; i < this.state.ongoinginvoice.length; i++) {
+      total += this.state.ongoinginvoice[i].qty * this.state.ongoinginvoice[i].price;
   };
   return total;
 }
@@ -1073,14 +1155,37 @@ _renderItem = ({item, index}) => {
           </View>
 }
 
+_displayRenderItem = ({item, index}) => {
+  var margin = 10;
+  var subViewWidth = Dimensions.get('window').width-(margin*9);
+  return  <View key={index} style={{ marginBottom: margin, marginTop: index==0?margin:0}}>
+              <View style={{flexDirection: 'row', flex:1}}>
+                  <View style={{justifyContent: 'space-between', width:subViewWidth+10, borderBottomWidth : 1, borderBottomColor : "#ccc"}}>
+                      <View>
+                                               <Text style={[styles.txtProductName, {width:subViewWidth, fontWeight : "bold"}]}>{item.productName}</Text>
+                      </View>
+                      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop:5}}>
+                          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                                       <Text style={{marginHorizontal: 5, fontSize: 18}}>Qtt : {item.qty}</Text>
+
+                                                   </View>
+                          <Text style={{marginHorizontal: 5, fontSize: 18}}>{item.price}</Text>
+                      </View>
+                  </View>
+              </View>
+          </View>
+}
 
 
-  createbill = () => {
+EditIface = () => {
     var margin = 10;
   var subViewWiddth = Dimensions.get('window').width-(margin*9);
     var subViewWidth = Dimensions.get('window').width;
-    return (
-      <View style={[styles.container, {alignItems : "center" }]}>
+
+
+
+
+  return ( <View style={[styles.container, {alignItems : "center" }]}>
        <FlatList
                 renderItem={this._renderItem}
                 keyExtractor={ (item,index) => index.toString() }
@@ -1108,7 +1213,7 @@ _renderItem = ({item, index}) => {
                                   }}>
                                  <View>
                                 <Text
-                                style={{ borderRadius:3, borderWidth : 1, borderColor : "#ccc", marginRight : 10}}
+                                style={{ borderRadius:3, borderWidth : 1, borderColor : "#ccc", margin : 10}}
                                 >&nbsp;&nbsp;Add&nbsp;&nbsp;</Text>
                                     </View>
                               </TouchableOpacity>
@@ -1128,7 +1233,135 @@ _renderItem = ({item, index}) => {
 
 
             </View>
-      </View>
+
+</View>
+);
+}
+
+  qrdata_bill = () => {
+
+    var ret = '';
+    ret += '{"id" :"';
+    ret += this.state.ongoingbillid;
+    ret += '", "t" : "';
+    ret += this.state.ongoingbilltotal;
+    ret += '"}';
+    return ret;
+  }
+
+DisplayIface = () => {
+    var margin = 10;
+  var subViewWiddth = Dimensions.get('window').width-(margin*9);
+    var subViewWidth = Dimensions.get('window').width;
+
+
+  return ( <View style={[styles.container, {alignItems : "center" }]}>
+       <FlatList
+                renderItem={this._displayRenderItem}
+                keyExtractor={ (item,index) => index.toString() }
+                data={this.state.ongoinginvoice} 
+                extraData={this.state}
+       />
+            <View style={{flexDirection:'row', justifyContent: 'space-between', margin : 10, width : subViewWiddth, marginBottom: 10}}>
+                <Text style={{flex:3, fontSize: 18}}>Total amount</Text>
+                <Text style={{flex:1, fontSize: 24, textAlign:'right', fontWeight : "bold"}}>{this._displayGetTotalPrice()}</Text>
+            </View>
+            
+        <QRCode style={[styles.qrcode, {padding : 20}]}
+          value={this.qrdata_bill()}
+          size={250}
+          bgColor='black'
+          fgColor='white'/>
+
+        <Text style={{flex:3, fontSize: 18}}>&nbsp;</Text>
+
+
+        </View>
+);
+}
+
+
+
+
+
+  createbill = () => {
+    var margin = 10;
+  var subViewWiddth = Dimensions.get('window').width-(margin*9);
+    var subViewWidth = Dimensions.get('window').width;
+
+    var stylePassive = { borderTopRightRadius:6, borderTopLeftRadius : 6, 
+      borderTopWidth : 1,
+      borderRightWidth : 1,
+      borderLeftWidth : 1,
+       borderColor : "#ccc", fontSize : 20,
+      borderBottomWidth : 1,
+      padding : 6,
+      backgroundColor : "#eee"};
+
+    var styleActive = 
+    {  borderTopRightRadius:6, borderTopLeftRadius : 6, 
+                                borderTopWidth : 1,
+                                borderRightWidth : 1,
+                                borderLeftWidth : 1,
+                                 borderColor : "#ccc", padding : 6, fontSize : 20, borderBottomColor : "#fff"};
+ 
+
+    var styleEdit = stylePassive;
+    var styleDisplay = styleActive;
+    var iface = this.DisplayIface();
+
+    if (this.state.invoiceEdit)
+    {
+    var styleEdit = styleActive;
+    var styleDisplay = stylePassive;
+    var iface = this.EditIface();
+    }
+
+    return (
+      <View style={[styles.container, {alignItems : "center" }]}>
+     <View style={{flexDirection:'row', justifyContent: 'flex-start', width : subViewWidth}}>
+          <TouchableOpacity
+                                  onPress={ ()=> {
+                                      this._invoiceEdit();
+                                  }}>
+                                 <View>
+                                <Text
+                                style={styleEdit}
+                                >&nbsp; Invoice edition&nbsp;</Text>
+                                    </View>
+                </TouchableOpacity>
+           <TouchableOpacity
+                                  onPress={ ()=> {
+                                      this._invoiceDisplay();
+                                  }}>
+                                 <View>
+                                <Text
+                                style={styleDisplay}
+                                >&nbsp; Invoice display&nbsp;</Text>
+                                    </View>
+                </TouchableOpacity>
+           <TouchableOpacity
+                                  onPress={ ()=> {
+                                      //this._createInvoice();
+                                  }}>
+                                 <View>
+                                <Text
+                                style={{ fontWeight : "bold", borderTopRightRadius:3, borderTopLeftRadius : 3, 
+                                 borderColor : "#ccc", padding : 6 , fontSize : 20, borderBottomColor : "#ccc",
+                                width : subViewWidth, borderBottomWidth : 1}}
+                                >&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</Text>
+                                    </View>
+                </TouchableOpacity>
+
+
+
+
+
+
+
+            </View>
+                                  {iface}
+           </View>
 
     );
 }
@@ -1372,7 +1605,7 @@ ft_approve = () => {
  logoutButton = (st) => {
     return (
           <TouchableOpacity onPress={this.LogOut}>
-            <Text style={{marginTop: '10%', textAlign: 'center', fontSize: 21, fontWeight: '100'}}>
+            <Text style={{ textAlign: 'center', fontSize: 21, fontWeight: '100'}}>
               Logged in as : {this.state.username}
             </Text>
           </TouchableOpacity>
@@ -1490,14 +1723,13 @@ const styles = StyleSheet.create({
   },
 
   headerStyle: {
-    fontSize: 36,
+    fontSize: 30,
     textAlign: 'center',
     fontWeight: '100',
-    marginBottom: 24
   },
 
   headerSty: {
-    fontSize: 28,
+    fontSize: 30,
     textAlign: 'center',
     fontWeight: '100',
   },
