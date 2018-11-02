@@ -3,7 +3,7 @@ package main
 import	"fmt"
 import	"encoding/json"
 
-func	getUserInfo() ([]byte, error) {
+func	getUserStruct() ([]byte, error) {
 	var err			error
 	var	user		User
 	var	bytes		[]byte
@@ -15,21 +15,27 @@ func	getUserInfo() ([]byte, error) {
 	return bytes, nil
 }
 
-func	newUser(args []string) (string, error) {
+func	funcNewUser(args []string) (string, error) {
 	var	err			error
-	var	userInfo	[]byte
+	var	publicKey	string
+	var	user		[]byte
 
-	// CHECK ARGUMENTS
-	if len(args) != 1 {
-		return "", fmt.Errorf("Incorrect argument number. Expecting a public key.")
+	// GET PUBLIC KEY
+	publicKey, err = getPublicKey()
+	if err != nil {
+		return "", err
 	}
-	// GET USER INFO
-	userInfo, err = getUserInfo()
+	// CHECK ARGUMENTS
+	if len(args) != 0 {
+		return "", fmt.Errorf("This function does not require any argument.")
+	}
+	// GET USER STRUCTURE
+	user, err = getUserStruct()
 	if err != nil {
 		return "", err
 	}
 	// PUT STATE
-	err = STUB.PutState(args[0], userInfo)
+	err = STUB.PutState(publicKey, user)
 	if err != nil {
 		return "", fmt.Errorf("Failed to set asset: %s", args[0])
 	}

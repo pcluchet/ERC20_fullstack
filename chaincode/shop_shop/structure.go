@@ -29,6 +29,7 @@ type ShopSold		struct {
 
 type Shop			struct {
 	Name			string
+	Users			map[string]bool
 	Items			map[string]ShopItem
 	Raw				map[string]ShopRaw
 	SoldItems		map[string]ShopSold
@@ -48,6 +49,5 @@ type Raw			struct {
 ////////////////////////////////////////////////////////////////////////////////
 
 type User			struct {
-	Shops			map[string]bool
 	Offers			map[string]map[string]uint64
 }
