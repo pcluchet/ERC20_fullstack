@@ -1661,16 +1661,8 @@ ft_approve = () => {
 
        <View style={styles.slide}>
           {logoutButton}
-          {createbill}
-        </View>
-
-
-
-       <View style={styles.slide}>
-          {logoutButton}
           {balance}
         </View>
-
 
 
          <View style={styles.slide}>
@@ -1694,6 +1686,13 @@ ft_approve = () => {
           {logoutButton}
           {paybill}
         </View>
+
+       <View style={styles.slide}>
+          {logoutButton}
+          {createbill}
+        </View>
+
+
 
 
  {/*
