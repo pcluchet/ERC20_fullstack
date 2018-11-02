@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { Text, TextInput, Icon , TouchableOpacity, ScrollView, View, StyleSheet,
-  ActivityIndicator, AsyncStorage, Picker
+  ActivityIndicator, AsyncStorage, Picker, FlatList, Image
 } from 'react-native';
 //import { Constants } from 'expo';
 import Swiper from 'react-native-swiper';
 import TimerMixin from 'react-timer-mixin';
 import QRCode from 'react-native-qrcode';
 import Camera from 'react-native-camera';
+import Dimensions from 'Dimensions';
 //import BarcodeScanner from 'react-native-barcodescanner';
 
 
@@ -321,6 +322,11 @@ export default class App extends Component {
 
 
     this.state = {
+      data:[
+        {id:4, productName:'Product 4', shortDescription:'shortDescription 4', qty:1, price:500 },
+        {id:5, productName:'Product 5', shortDescription:'shortDescription 5', qty:1, price:1000},
+        {id:6, productName:'Product 6', shortDescription:'shortDescription 6', qty:1, price:1000},
+      ],
       qrcode: '',
       password : 'cbpassword',
       pubkey : "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEteL3xbiv2NCEn8G7uyzYtOb6ozyeSCKsUPL6MlDs3fnyyUpqzzzudhz7hJLnTLvt35o2OSLhT+k7Y5AcYzG/3g==",
@@ -970,33 +976,158 @@ other guy
     );
 }
 
+_addQty = (index) => {
+  var data = this.state.data;
+  data[index].qty = data[index].qty + 1;
+  this.setState({data : data});
+}
+
+_rmQty = (index) => {
+  var data = this.state.data;
+  data[index].qty -= 1;
+  if (data[index].qty == 0)
+  {
+    data[index].qty = 1;
+  }
+  this.setState({data : data});
+}
+
+_rmItm = (index) => {
+  var data = this.state.data;
+  data.splice(index,1);
+  this.setState({data : data});
+}
+
+_addItm = () => {
+  var data = this.state.data;
+  var price = this.state.itm_price;
+  var name = this.state.itm_to_add;
+
+  var toadd = {id: name, productName: name, qty:1, price: price }; 
+  data.push(toadd);
+  
+  this.setState({data : data});
+}
+
+_getTotalPrice = () => {
+  var total = 0;
+  for (var i = 0; i < this.state.data.length; i++) {
+      total += this.state.data[i].qty * this.state.data[i].price;
+  };
+  return total;
+}
+
+_renderItem = ({item, index}) => {
+  var margin = 10;
+  var subViewWidth = Dimensions.get('window').width-(margin*9);
+  return  <View key={index} style={{ marginBottom: margin, marginTop: index==0?margin:0}}>
+              <View style={{flexDirection: 'row', flex:1}}>
+                  <View style={{justifyContent: 'space-between', width:subViewWidth+10, borderBottomWidth : 1, borderBottomColor : "#ccc"}}>
+                      <View>
+                          <TouchableOpacity style={{position: 'absolute', right: 0}}
+                            onPress={ ()=> {
+                                      this._rmItm(index);
+                              }}>
+                              <View>
+                                <Text
+                                style={{ fontWeight : "bold", borderRadius:500, borderWidth : 1, borderColor : "#f1948a", color: "#f1948a"}}
+                                >
+                                     &nbsp; X </Text>
+                              </View>
+                          </TouchableOpacity>
+
+                          <Text style={[styles.txtProductName, {width:subViewWidth, fontWeight : "bold"}]}>{item.productName}</Text>
+                      </View>
+                      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop:5}}>
+                          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                              <TouchableOpacity
+                                  onPress={ ()=> {
+                                      this._rmQty(index);
+                              }}>
+
+                                  <View>
+                                <Text
+                                
+                                style={{ fontWeight : "bold", borderRadius:500, borderWidth : 1, borderColor : "#ccc"}}
+                                >&nbsp;&nbsp;-&nbsp;&nbsp;</Text>
+                                    </View>
+                              </TouchableOpacity>
+                              <Text style={{marginHorizontal: 5, fontSize: 18}}>{item.qty}</Text>
+
+                              <TouchableOpacity
+                                  onPress={ ()=> {
+                                      this._addQty(index);
+                                  }}>
+                                 <View>
+                                <Text
+                                style={{ fontWeight : "bold", borderRadius:500, borderWidth : 1, borderColor : "#ccc"}}
+                                >&nbsp;&nbsp;+&nbsp;&nbsp;</Text>
+                                    </View>
+                              </TouchableOpacity>
+
+                          </View>
+                          <Text style={{marginHorizontal: 5, fontSize: 18}}>{item.price}</Text>
+                      </View>
+                  </View>
+              </View>
+          </View>
+}
+
+
+
   createbill = () => {
+    var margin = 10;
+  var subViewWiddth = Dimensions.get('window').width-(margin*9);
+    var subViewWidth = Dimensions.get('window').width;
     return (
-      <View style={styles.container}>
-      <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold', marginTop: '2%'}}>
-            Bill creation :
-          </Text>
-          <Text style={{fontSize: 20, textAlign: 'left', fontWeight: '100'}}>
-          Bill total : {this.state.billtotal}{"\n"} 
-          Bill address : {this.state.billaddress} 
-          </Text>
-          <View style={{flex: 0.3, backgroundColor: '#4CB676'}}>
-            <TouchableOpacity onPress={this.ft_paybill}>
-            <Text style={{marginTop: '5%', textAlign: 'center', fontSize: 42, fontWeight: '100'}}>
-              Pay this bill
-            </Text>
-          </TouchableOpacity>
+      <View style={[styles.container, {alignItems : "center" }]}>
+       <FlatList
+                renderItem={this._renderItem}
+                keyExtractor={ (item,index) => index.toString() }
+                data={this.state.data} 
+                extraData={this.state}
+       />
+            <View style={{flexDirection:'row', justifyContent: 'space-between', margin : 10, width : subViewWiddth, marginBottom: 10}}>
+                <Text style={{flex:3, fontSize: 18}}>Total amount</Text>
+                <Text style={{flex:1, fontSize: 24, textAlign:'right', fontWeight : "bold"}}>{this._getTotalPrice()}</Text>
+            </View>
 
-          </View>
-      <View style={{flex: 0.3, backgroundColor: '#4CB676'}}>
-            <TouchableOpacity onPress={() => this.setState({ scanningBill : true })}>
-            <Text style={{marginTop: '5%', textAlign: 'center', fontSize: 42, fontWeight: '100'}}>
-              scan a bill
-            </Text>
-          </TouchableOpacity>
+            <View style={{flexDirection:'row', justifyContent: 'space-between', borderTopWidth : 1, borderTopColor : "#ccc", paddingTop : 10}}>
+                <TextInput style={{borderWidth : 1, borderRadius: 3, borderColor : "#ccc", width : (0.6 * subViewWidth), marginLeft : 10}}
+                placeholder="Item name"
+                onChangeText={(itm_to_add) => this.setState({ itm_to_add })}>
+                </TextInput>
+               <TextInput style={{borderWidth : 1, borderRadius: 3, borderColor : "#ccc", width : (0.2 * subViewWidth), marginLeft : 10}}
+                placeholder="Price"
+                onChangeText={(itm_price) => this.setState({ itm_price })}>
+                </TextInput>
 
-          </View>
+                              <TouchableOpacity
+                                  onPress={ ()=> {
+                                      this._addItm();
+                                  }}>
+                                 <View>
+                                <Text
+                                style={{ borderRadius:3, borderWidth : 1, borderColor : "#ccc", marginRight : 10}}
+                                >&nbsp;&nbsp;Add&nbsp;&nbsp;</Text>
+                                    </View>
+                              </TouchableOpacity>
+</View>
+            <View style={{flexDirection:'row', justifyContent: 'center'}}>
+               <TouchableOpacity
+                                  onPress={ ()=> {
+                                      this._createInvoice();
+                                  }}>
+                                 <View>
+                                <Text
+                                style={{ fontWeight : "bold", borderRadius:3, borderWidth : 1, borderColor : "#ccc", margin : 10, fontSize : 37}}
+                                >&nbsp;&nbsp;Create Invoice&nbsp;&nbsp;</Text>
+                                    </View>
+                </TouchableOpacity>
 
+
+
+            </View>
       </View>
 
     );
@@ -1260,6 +1391,7 @@ ft_approve = () => {
      var transfer = this.transfer();
      var contacts = this.contacts();
      var paybill = this.paybill();
+     var createbill = this.createbill();
      var scancontact = this.scancontact();
      var scanbill = this.scanbill();
 
@@ -1293,6 +1425,13 @@ ft_approve = () => {
      {
     return (
       <Swiper style={styles.wrapper} showsButtons={true} showsPagination={false}>
+
+       <View style={styles.slide}>
+          {logoutButton}
+          {createbill}
+        </View>
+
+
 
        <View style={styles.slide}>
           {logoutButton}
