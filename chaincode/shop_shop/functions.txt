@@ -1,0 +1,32 @@
+********************************************************************************
+*** USERS
+********************************************************************************
+- newUser() -> "userId"
+
+**************************************************
+*** SHOP
+**************************************************
+- buyItems([{shopId, itemId, quantity}, ...]) -> true/false
+- buyRaw([{shopId, rawId, quantity}, ...]) -> true/false
+- makeOffer(shopId, itemId, price) -> true/false
+
+********************************************************************************
+*** SHOP ADMIN
+********************************************************************************
+- shopCreate(name) -> true/false
+- shopAddUser(shopId, userId) -> true/false
+- shopAddItem(shopId, name, price, isUnique[, bidLimitDate]) -> true/false
+- shopAddRaw(shopId, rawId, price, quantity) -> true/false
+
+- shopItemUpdateBid(shopId) /// Met en vente les produits qui etaient aux encheres
+- shopItemListSold(shopId) -> map des articles en cours de vente 
+- shopItemSetStatus(shopId, soldId, status, details)
+
+- shopRawListSold(shopId)
+- shopRawSetStatus(shopId, soldId, status, details)
+
+********************************************************************************
+*** RAW
+********************************************************************************
+- new(name, details)
+- update(id, newName, newDetails)
