@@ -51,3 +51,5 @@ type User			struct {
 	Shops			map[string]bool
 	Offers			map[string]map[string]uint64
 }
+
+
