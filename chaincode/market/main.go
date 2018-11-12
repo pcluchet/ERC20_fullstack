@@ -9,7 +9,7 @@ import	"github.com/hyperledger/fabric/core/chaincode/shim"
 ////////////////////////////////////////////////////////////////////////////////
 
 func main() {
-	err := shim.Start(new(SimpleAsset))
+	err := shim.Start(new(Base))
 	if err != nil {
 		fmt.Fprint(os.Stderr, "Error starting Simple chaincode: %s", err)
 		os.Exit(1)

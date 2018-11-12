@@ -8,35 +8,11 @@ import "github.com/hyperledger/fabric/protos/peer"
 /// PRIVATE
 ////////////////////////////////////////////////////////////////////////////////
 
-//func gethistory(stub shim.ChaincodeStubInterface, args []string) (string, error) {
-//	if len(args) != 1 {
-//		return "", fmt.Errorf("Incorrect arguments. Expecting a key")
-//	}
-//
-//	value, err := stub.GetHistoryForKey(args[0])
-//
-//	if err != nil {
-//		return "", fmt.Errorf("Failed to get asset: %s with error: %s", args[0], err)
-//	}
-//	if value == nil {
-//		return "", fmt.Errorf("Asset not found: %s", args[0])
-//	}
-//
-//	var history string
-//	history = "\n"
-//
-//	for value.HasNext() {
-//		history = fmt.Sprintf("%s%s", history, fmt.Sprintln(value.Next()))
-//	}
-//
-//	return string(history), nil
-//}
-
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC
 ////////////////////////////////////////////////////////////////////////////////
 
-func (t *SimpleAsset) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
+func (t *Base) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 	var err		error
 	var fct		string
 	var argv	[]string
@@ -57,6 +33,30 @@ func (t *SimpleAsset) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 	//	ret, err = gethistory(stub, argv)
 	case "newUser":
 		ret, err = funcNewUser(argv)
+	case "buyItems":
+		ret, err = funcBuyItems(argv)
+	case "buyRaw":
+		ret, err = funcBuyRaw(argv)
+	case "makeOffer":
+		ret, err = funcMakeOffer(argv)
+	case "shopCreate":
+		ret, err = funcShopCreate(argv)
+	case "shopAddUser":
+		ret, err = funcShopAddUser(argv)
+	case "shopAddItem":
+		ret, err = funcShopAddItem(argv)
+	case "shopAddRaw":
+		ret, err = funcShopAddRaw(argv)
+	case "shopItemUpdateBid":
+		ret, err = funcShopItemUpdateBid(argv)
+	case "shopItemListSold":
+		ret, err = funcShopItemListSold(argv)
+	case "shopRawListSold":
+		ret, err = funcShopRawListSold(argv)
+	case "rawNew":
+		ret, err = funcRawNew(argv)
+	case "rawUpdate":
+		ret, err = funcRawUpdate(argv)
 	default:
 		err = fmt.Errorf("Illegal function called \"%s\"\n", fct)
 	}
