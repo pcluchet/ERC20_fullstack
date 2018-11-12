@@ -33,13 +33,14 @@ type Shop struct {
 	DocType string
 }
 
-type ShopItemSubmission struct {
-	Picture  string
-	Name     string
-	Detail   string
-	Price    uint64
-	Quantity uint64
-	Duration uint64
+type ShopItemSubmission	struct {
+	Bidable				bool
+	Picture				string
+	Name				string
+	Detail				string
+	Price				uint64
+	Quantity			uint64
+	Duration			uint64
 }
 
 type ShopItem struct {

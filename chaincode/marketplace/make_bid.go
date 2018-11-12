@@ -64,7 +64,7 @@ func makeBid(args []string) (string, error) {
 		return "", fmt.Errorf("Error: %s", err)
 	}
 
-	if !itm.Biddable {
+	if itm.Biddable == false {
 		return "", fmt.Errorf("You cannot bid on that item")
 	}
 
