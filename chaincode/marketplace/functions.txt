@@ -26,6 +26,6 @@
  [X] update(id, newName, newDetails)
 
 *** ADMIN
- [ ] isAdmin(userId) -> true/false
- [ ] adminGetList()
- [ ] adminSetList(adminList string)
+ [X] isAdmin(userId) -> true/false
+ [X] adminGet()
+ [X] adminSet(adminList string)
