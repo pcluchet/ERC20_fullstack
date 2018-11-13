@@ -33,14 +33,14 @@ type Shop struct {
 	DocType string
 }
 
-type ShopItemSubmission	struct {
-	Bidable				bool
-	Picture				string
-	Name				string
-	Detail				string
-	Price				uint64
-	Quantity			uint64
-	Duration			uint64
+type ShopItemSubmission struct {
+	Bidable  bool
+	Picture  string
+	Name     string
+	Detail   string
+	Price    uint64
+	Quantity uint64
+	Duration uint64
 }
 
 type ShopItem struct {
@@ -86,18 +86,19 @@ type ShopLastOffer struct {
 /// RAW
 ////////////////////////////////////////////////////////////////////////////////
 
-type Raw			struct {
-	Name			string
-	Detail			string
-	DocType			string
+type Raw struct {
+	Picture string
+	Name    string
+	Detail  string
+	DocType string
 }
 
-type RawSubmission	struct {
-	Name			string
-	Detail			string
+type RawSubmission struct {
+	Name   string
+	Detail string
 }
 
-type AdminList		[]string
+type AdminList []string
 
 ////////////////////////////////////////////////////////////////////////////////
 /// GLOBALS

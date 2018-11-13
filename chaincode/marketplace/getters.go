@@ -193,3 +193,21 @@ func getQueryResultForQueryString(stub shim.ChaincodeStubInterface, queryString 
 
 	return buffer.Bytes(), nil
 }
+
+func queryData(args []string) (string, error) {
+
+	//   0
+	// "queryString"
+	if len(args) < 1 {
+		return "", fmt.Errorf("Incorrect number of arguments. Expecting 1")
+	}
+
+	queryString := args[0]
+
+	queryResults, err := getQueryResultForQueryString(STUB, queryString)
+	if err != nil {
+		return "", fmt.Errorf("Error : %s", err)
+	}
+
+	return string(queryResults), nil
+}

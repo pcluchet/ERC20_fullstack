@@ -38,6 +38,8 @@ func (t *SimpleAsset) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 		ret, err = shopAddItem(argv)
 	case "make_bid":
 		ret, err = makeBid(argv)
+	case "query_data":
+		ret, err = queryData(argv)
 	case "get":
 		ret, err = _get(argv)
 	default:

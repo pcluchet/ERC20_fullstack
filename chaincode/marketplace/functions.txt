@@ -1,33 +1,26 @@
-********************************************************************************
+
 *** USERS
-********************************************************************************
-- newUser() -> "userId"
-- grantPrivilege(userId) -> "ok/ko"
+[X] newUser() -> "userId"
+[ ] grantPrivilege(userId) -> "ok/ko"
 
-**************************************************
 *** SHOP
-**************************************************
-- buyItems([{shopId, itemId, quantity}, ...]) -> true/false
-- buyRaw([{shopId, rawId, quantity}, ...]) -> true/false
-- Bid(itemId, price) -> true/false
+ [ ] buyItems([{shopId, itemId, quantity}, ...]) -> true/false
+ [ ] buyRaw([{shopId, rawId, quantity}, ...]) -> true/false
+ [X] Bid(itemId, price) -> true/false
 
-********************************************************************************
 *** SHOP ADMIN
-********************************************************************************
-- shopCreate(name) -> true/false
-- shopAddUser(shopId, userId) -> true/false
-- shopAddItem(name, price, isUnique[, bidLimitDate]) -> true/false
-- shopAddRaw(rawId, price, quantity) -> true/false
+ [X] shopCreate(name) -> true/false
+ [X] shopAddUser(shopId, userId) -> true/false
+ [X] shopAddItem(name, price, isUnique[, bidLimitDate]) -> true/false
+ [ ] shopAddRaw(rawId, price, quantity) -> true/false
 
-- shopItemUpdateBid() /// Met en vente les produits qui etaient aux encheres
-- shopItemListSold() -> map des articles en cours de vente 
-- shopItemSetStatus(soldId, status, details)
+ [ ] shopItemUpdateBid() /// Met en vente les produits qui etaient aux encheres
+ [ ] shopItemListSold() -> map des articles en cours de vente 
+ [ ] shopItemSetStatus(soldId, status, details)
 
-- shopRawListSold()
-- shopRawSetStatus(soldId, status, details)
+ [ ] shopRawListSold()
+ [ ] shopRawSetStatus(soldId, status, details)
 
-********************************************************************************
 *** RAW
-********************************************************************************
-- new(name, details)
-- update(id, newName, newDetails)
+ [ ] new(name, details)
+ [ ] update(id, newName, newDetails)
