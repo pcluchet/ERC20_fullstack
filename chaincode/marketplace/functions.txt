@@ -1,7 +1,7 @@
 
 *** USERS
-[X] newUser() -> "userId"
-[ ] grantPrivilege(userId) -> "ok/ko"
+ [X] newUser() -> "userId"
+ [ ] grantPrivilege(userId) -> "ok/ko"
 
 *** SHOP
  [ ] buyItems([{shopId, itemId, quantity}, ...]) -> true/false
@@ -22,5 +22,10 @@
  [ ] shopRawSetStatus(soldId, status, details)
 
 *** RAW
- [ ] new(name, details)
- [ ] update(id, newName, newDetails)
+ [X] new(name, details)
+ [X] update(id, newName, newDetails)
+
+*** ADMIN
+ [ ] isAdmin(userId) -> true/false
+ [ ] adminGetList()
+ [ ] adminSetList(adminList string)
