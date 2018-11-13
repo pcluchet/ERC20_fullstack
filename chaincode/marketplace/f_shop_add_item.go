@@ -11,14 +11,13 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
-func shopAddItem(args []string) (string, error) {
-
-	var itemBytes []byte
-	var shopBytes []byte
+func	shopAddItem(args []string) (string, error) {
+	var	err			error
+	var	itemBytes	[]byte
+	var	shopBytes	[]byte
+	var	newItmId	string
+	var	hasThisShop	bool
 	//var listBytes []byte
-	var newItmId string
-	var err error
-	var hasThisShop bool
 
 	/// CHECK ARGUMENTS
 	/// TODO : when better API, check this better
@@ -28,25 +27,17 @@ func shopAddItem(args []string) (string, error) {
 
 	println("Some log")
 
+	/// GET USER PUBLIC KEY
 	userKey, err := getPublicKey()
 	if err != nil {
 		return "", fmt.Errorf("%s", err)
 	}
 
-	//verify the caller is part of the given shop
-	var usr User
-
-	usr, err = getUser(userKey)
+	/// CHECK IS USER IS GIVEN SHOP ADMIN
+	_, hasThisShop, err = userHasShopWithId(userKey, args[0])
 	if err != nil {
 		return "", fmt.Errorf("%s", err)
-	}
-
-	hasThisShop, err = userHasShopWithId(usr, args[0])
-	if err != nil {
-		return "", fmt.Errorf("%s", err)
-	}
-
-	if !hasThisShop {
+	} else if !hasThisShop {
 		return "", fmt.Errorf("You are not authorized to modify this shop user list")
 	}
 

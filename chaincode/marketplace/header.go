@@ -14,7 +14,7 @@ type	SimpleAsset	struct {
 //////////////////////////////////////////////////
 
 type User struct {
-	Shops   []string
+	Shops   map[string]bool
 	DocType string
 }
 
@@ -37,7 +37,6 @@ type UserLastOffer struct {
 
 type Shop struct {
 	Name    string
-	Users   []string
 	Items   []string
 	DocType string
 }
