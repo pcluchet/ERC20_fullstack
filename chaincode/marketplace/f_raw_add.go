@@ -21,6 +21,7 @@ func	getRaw(arg string) ([]byte, error) {
 	}
 	raw.Name = rawSubmission.Name
 	raw.Detail = rawSubmission.Detail
+	raw.Picture = rawSubmission.Picture
 	raw.DocType = "Raw"
 	// TO DO: check if raw name is taken ?
 	rawBytes, err = json.Marshal(raw)
@@ -51,7 +52,7 @@ func	rawAdd(args []string) (string, error) {
 	/// IS USER ADMINISTRATOR
 	isAdmin, err = isUserAdmin()
 	if err != nil {
-		return "", fmt.Errorf("Cannot know is user is administrator.")
+		return "", fmt.Errorf("Cannot know is user if administrator.")
 	} else if isAdmin == false {
 		return "", fmt.Errorf("User must be admin to add raw material.")
 	}

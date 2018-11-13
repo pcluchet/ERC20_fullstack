@@ -13,6 +13,7 @@ import "encoding/json"
 
 func	adminSet(args []string) (string, error) {
 	var err				error
+	var	isAdmin			bool
 	var	adminList		AdminList
 
 	/// CHECK ARGUMENTS
@@ -22,6 +23,14 @@ func	adminSet(args []string) (string, error) {
 	}
 
 	println("Some log")
+
+	/// IS USER ADMINISTRATOR
+	isAdmin, err = isUserAdmin()
+	if err != nil {
+		return "", fmt.Errorf("Cannot know if user is administrator.")
+	} else if isAdmin == false {
+		return "", fmt.Errorf("User must be admin to set admin list.")
+	}
 
 	/// UNMARSHAL LIST
 	err = json.Unmarshal([]byte(args[0]), &adminList)

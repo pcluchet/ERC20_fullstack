@@ -75,23 +75,19 @@ func shopAddItem(args []string) (string, error) {
 
 	newItm.Price = itm_toadd.Price
 
-	if itm_toadd.Bidable {
-		var endtime uint64
-		if itm_toadd.Duration <= 0 {
-			return "", fmt.Errorf("Offer duration cannot be 0 or negative")
-		}
-
-		endtime = itm_toadd.Duration * 3600
-
-		txTimeStamp, err2 := STUB.GetTxTimestamp()
-		if err2 != nil {
-			return "", fmt.Errorf("Error :%s", err2)
-		}
-
-		newItm.ExpireDate = uint64(txTimeStamp.Seconds) + endtime
-	} else {
-		newItm.ExpireDate = 0
+	var endtime uint64
+	if itm_toadd.Duration <= 0 {
+		return "", fmt.Errorf("Offer duration cannot be 0 or negative")
 	}
+
+	endtime = itm_toadd.Duration * 3600
+
+	txTimeStamp, err2 := STUB.GetTxTimestamp()
+	if err2 != nil {
+		return "", fmt.Errorf("Error :%s", err2)
+	}
+
+	newItm.ExpireDate = uint64(txTimeStamp.Seconds) + endtime
 
 	//update the shop to include the new item
 	var shp Shop
