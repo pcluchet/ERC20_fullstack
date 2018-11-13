@@ -12,22 +12,20 @@ import "github.com/hyperledger/fabric/protos/peer"
 
 func	getAdminList() ([]byte, error) {
 	var	err			error
-	var	argv		[][]byte
+	var	args		[][]byte
 	var	adminList	AdminList
-	var	adminBytes	[]byte
-	var	value		[]byte
 
-	/// CREATE ADMIN LIST
-	argv = STUB.GetArgs()
-	for _, value = range argv {
-		adminList = append(adminList, string(value))
+	args = STUB.GetArgs()
+	if len(args) != 0 {
+		return nil, fmt.Errorf("Marketplace init requires an admin list")
 	}
-	/// MARSHAL ADMIN LIST
-	adminBytes, err = json.Marshal(adminList)
+	err = json.Unmarshal(args[0], &adminList)
 	if err != nil {
-		return nil, fmt.Errorf("Cannot marshal administrator keys structure.")
+		return nil, fmt.Errorf("Cannot unmarshal admin list")
+	} else if len(adminList) == 0 {
+		return nil, fmt.Errorf("Marketplace init requires at least one admin")
 	}
-	return adminBytes, nil
+	return args[0], nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
