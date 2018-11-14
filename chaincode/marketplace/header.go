@@ -18,17 +18,30 @@ type User struct {
 	DocType string
 }
 
-type UserLastBought struct {
-	Id       string
-	Shop     string
-	Price    uint64
-	Quantity uint64
+//type UserLastBought	struct {
+//	Id				string
+//	Shop			string
+//	Price			uint64
+//	Quantity		uint64
+//}
+//
+//type UserLastOffer	struct {
+//	Id				string
+//	Shop			string
+//	Offer			uint64
+//}
+
+type Sale			struct {
+	User			string
+	ItemId			string
+	Price			uint64
+	StateShop		uint8	// When both states are TRUE,
+	StateUser		uint8	// the Sale key is deleted.
+	DocType			string
 }
 
-type UserLastOffer struct {
-	Id    string
-	Shop  string
-	Offer uint64
+type SaleSubmission	struct {
+	ItemId			string
 }
 
 //////////////////////////////////////////////////
@@ -77,18 +90,18 @@ type BidSubmission struct {
 	Price  uint64
 }
 
-type ShopLastSold struct {
-	Id       string
-	Price    uint64
-	Quantity uint64
-	User     string
-}
-
-type ShopLastOffer struct {
-	Id    string
-	Offer uint64
-	User  string
-}
+//type ShopLastSold struct {
+//	Id       string
+//	Price    uint64
+//	Quantity uint64
+//	User     string
+//}
+//
+//type ShopLastOffer struct {
+//	Id    string
+//	Offer uint64
+//	User  string
+//}
 
 //////////////////////////////////////////////////
 /// RAW
