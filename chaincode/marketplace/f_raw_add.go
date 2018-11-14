@@ -23,7 +23,7 @@ func	getRaw(arg string) ([]byte, error) {
 	raw.Detail = rawSubmission.Detail
 	raw.Picture = rawSubmission.Picture
 	raw.DocType = "Raw"
-	// TO DO: check if raw name is taken ?
+	//TODO: check if raw name is taken ?
 	rawBytes, err = json.Marshal(raw)
 	if err != nil {
 		return nil, fmt.Errorf("Cannot marshal raw structure.")

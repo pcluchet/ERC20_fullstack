@@ -4,7 +4,7 @@
  [ ] grantPrivilege(userId) -> "ok/ko"
 
 *** SHOP
- [ ] buyItems([{shopId, itemId, quantity}, ...]) -> true/false
+ [~] buyItems([{shopId, itemId, quantity}, ...]) -> true/false
  [ ] buyRaw([{shopId, rawId, quantity}, ...]) -> true/false
  [X] Bid(itemId, price) -> true/false
 

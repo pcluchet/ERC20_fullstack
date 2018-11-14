@@ -7,28 +7,6 @@ import "fmt"
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-//func	getRaw(arg string) ([]byte, error) {
-//	var	err				error
-//	var	raw				Raw
-//	var	rawSubmission	RawSubmission
-//	var	rawBytes		[]byte
-//
-//	err = json.Unmarshal([]byte(arg), &rawSubmission)
-//	if err != nil {
-//		return nil, fmt.Errorf("Cannot unmarshal raw submission.")
-//	}
-//	raw.Name = rawSubmission.Name
-//	raw.Detail = rawSubmission.Detail
-//	raw.Picture = rawSubmission.Picture
-//	raw.DocType = "Raw"
-//	// TO DO: check if raw name is taken ?
-//	rawBytes, err = json.Marshal(raw)
-//	if err != nil {
-//		return nil, fmt.Errorf("Cannot marshal raw structure.")
-//	}
-//	return rawBytes, nil
-//}
-
 func	getSale(userKey string, arg string) (Sale, error) {
 	var	err				error
 	var	submission		SaleSubmission
@@ -37,11 +15,21 @@ func	getSale(userKey string, arg string) (Sale, error) {
 	err = json.Unmarshal([]byte(arg), &submission)
 	if err != nil {
 		return sale, fmt.Errorf("Cannot unmarshal sale submission.")
+	} else if submission.Quantity == 0 {
+		return sale, fmt.Errorf("Sale submission's quantity must be greater than 0.")
 	}
 	sale.User = userKey
 	sale.ItemId = submission.ItemId
+	sale.Quantity = submission.Quantity
 	sale.DocType = "Sale"
 	return sale, nil
+}
+
+func	transferMoneyForSale(shopId string, amount uint64) (error) {
+	//TODO:	if == 1 admin on shop	-> transfer to admin
+	//		if > 1 admin on shop	-> transfer to shop
+	// Requires couchdb queries
+	return transfer(shopId, amount)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -85,15 +73,22 @@ func	buyItem(args []string) (string, error) {
 	item, err = getItem(sale.ItemId)
 	if err != nil {
 		return "", fmt.Errorf("Cannot get bought item.")
-	} else if item.Quantity == 0 {
-		return "", fmt.Errorf("This item is out of stock.")
+	} else if item.Quantity >= sale.Quantity {
+		return "", fmt.Errorf("Not enough available items.")
 	}
 
-	/// SET PRICE
+	/// UPDATE OBJECTS
 	sale.Price = item.Price
+	item.Quantity -= sale.Quantity
 
 	//////////////////////
 	//TODO: MONEY TRANSFER
+	//////////////////////
+	err = transferMoneyForSale(item.ShopId, sale.Price * sale.Quantity)
+	if err != nil {
+		return "", err
+	}
+	//////////////////////
 	//////////////////////
 
 	txId = STUB.GetTxID()
@@ -109,7 +104,6 @@ func	buyItem(args []string) (string, error) {
 	}
 
 	/// UPADTE ITEM FROM LEDGER
-	item.Quantity -= 1
 	bytes, err = json.Marshal(item)
 	if err != nil {
 		return "", fmt.Errorf("Cannot marshal item struct.")
