@@ -34,7 +34,7 @@ func	shopAddItem(args []string) (string, error) {
 	}
 
 	/// CHECK IS USER IS GIVEN SHOP ADMIN
-	_, hasThisShop, err = userHasShopWithId(userKey, args[0])
+	_, hasThisShop, err = isShopAdmin(userKey, args[0])
 	if err != nil {
 		return "", fmt.Errorf("%s", err)
 	} else if !hasThisShop {
