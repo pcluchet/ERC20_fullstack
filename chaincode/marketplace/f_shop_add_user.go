@@ -9,27 +9,6 @@ import (
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-func	userHasShopWithId(userKey string, shopId string) (User, bool, error) {
-	var	err		error
-	var	user	User
-	var	isIn	bool
-
-	user, err = getUser(userKey)
-	if err != nil {
-		return user, false, err
-	}
-	_, isIn = user.Shops[shopId]
-	return user, isIn, nil
-	//var shopUid string
-
-	//for _, shopUid = range usr.Shops {
-	//	if shopUid == shopId {
-	//		return true, nil
-	//	}
-	//}
-	//return false, nil
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +37,7 @@ func	shopAddUser(args []string) (string, error) {
 	}
 
 	/// CHECK IF USER IS GIVEN SHOP ADMIN
-	_, hasThisShop, err = userHasShopWithId(userKey, args[0])
+	_, hasThisShop, err = isShopAdmin(userKey, args[0])
 	if err != nil {
 		return "", err
 	} else if hasThisShop == false {
@@ -66,7 +45,7 @@ func	shopAddUser(args []string) (string, error) {
 	}
 
 	/// CHECK IF NEW USER ALREADY HAS THIS SHOP
-	usr, hasThisShop, err = userHasShopWithId(args[1], args[0])
+	usr, hasThisShop, err = isShopAdmin(args[1], args[0])
 	if err != nil {
 		return "", err
 	} else if hasThisShop == false {

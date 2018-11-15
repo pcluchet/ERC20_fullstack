@@ -52,18 +52,9 @@ type SaleSubmission	struct {
 
 type Shop struct {
 	Name    string
-	Items   []string
+	Items   []string	// Will be useless with couchdb
+	Raw		[]string	// Will be useless with couchdb
 	DocType string
-}
-
-type ShopItemSubmission struct {
-	Bidable  bool
-	Picture  string
-	Name     string
-	Detail   string
-	Price    uint64
-	Quantity uint64
-	Duration uint64
 }
 
 type ShopItem struct {
@@ -76,7 +67,30 @@ type ShopItem struct {
 	Quantity   uint64
 	ExpireDate uint64
 	ShopId     string
-	BidList    []string
+	BidList    []string	// Will be useless with couchdb
+}
+
+type ShopItemSubmission struct {
+	Bidable  bool
+	Picture  string
+	Name     string
+	Detail   string
+	Price    uint64
+	Quantity uint64
+	Duration uint64
+}
+
+type ShopRaw			struct {
+	RawId				string
+	Price				uint64
+	Quantity			uint64
+	DocType				string
+}
+
+type ShopRawSubmission	struct {
+	RawId				string
+	Price				uint64
+	Quantity			uint64
 }
 
 type Bid struct {

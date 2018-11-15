@@ -11,8 +11,8 @@
 *** SHOP ADMIN
  [X] shopCreate(name) -> true/false
  [X] shopAddUser(shopId, userId) -> true/false
- [X] shopAddItem(name, price, isUnique[, bidLimitDate]) -> true/false
- [ ] shopAddRaw(rawId, price, quantity) -> true/false
+ [~] shopAddItem(name, price, isUnique[, bidLimitDate]) -> true/false
+ [~] shopAddRaw(rawId, price, quantity) -> true/false
 
  [ ] shopItemUpdateBid() /// Met en vente les produits qui etaient aux encheres
  [ ] shopItemListSold() -> map des articles en cours de vente 
