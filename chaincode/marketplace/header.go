@@ -84,6 +84,7 @@ type ShopRaw			struct {
 	RawId				string
 	Price				uint64
 	Quantity			uint64
+	ShopId				string
 	DocType				string
 }
 

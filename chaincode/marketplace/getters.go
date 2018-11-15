@@ -9,7 +9,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
-func getUser(userPubKey string) (User, error) {
+func	getUser(userPubKey string) (User, error) {
 	var usr User
 	var userBytes []byte
 	var err error
@@ -32,7 +32,7 @@ func getUser(userPubKey string) (User, error) {
 	return usr, nil
 }
 
-func getShop(shopUid string) (Shop, error) {
+func	getShop(shopUid string) (Shop, error) {
 	var shp Shop
 	var shopBytes []byte
 	var err error
@@ -55,7 +55,7 @@ func getShop(shopUid string) (Shop, error) {
 	return shp, nil
 }
 
-func getItem(itemUid string) (ShopItem, error) {
+func	getItem(itemUid string) (ShopItem, error) {
 	var itm ShopItem
 	var shopItemBytes []byte
 	var err error
@@ -78,7 +78,28 @@ func getItem(itemUid string) (ShopItem, error) {
 	return itm, nil
 }
 
-func getBid(bidUid string) (Bid, error) {
+func	getShopRaw(rawUid string) (ShopRaw, error) {
+	var err				error
+	var	raw				ShopRaw
+	var bytes			[]byte
+
+	/// GET SHOP RAW
+	bytes, err = STUB.GetState(rawUid)
+	if err != nil {
+		return raw, fmt.Errorf("Ledger acess problem, : %s", err)
+	} else if bytes == nil {
+		return raw, fmt.Errorf("item not found")
+	}
+
+	/// UNMARSHAL
+	err = json.Unmarshal(bytes, &raw)
+	if err != nil {
+		return raw, fmt.Errorf("Cannot unmarshal item informations: %s", err)
+	}
+	return raw, nil
+}
+
+func	getBid(bidUid string) (Bid, error) {
 	var bid Bid
 	var bidBytes []byte
 	var err error
@@ -101,7 +122,7 @@ func getBid(bidUid string) (Bid, error) {
 	return bid, nil
 }
 
-func getWinningBid(itemUid string) (Bid, error) {
+func	getWinningBid(itemUid string) (Bid, error) {
 	var itm ShopItem
 	var winningBid Bid
 	var shopItemBytes []byte
@@ -143,7 +164,7 @@ func getWinningBid(itemUid string) (Bid, error) {
 	return winningBid, nil
 }
 
-func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorInterface) (*bytes.Buffer, error) {
+func	constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorInterface) (*bytes.Buffer, error) {
 	// buffer is a JSON array containing QueryResults
 	var buffer bytes.Buffer
 	buffer.WriteString("[")
@@ -174,11 +195,11 @@ func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorI
 	return &buffer, nil
 }
 
-func getQueryResultForQueryString(stub shim.ChaincodeStubInterface, queryString string) ([]byte, error) {
+func	getQueryResultForQueryString(queryString string) ([]byte, error) {
 
 	fmt.Printf("- getQueryResultForQueryString queryString:\n%s\n", queryString)
 
-	resultsIterator, err := stub.GetQueryResult(queryString)
+	resultsIterator, err := STUB.GetQueryResult(queryString)
 	if err != nil {
 		return nil, err
 	}
@@ -194,7 +215,7 @@ func getQueryResultForQueryString(stub shim.ChaincodeStubInterface, queryString 
 	return buffer.Bytes(), nil
 }
 
-func queryData(args []string) (string, error) {
+func	queryData(args []string) (string, error) {
 
 	//   0
 	// "queryString"
@@ -204,7 +225,7 @@ func queryData(args []string) (string, error) {
 
 	queryString := args[0]
 
-	queryResults, err := getQueryResultForQueryString(STUB, queryString)
+	queryResults, err := getQueryResultForQueryString(queryString)
 	if err != nil {
 		return "", fmt.Errorf("Error : %s", err)
 	}

@@ -9,7 +9,7 @@ import (
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-func	getRawStruct(submitString string) (ShopRaw, error) {
+func	getRawStruct(submitString string, shopId string) (ShopRaw, error) {
 	var	err			error
 	var	submission	ShopRawSubmission
 	var	raw			ShopRaw
@@ -21,6 +21,7 @@ func	getRawStruct(submitString string) (ShopRaw, error) {
 	raw.RawId = submission.RawId
 	raw.Price = submission.Price
 	raw.Quantity = submission.Quantity
+	raw.ShopId = shopId
 	raw.DocType = "ShopRaw"
 	return raw, nil
 }
@@ -60,7 +61,7 @@ func	shopAddRaw(args []string) (string, error) {
 	}
 
 	/// GET RAW SUBMISSION
-	raw, err = getRawStruct(args[1])
+	raw, err = getRawStruct(args[1], args[0])
 	if err != nil {
 		return "", err
 	}
