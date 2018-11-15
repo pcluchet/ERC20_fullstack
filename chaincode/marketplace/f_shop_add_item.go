@@ -73,6 +73,7 @@ func	shopAddItem(args []string) (string, error) {
 	if err2 != nil {
 		return "", fmt.Errorf("Error :%s", err2)
 	}
+	newItem.CreationDate = uint64(txTimeStamp.Seconds)
 	newItem.ExpireDate = uint64(txTimeStamp.Seconds) + endtime
 
 	/// ADD ITEM TO SHOP

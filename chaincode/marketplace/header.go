@@ -65,6 +65,7 @@ type ShopItem			struct {
 	Detail				string
 	Price				uint64
 	Quantity			uint64
+	CreationDate		uint64
 	ExpireDate			uint64
 	ShopId				string
 	BidList				[]string	// Will be useless with couchdb

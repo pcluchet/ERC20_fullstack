@@ -2,6 +2,7 @@ package	main
 
 import "fmt"
 import "github.com/hyperledger/fabric/core/chaincode/shim"
+import "strconv"
 
 ////////////////////////////////////////////////////////////////////////////////
 /// STATIC FUNCTIONS
@@ -22,9 +23,11 @@ func	toChaincodeArgs(args ...string) [][]byte {
 ////////////////////////////////////////////////////////////////////////////////
 
 func	transfer(to string, amount uint64) (error) {
-	var	ccArgs		[][]byte
+	var	amountString	string
+	var	ccArgs			[][]byte
 
-	ccArgs = toChaincodeArgs("transfer", to, fmt.Sprintf("%u", amount))
+	amountString = strconv.FormatUint(amount, 10)
+	ccArgs = toChaincodeArgs("transfer", to, amountString)
 	response := STUB.InvokeChaincode("ERC20", ccArgs, "")
 	if response.Status != shim.OK {
 		return fmt.Errorf("Cannot make transfer for sale: %s", response.Message)
