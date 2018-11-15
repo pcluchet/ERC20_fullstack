@@ -66,6 +66,8 @@ func	shopAddRaw(args []string) (string, error) {
 		return "", err
 	}
 
+	//TODO: Check if this shop already sell this raw material (with couchdb)
+
 	/////////////////////////////////////////
 	//TODO: This will be useless with couchdb
 	/// UPDATE SHOP

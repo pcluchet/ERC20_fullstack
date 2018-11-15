@@ -4,8 +4,8 @@
  [ ] grantPrivilege(userId) -> "ok/ko"
 
 *** SHOP
- [~] buyItems([{shopId, itemId, quantity}, ...]) -> true/false
- [ ] buyRaw([{shopId, rawId, quantity}, ...]) -> true/false
+ [~] buyItem([{shopId, itemId, quantity}, ...]) -> true/false
+ [~] buyRaw([{shopId, rawId, quantity}, ...]) -> true/false
  [X] Bid(itemId, price) -> true/false
 
 *** SHOP ADMIN
@@ -13,6 +13,8 @@
  [X] shopAddUser(shopId, userId) -> true/false
  [~] shopAddItem(name, price, isUnique[, bidLimitDate]) -> true/false
  [~] shopAddRaw(rawId, price, quantity) -> true/false
+ [ ] shopSetItemQuantity(shopId, itemId, quantity)
+ [ ] shopSetRawQuantity(ShopId, rawId, quantity)
 
  [ ] shopItemUpdateBid() /// Met en vente les produits qui etaient aux encheres
  [ ] shopItemListSold() -> map des articles en cours de vente 
