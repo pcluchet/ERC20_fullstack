@@ -76,6 +76,7 @@ curl_close ($ch);
 
 $resp = json_decode($server_output, true);
 
+//print_r($resp);
 
 if ($resp['status'] == "200")
 {

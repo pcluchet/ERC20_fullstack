@@ -10,13 +10,16 @@ import "github.com/hyperledger/fabric/protos/peer"
 /// PRIVATE
 ////////////////////////////////////////////////////////////////////////////////
 
-func	getAdminList() ([]byte, error) {
-	var	err			error
-	var	args		[][]byte
-	var	adminList	AdminList
+func getAdminList() ([]byte, error) {
+	var err error
+	var args [][]byte
+	var adminList AdminList
 
 	args = STUB.GetArgs()
-	if len(args) != 0 {
+
+	fmt.Println("argsZERO:", string(args[0]))
+
+	if len(args) != 1 {
 		return nil, fmt.Errorf("Marketplace init requires an admin list")
 	}
 	err = json.Unmarshal(args[0], &adminList)
@@ -33,8 +36,8 @@ func	getAdminList() ([]byte, error) {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (t *SimpleAsset) Init(stub shim.ChaincodeStubInterface) peer.Response {
-	var err			error
-	var	adminBytes	[]byte
+	var err error
+	var adminBytes []byte
 
 	fmt.Println("---------------> Init <---------------")
 	STUB = stub
