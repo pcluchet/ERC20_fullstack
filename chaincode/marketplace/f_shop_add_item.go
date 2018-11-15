@@ -11,15 +11,15 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
-func	shopAddItem(args []string) (string, error) {
-	var	err			error
-	var	shop		Shop
-	var	userKey		string
-	var	bytes		[]byte
-	var	newItemId	string
-	var itemToAdd	ShopItemSubmission
-	var newItem		ShopItem
-	var endtime		uint64
+func shopAddItem(args []string) (string, error) {
+	var err error
+	var shop Shop
+	var userKey string
+	var bytes []byte
+	var newItemId string
+	var itemToAdd ShopItemSubmission
+	var newItem ShopItem
+	var endtime uint64
 	//var listBytes []byte
 
 	/// CHECK ARGUMENTS
@@ -59,6 +59,7 @@ func	shopAddItem(args []string) (string, error) {
 		return "", fmt.Errorf("Offer duration cannot be 0 or negative")
 	}
 	newItem.Name = itemToAdd.Name
+	newItem.Quantity = itemToAdd.Quantity
 	newItem.Detail = itemToAdd.Detail
 	newItem.Picture = itemToAdd.Picture
 	//TODO : verify arg
