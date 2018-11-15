@@ -13,7 +13,7 @@ import (
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-func	isUserAdmin() (bool, error) {
+func	isLedgerAdmin() (bool, error) {
 	var	err			error
 	var	userKey		string
 	var	adminBytes	[]byte

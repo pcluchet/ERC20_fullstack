@@ -33,8 +33,7 @@ func userHasShopNamed(usr User, shopname string) (bool, error) {
 
 func	shopCreate(args []string) (string, error) {
 	var	err			error
-	var	userBytes	[]byte
-	var	shopBytes	[]byte
+	var	bytes		[]byte
 	var	nameExist	bool
 	var	shopId		string
 	var	usr			User
@@ -68,31 +67,17 @@ func	shopCreate(args []string) (string, error) {
 	/// CREATE SHOP
 	shp.Name = args[0]
 	shp.DocType = "Shop"
-	//shp.Users = append(shp.Users, userKey)
+	shp.Users = append(shp.Users, userKey)
 
 	/// PUT SHOP TO LEDGER
-	shopBytes, err = json.Marshal(shp)
+	bytes, err = json.Marshal(shp)
 	if err != nil {
 		return "", fmt.Errorf("Cannot marshal shop informations: %s", err)
 	}
 	shopId = STUB.GetTxID()
-	err = STUB.PutState(shopId, shopBytes)
+	err = STUB.PutState(shopId, bytes)
 	if err != nil {
 		return "", fmt.Errorf("Cannot write shop informations: %s", err)
-	}
-
-	/// ADD SHOP TO USER
-	usr.Shops = make(map[string]bool)
-	usr.Shops[shopId] = true
-
-	/// UPDATE USER ON LEDGER
-	userBytes, err = json.Marshal(usr)
-	if err != nil {
-		return "", fmt.Errorf("Cannot marshal user informations: %s", err)
-	}
-	err = STUB.PutState(userKey, userBytes)
-	if err != nil {
-		return "", fmt.Errorf("Cannot update user informations: %s", err)
 	}
 	return shopId, nil
 }

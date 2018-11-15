@@ -32,7 +32,6 @@ func	getRawStruct(submitString string) (ShopRaw, error) {
 func	shopAddRaw(args []string) (string, error) {
 	var	err			error
 	var	bytes		[]byte
-	var	hasThisShop	bool
 	var	raw			ShopRaw
 	var	rawId		string
 	var	shop		Shop
@@ -52,12 +51,12 @@ func	shopAddRaw(args []string) (string, error) {
 		return "", err
 	}
 
-	/// CHECK IS USER IS GIVEN SHOP ADMIN
-	_, hasThisShop, err = isShopAdmin(userKey, args[0])
+	/// GET SHOP
+	shop, err = getShop(args[0])
 	if err != nil {
-		return "", err
-	} else if hasThisShop == false {
-		return "", fmt.Errorf("You are not authorized to modify this shop user list")
+		return "", fmt.Errorf("Cannot get shop informations.")
+	} else if isShopAdmin(shop, userKey) == false {
+		return "", fmt.Errorf("You are not authorized to modify this shop user list.")
 	}
 
 	/// GET RAW SUBMISSION

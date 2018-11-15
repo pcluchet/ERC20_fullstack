@@ -13,10 +13,13 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 func	shopAddItem(args []string) (string, error) {
 	var	err			error
-	var	itemBytes	[]byte
-	var	shopBytes	[]byte
-	var	newItmId	string
-	var	hasThisShop	bool
+	var	shop		Shop
+	var	userKey		string
+	var	bytes		[]byte
+	var	newItemId	string
+	var itemToAdd	ShopItemSubmission
+	var newItem		ShopItem
+	var endtime		uint64
 	//var listBytes []byte
 
 	/// CHECK ARGUMENTS
@@ -28,84 +31,74 @@ func	shopAddItem(args []string) (string, error) {
 	println("Some log")
 
 	/// GET USER PUBLIC KEY
-	userKey, err := getPublicKey()
+	userKey, err = getPublicKey()
 	if err != nil {
 		return "", fmt.Errorf("%s", err)
 	}
 
-	/// CHECK IS USER IS GIVEN SHOP ADMIN
-	_, hasThisShop, err = isShopAdmin(userKey, args[0])
+	/// GET SHOP
+	shop, err = getShop(args[0])
 	if err != nil {
-		return "", fmt.Errorf("%s", err)
-	} else if !hasThisShop {
+		return "", fmt.Errorf("Cannot get shop informations.")
+	} else if isShopAdmin(shop, userKey) == false {
 		return "", fmt.Errorf("You are not authorized to modify this shop user list")
 	}
 
-	var itm_toadd ShopItemSubmission
-	/// GET ARGUMENT
-	err = json.Unmarshal([]byte(args[1]), &itm_toadd)
+	/// GET ITEM SUBMISSION
+	err = json.Unmarshal([]byte(args[1]), &itemToAdd)
 	if err != nil {
 		return "", fmt.Errorf("Cannot unmarshal item: %s", err)
 	}
 
-	//filling new item, calculating expiration timestamp etc
-	newItmId = STUB.GetTxID()
-	var newItm ShopItem
+	/// CREATE NEW ITEM
+	newItemId = STUB.GetTxID()
 
-	newItm.Name = itm_toadd.Name
-	newItm.Detail = itm_toadd.Detail
-	newItm.Picture = itm_toadd.Picture
-	//TODO : verify arg
-	newItm.ShopId = args[0]
-	newItm.DocType = "ShopItem"
-	newItm.Biddable = itm_toadd.Bidable
-
-	if itm_toadd.Price < 0 {
+	if itemToAdd.Price < 0 {
 		return "", fmt.Errorf("Item price cannot be negative ")
-	}
-
-	newItm.Price = itm_toadd.Price
-
-	var endtime uint64
-	if itm_toadd.Duration <= 0 {
+	} else if itemToAdd.Duration <= 0 {
 		return "", fmt.Errorf("Offer duration cannot be 0 or negative")
 	}
+	newItem.Name = itemToAdd.Name
+	newItem.Detail = itemToAdd.Detail
+	newItem.Picture = itemToAdd.Picture
+	//TODO : verify arg
+	newItem.ShopId = args[0]
+	newItem.Biddable = itemToAdd.Bidable
+	newItem.DocType = "ShopItem"
+	newItem.Price = itemToAdd.Price
+	endtime = itemToAdd.Duration * 3600
 
-	endtime = itm_toadd.Duration * 3600
-
+	/// CREATE ITEM TIMESTAMP
 	txTimeStamp, err2 := STUB.GetTxTimestamp()
 	if err2 != nil {
 		return "", fmt.Errorf("Error :%s", err2)
 	}
+	newItem.ExpireDate = uint64(txTimeStamp.Seconds) + endtime
 
-	newItm.ExpireDate = uint64(txTimeStamp.Seconds) + endtime
-
-	//update the shop to include the new item
-	var shp Shop
-
-	shp, err = getShop(args[0])
+	/// ADD ITEM TO SHOP
+	//TODO: useless with couchdb
+	shop, err = getShop(args[0])
 	if err != nil {
 		return "", fmt.Errorf("Shop not found : %s", err)
 	}
+	shop.Items = append(shop.Items, newItemId)
 
-	shp.Items = append(shp.Items, newItmId)
-
-	//commit shop key
-	shopBytes, err = json.Marshal(shp)
+	/// PUT SHOP TO LEDGER
+	bytes, err = json.Marshal(shop)
 	if err != nil {
 		return "", fmt.Errorf("Cannot marshal shop informations: %s", err)
 	}
-	err = STUB.PutState(args[0], shopBytes)
+	err = STUB.PutState(args[0], bytes)
 	if err != nil {
 		return "", fmt.Errorf("Cannot write shop informations: %s", err)
 	}
 
-	//commit item key
-	itemBytes, err = json.Marshal(newItm)
+	/// PUT ITEM TO LEDGER
+	bytes, err = json.Marshal(newItem)
 	if err != nil {
 		return "", fmt.Errorf("Cannot marshal user informations: %s", err)
 	}
-	err = STUB.PutState(newItmId, itemBytes)
+	err = STUB.PutState(newItemId, bytes)
 	if err != nil {
 		return "", fmt.Errorf("Cannot update user informations: %s", err)
 	}
@@ -114,12 +107,12 @@ func	shopAddItem(args []string) (string, error) {
 	/*
 		//updating item list
 		var newItemList []string
-		newItemList, err = getItms()
+		newItemList, err = getItems()
 		if err != nil {
 			return "", fmt.Errorf("Error: %s", err)
 		}
 
-		newItemList = append(newItemList, newItmId)
+		newItemList = append(newItemList, newItemId)
 
 		//commit item list
 		listBytes, err = json.Marshal(newItemList)
@@ -132,5 +125,5 @@ func	shopAddItem(args []string) (string, error) {
 		}
 	*/
 
-	return newItmId, nil
+	return newItemId, nil
 }

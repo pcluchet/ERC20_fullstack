@@ -14,7 +14,6 @@ type	SimpleAsset	struct {
 //////////////////////////////////////////////////
 
 type User struct {
-	Shops   map[string]bool
 	DocType string
 }
 
@@ -52,6 +51,7 @@ type SaleSubmission	struct {
 
 type Shop struct {
 	Name    string
+	Users	[]string
 	Items   []string	// Will be useless with couchdb
 	Raw		[]string	// Will be useless with couchdb
 	DocType string
