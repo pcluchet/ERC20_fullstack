@@ -1,6 +1,6 @@
 cd ./nodejs-server-server
 ./build_container.sh
-cd ../merchant_app
+cd ../webservices
 ./build_container.sh
 cd ../network
 ./ptwist.sh init

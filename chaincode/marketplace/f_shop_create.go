@@ -14,7 +14,7 @@ func userHasShopNamed(usr User, shopname string) (bool, error) {
 	//var shp Shop
 	//var err error
 
-////// TODO: CHECK THIS WITH COUCHDB
+	////// TODO: CHECK THIS WITH COUCHDB
 	//for _, shopUid = range usr.Shops {
 	//	shp, err = getShop(shopUid)
 	//	if err != nil {
@@ -31,18 +31,18 @@ func userHasShopNamed(usr User, shopname string) (bool, error) {
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-func	shopCreate(args []string) (string, error) {
-	var	err			error
-	var	bytes		[]byte
-	var	nameExist	bool
-	var	shopId		string
-	var	usr			User
-	var	shp			Shop
+func shopCreate(args []string) (string, error) {
+	var err error
+	var bytes []byte
+	var nameExist bool
+	var shopId string
+	var usr User
+	var shp Shop
 
 	/// CHECK ARGUMENTS
 	/// TODO : when better API, check this better
-	if len(args) != 1 {
-		return "", fmt.Errorf("shopCreate requires one argument.")
+	if len(args) != 2 {
+		return "", fmt.Errorf("shopCreate requires two arguments.")
 	}
 
 	println("Some log")
@@ -55,6 +55,9 @@ func	shopCreate(args []string) (string, error) {
 
 	/// GET USER STRUCT
 	usr, err = getUser(userKey)
+	if err != nil {
+		return "", fmt.Errorf("Failed to get user: %s", err)
+	}
 
 	/// CHECK IF SHOP EXISTS
 	nameExist, err = userHasShopNamed(usr, args[0])
@@ -67,6 +70,7 @@ func	shopCreate(args []string) (string, error) {
 	/// CREATE SHOP
 	shp.Name = args[0]
 	shp.DocType = "Shop"
+	shp.ERC20Address = args[1]
 	shp.Users = append(shp.Users, userKey)
 
 	/// PUT SHOP TO LEDGER

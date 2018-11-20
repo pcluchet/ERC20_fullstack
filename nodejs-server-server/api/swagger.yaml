@@ -126,7 +126,7 @@ paths:
       - name: "params"
         in: "header"
         description: "parameters sent to the chaincode"
-        required: true
+        required: false
         type: "array"
         items:
           type: "string"
@@ -189,7 +189,7 @@ paths:
       - name: "params"
         in: "header"
         description: "parameters sent to the chaincode"
-        required: true
+        required: false
         type: "array"
         items:
           type: "string"

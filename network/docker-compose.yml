@@ -107,9 +107,9 @@ services:
     networks:
       - ptwist
 
-  merchantapp:
-    container_name: merchantapp
-    image: erc20_fs/merchantapp
+  webservices:
+    container_name: webservices
+    image: erc20_fs/webservices
     working_dir: /
     # commd: peer node start --peer-chaincodedev=true
     ports:

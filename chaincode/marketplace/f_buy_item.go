@@ -7,10 +7,10 @@ import "fmt"
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-func	getSale(userKey string, arg string) (Sale, error) {
-	var	err				error
-	var	submission		SaleSubmission
-	var	sale			Sale
+func getSale(userKey string, arg string) (Sale, error) {
+	var err error
+	var submission SaleSubmission
+	var sale Sale
 
 	err = json.Unmarshal([]byte(arg), &submission)
 	if err != nil {
@@ -21,28 +21,29 @@ func	getSale(userKey string, arg string) (Sale, error) {
 	sale.User = userKey
 	sale.ItemId = submission.ItemId
 	sale.Quantity = submission.Quantity
+	sale.ShopId = submission.ShopId
 	sale.DocType = "Sale"
 	return sale, nil
 }
 
-func	transferMoneyForSale(shopId string, amount uint64) (error) {
+func transferMoneyForSale(shop Shop, amount uint64) error {
 	//TODO:	if == 1 admin on shop	-> transfer to admin
 	//		if > 1 admin on shop	-> transfer to shop
 	// Requires couchdb queries
-	return transfer(shopId, amount)
+	return transfer(shop.ERC20Address, amount)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-func	buyItem(args []string) (string, error) {
-	var err				error
-	var	userKey			string
-	var	sale			Sale
-	var	item			ShopItem
-	var	bytes			[]byte
-	var	txId			string
+func buyItem(args []string) (string, error) {
+	var err error
+	var userKey string
+	var sale Sale
+	var item ShopItem
+	var bytes []byte
+	var txId string
 	//var	user			User
 
 	/// CHECK ARGUMENTS
@@ -73,7 +74,7 @@ func	buyItem(args []string) (string, error) {
 	item, err = getItem(sale.ItemId)
 	if err != nil {
 		return "", fmt.Errorf("Cannot get bought item.")
-	} else if item.Quantity >= sale.Quantity {
+	} else if item.Quantity < sale.Quantity {
 		return "", fmt.Errorf("Not enough available items.")
 	}
 
@@ -84,7 +85,14 @@ func	buyItem(args []string) (string, error) {
 	//////////////////////
 	//TODO: MONEY TRANSFER
 	//////////////////////
-	err = transferMoneyForSale(item.ShopId, sale.Price * sale.Quantity)
+	var shop Shop
+
+	shop, err = getShop(item.ShopId)
+	if err != nil {
+		return "", err
+	}
+
+	err = transferMoneyForSale(shop, sale.Price*sale.Quantity)
 	if err != nil {
 		return "", err
 	}

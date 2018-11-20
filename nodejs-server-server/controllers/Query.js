@@ -16,9 +16,18 @@ module.exports.query = function query (req, res, next) {
   var params = req.swagger.params['params'].value;
 
   //only strings in params, cause weird issues otherwise
-  params.every(function(element, index, array) {
-    array[index] = element.toString();
-  });
+  if (params)
+  {
+   params.every(function(element, index, array) {
+     array[index] = element.toString();
+   });
+  }
+  else {
+    params = [];
+  }
+
+
+
 
   users.comparepwd(xRequestUsername, xRequestPassword, function (err, result) {
     if (err) {

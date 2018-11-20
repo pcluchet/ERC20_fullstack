@@ -68,7 +68,7 @@ func makeBid(args []string) (string, error) {
 		return "", fmt.Errorf("You cannot bid on that item")
 	}
 
-	if itm.Price > bidToAdd.Price {
+	if itm.Price >= bidToAdd.Price {
 		return "", fmt.Errorf("The price is already higher than you bid")
 	}
 
@@ -100,13 +100,19 @@ func makeBid(args []string) (string, error) {
 			autoBid.Owner = winningBid.Owner
 			autoBid.DocType = "Bid"
 			autoBid.ItemId = winningBid.ItemId
+			autoBid.ShownPrice = bidToAdd.Price + 1
 			autoBid.Timestamp = uint64(txTimeStamp.Seconds)
+
 			itm.Price = bidToAdd.Price + 1
 			itm.BidList = append(itm.BidList, autoBidId)
+			bidToAdd.ShownPrice = bidToAdd.Price
 		} else {
 			itm.Price = winningBid.Price + 1
+			bidToAdd.ShownPrice = itm.Price
 		}
 	} else {
+
+		bidToAdd.ShownPrice = itm.Price + 1
 		itm.Price++
 	}
 

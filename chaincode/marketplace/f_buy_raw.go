@@ -36,13 +36,13 @@ import "fmt"
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-func	buyRaw(args []string) (string, error) {
-	var err				error
-	var	userKey			string
-	var	sale			Sale
-	var	raw				ShopRaw
-	var	bytes			[]byte
-	var	txId			string
+func buyRaw(args []string) (string, error) {
+	var err error
+	var userKey string
+	var sale Sale
+	var raw ShopRaw
+	var bytes []byte
+	var txId string
 	//var	user			User
 
 	/// CHECK ARGUMENTS
@@ -84,10 +84,19 @@ func	buyRaw(args []string) (string, error) {
 	//////////////////////
 	//TODO: MONEY TRANSFER
 	//////////////////////
-	err = transferMoneyForSale(raw.ShopId, sale.Price * sale.Quantity)
+
+	var shop Shop
+
+	shop, err = getShop(raw.ShopId)
 	if err != nil {
 		return "", err
 	}
+
+	err = transferMoneyForSale(shop, sale.Price*sale.Quantity)
+	if err != nil {
+		return "", err
+	}
+
 	//////////////////////
 	//////////////////////
 

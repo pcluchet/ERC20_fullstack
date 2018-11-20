@@ -1,3 +1,4 @@
+<?php date_default_timezone_set('UTC'); ?>
 <div id="header">
 <div id="logo">
 Plastic Bay
@@ -12,11 +13,12 @@ Plastic Bay
 
 <div id="logout">
 
-    <?php $logged = false ?>
-    <?php if (!$logged) {?>
+    <?php if (!isset($_SESSION["username"])) {?>
     <a href="login.php"> Login </a>
-    <?php } else {?>
-    <a href="logout.php"> <i class="fas fa-sign-out-alt"></i> Logout</a>
+    <?php } else { echo "Logged in as : ".$_SESSION["username"]?>
+    <a href="adm.php"> <i class="fas fa-user"></i> &nbsp;&nbsp;&nbsp;</a>
+    <a href="logout.php"> <i class="fas fa-sign-out-alt"></i> &nbsp;&nbsp;&nbsp;</a>
+
     <?php } ?>
 </div>
 </div>

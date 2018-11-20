@@ -20,6 +20,8 @@ docker exec \
 	-v $1 \
 	-p "$CC_SRC_PATH" \
 	-l "$LANGUAGE"
+
+pubkey="$(cat ../../centralbank_pubkey.txt)";
 	
 docker exec \
 	-e "CORE_PEER_LOCALMSPID=MEDSOSMSP" \
@@ -29,6 +31,6 @@ docker exec \
 	-n "$CC_NAME" \
 	-l "$LANGUAGE" \
 	-v $1 \
-	-c '{"function": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEunUWDj0GbeDC1FVcaoopXNYJMFnEOHVGruBkqc6kYtTEMKMRKZ5YapFNDVvY22S2vE8fQu+BeVGMsi1oHpnVAA==", "Args":["lol", "lol"]}' \
+	-c '{"Args":["[\"'"$pubkey"'\"]"]}' \
 	-P "OR ('MEDSOSMSP.member')"
 	

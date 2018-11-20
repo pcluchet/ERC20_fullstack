@@ -22,23 +22,17 @@ else
   <title>Merchant App</title>
   <meta name="description" content="The HTML5 Herald">
   <meta name="author" content="SitePoint">
-
   <link rel="stylesheet" href="css/style.css">
-
 </head>
 
 <body>
 <script src="js/script.js"></script>
 <?php include "parts/header.php" ?>
 <div id="maincontainer">
+
 <?php
 
-//SETTINGS//
-$APIURL = "http://localhost:8080";
-$login = $_SESSION["username"];
-$password = $_SESSION["password"];
-//END SETTINGS//
-
+include "settings.php";
 //
 //Now calling API
 //
@@ -51,7 +45,68 @@ $ch = curl_init();
 
 curl_setopt($ch, CURLOPT_URL,$APIURL."/ledger/$channel/$chaincode/query_data");
 
-$mango_query = '{"selector":{"DocType":"ShopItem","Name":{"$regex":".*'.$_GET["s"].'.*"}}}';
+$mango_query = '{"selector":{"DocType":"ShopItem","_id":{"$regex":".*'.$_GET["pid"].'.*"}}}';
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            "X-request-username: $login",
+            "X-request-password: $password",
+            "params: $mango_query"
+        ));
+
+// In real life you should use something like:
+// curl_setopt($ch, CURLOPT_POSTFIELDS, 
+//          http_build_query(array('postvar1' => 'value1')));
+
+// Receive server response ...
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$server_output = curl_exec($ch);
+
+//echo $server_output;
+
+//echo $server_output;
+
+curl_close ($ch);
+
+$resp = json_decode($server_output, true);
+
+
+
+//print_r($resp);
+
+$value = $resp['response'][0];
+
+  $price = $value['Record']['Price'];
+  $pid = $value['Key'];
+  $name = $value['Record']['Name'];
+  $picurl = $value['Record']['Picture'];
+  $details = $value['Record']['Detail'];
+  $shopid = $value['Record']['ShopId'];
+  if (strlen($details) > 130)
+  {
+     $trimmed_details = substr($details,0,120)."[...]";
+  }
+  else
+  {
+     $trimmed_details = $details;
+  }
+
+  $bid_count = count($value['Record']['BidList']);
+  $exp_tstamp = $value['Record']['ExpireDate'];
+  $qtty = $value['Record']['Quantity'];
+  $end_time = date('Y-m-d H:i:s', $exp_tstamp);
+  $is_auction = $value['Record']['Biddable'];
+  $bid = $is_auction;
+
+
+$channel = "ptwist";
+$chaincode = "marketplace";
+
+$ch = curl_init();
+
+curl_setopt($ch, CURLOPT_URL,$APIURL."/ledger/$channel/$chaincode/query_data");
+
+$mango_query = '{"selector":{"DocType":"Bid","ItemId":{"$regex":".*'.$_GET["pid"].'.*"}}}';
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
             "X-request-username: $login",
@@ -78,48 +133,37 @@ $resp = json_decode($server_output, true);
 
 //print_r($resp);
 
-if ($resp['status'] == "200")
+$bidlist = $resp['response'];
+
+
+function sortByDate($a, $b)
 {
+    $a = $a['Timestamp'];
+    $b = $b['Timestamp'];
+
+    if ($a == $b) return 0;
+    return ($a < $b) ? -1 : 1;
 }
-else
+
+
+
+
+$simple = array();
+foreach ($bidlist as $k => $v)
 {
-    echo "failure, teh search has failed because : ".$resp["response"];
+    $v['Record']['Key'] = $v['Key'];
+    $simple[] = $v['Record'];
 }
 
-if (count($resp['response']) == 0)
-{
-  echo "Your search has returned no results<br>";
-}
+usort($simple, 'sortByDate');
 
-foreach ($resp['response'] as $key => $value)
-{
-  $price = $value['Record']['Price'];
-  $pid = $value['Key'];
-  $name = $value['Record']['Name'];
-  $picurl = $value['Record']['Picture'];
-  $details = $value['Record']['Detail'];
-  if (strlen($details) > 130)
-  {
-     $trimmed_details = substr($details,0,120)."[...]";
-  }
-  else
-  {
-     $trimmed_details = $details;
-  }
+?>
 
-  $bid_count = count($value['Record']['BidList']);
-  $exp_tstamp = $value['Record']['ExpireDate'];
-  $end_time = date('Y-m-d H:i:s', $exp_tstamp);
-  $is_auction = $value['Record']['Biddable'];
-  $bid = $is_auction;
-
-  ?>
-
-  <div id="item">
+<div id="item">
 
         <div id="itm_pic">
 
-    <a href="itempage.php?pid=<?php echo $pid?>">
+    <a href="itempage.php?pid=<?php echo $pid?>&shop=<?php echo $shopid?>">
             <div class="container">
                 <img src="<?php echo $picurl?>"/>
             </div>
@@ -130,13 +174,15 @@ foreach ($resp['response'] as $key => $value)
         <div id="title">
             <?php echo $name?>
         </div>
-        <div id="details">
-            <?php echo $trimmed_details?>
-        </div>
         <div id="end_of_offer">
 
             End <?php echo $end_time ?>
         </div>
+        <div id="qtty">
+
+            Quantity : <?php echo $qtty ?>
+        </div>
+
         <div id="pricezone">
            <div id="pricetag">
             <?php echo $price ?> $ 
@@ -148,7 +194,7 @@ foreach ($resp['response'] as $key => $value)
            <?php } ?> 
         </div>
            <?php if (!$bid){ ?> 
-           <a href="buy.php?pid=<?php echo $pid?>">
+           <a href="buy.php?pid=<?php echo $pid?>&shop=<?php echo $shopid?>">
                 <div id="buybtn">
                      Buy
                 </div>
@@ -156,6 +202,7 @@ foreach ($resp['response'] as $key => $value)
            <?php } else { ?> 
             <form action="bid.php" method="get">
                 <input name="amount" id="bid_amount" placeholder="Bid Amount" />
+                <input name="pid" type="hidden" value="<?php echo $pid?>" />
                 <button id="buybtn">Bid</button>
             </form>
 
@@ -164,10 +211,49 @@ foreach ($resp['response'] as $key => $value)
 </div>
 
 
+<div id="therest">
 
-  <?php 
-  } 
-  ?>
+       <div id="details_big">
+        <h2> Full item discription :</h2>
+        <?php echo $details?>
+        </div>
+
+<div id="about_seller">
+    <h2> About the Seller :</h2>
+    <p>
+        Seller : uftV67ubHJh[...]BjhbH78ghvf3b<br>
+        Score : 77 % or whatever<br>
+    </p>
+</div>
+<div id="bid_history">
+
+
+    <h2> Bid history :</h2>
+    <?php
+    foreach($simple as $key => $value)
+    {
+    ?>
+    <p>
+        Amount : <?php echo $value['ShownPrice']?> <br>
+        By : <?php echo $value['Owner']?><br>
+
+        Date : <?php echo date('Y-m-d H:i:s', $value['Timestamp']) ?><br>
+        <?php if (strpos($value['Key'],"auto") !== false) { ?>
+        Autobid<br>
+        <?php } ?>
+    </p>
+    <br>
+
+    <?php }  ?>
+
+</div>
+
+</div>
+
+
+
+</div>
+
 
 
 </div>

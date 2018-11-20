@@ -14,21 +14,73 @@ u5="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: a
 u6="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-password: cbpassword' 'http://localhost:8080/users/user6' | jq -r '.pubkey')"
 
 
+echo "Public keys:";
+echo "User1:$u1";
+echo "User2:$u2";
+echo "User3:$u3";
+echo "User4:$u4";
+echo "User5:$u5";
+echo "User6:$u6";
+
+#each user register their name
+
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user1' --header 'X-request-password: cbpassword' --header 'params: 0' 'http://localhost:8080/ledger/ptwist/marketplace/new_user'
+
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user2' --header 'X-request-password: cbpassword' --header 'params: 0' 'http://localhost:8080/ledger/ptwist/marketplace/new_user'
+
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user3' --header 'X-request-password: cbpassword' --header 'params: 0' 'http://localhost:8080/ledger/ptwist/marketplace/new_user'
+
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user4' --header 'X-request-password: cbpassword' --header 'params: 0' 'http://localhost:8080/ledger/ptwist/marketplace/new_user'
+
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user5' --header 'X-request-password: cbpassword' --header 'params: 0' 'http://localhost:8080/ledger/ptwist/marketplace/new_user'
+
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user6' --header 'X-request-password: cbpassword' --header 'params: 0' 'http://localhost:8080/ledger/ptwist/marketplace/new_user'
+
+#each user receive 100 tokens from centralbank
+
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: centralbank' --header 'X-request-password: cbpassword' --header 'params: '"$u1"'|100' 'http://localhost:8080/ledger/ptwist/ERC20/transfer'
+
+
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: centralbank' --header 'X-request-password: cbpassword' --header 'params: '"$u2"'|100' 'http://localhost:8080/ledger/ptwist/ERC20/transfer'
+
+
+
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: centralbank' --header 'X-request-password: cbpassword' --header 'params: '"$u3"'|100' 'http://localhost:8080/ledger/ptwist/ERC20/transfer'
+
+
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: centralbank' --header 'X-request-password: cbpassword' --header 'params: '"$u4"'|100' 'http://localhost:8080/ledger/ptwist/ERC20/transfer'
+
+
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: centralbank' --header 'X-request-password: cbpassword' --header 'params: '"$u5"'|100' 'http://localhost:8080/ledger/ptwist/ERC20/transfer'
+
+
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: centralbank' --header 'X-request-password: cbpassword' --header 'params: '"$u6"'|100' 'http://localhost:8080/ledger/ptwist/ERC20/transfer'
+
+
 #each user create a shop
 
-u1_shop="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user1' --header 'X-request-password: cbpassword' --header 'params: myshopp' 'http://localhost:8080/ledger/ptwist/marketplace/new_shop' | jq -r '.payload')"
+u1_shop="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user1' --header 'X-request-password: cbpassword' --header 'params: The basket shop|'"$u1" 'http://localhost:8080/ledger/ptwist/marketplace/new_shop' | jq -r '.payload')"
 
-echo "$u1_shop"
+u2_shop="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user2' --header 'X-request-password: cbpassword' --header 'params: Tiles shop|'"$u2"  'http://localhost:8080/ledger/ptwist/marketplace/new_shop' | jq -r '.payload')"
 
-u2_shop="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user2' --header 'X-request-password: cbpassword' --header 'params: myshopp' 'http://localhost:8080/ledger/ptwist/marketplace/new_shop' | jq -r '.payload')"
+u3_shop="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user3' --header 'X-request-password: cbpassword' --header 'params: myshop|'"$u3"  'http://localhost:8080/ledger/ptwist/marketplace/new_shop' | jq -r '.payload')"
 
-u3_shop="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user3' --header 'X-request-password: cbpassword' --header 'params: myshopp' 'http://localhost:8080/ledger/ptwist/marketplace/new_shop' | jq -r '.payload')"
+u4_shop="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user4' --header 'X-request-password: cbpassword' --header 'params: myshop|'"$u4"  'http://localhost:8080/ledger/ptwist/marketplace/new_shop' | jq -r '.payload')"
 
-u4_shop="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user4' --header 'X-request-password: cbpassword' --header 'params: myshopp' 'http://localhost:8080/ledger/ptwist/marketplace/new_shop' | jq -r '.payload')"
 
-u5_shop="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user5' --header 'X-request-password: cbpassword' --header 'params: myshopp' 'http://localhost:8080/ledger/ptwist/marketplace/new_shop' | jq -r '.payload')"
+u5_shop="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user5' --header 'X-request-password: cbpassword' --header 'params: myshop|'"$u5"  'http://localhost:8080/ledger/ptwist/marketplace/new_shop' | jq -r '.payload')"
 
-u6_shop="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user6' --header 'X-request-password: cbpassword' --header 'params: myshopp' 'http://localhost:8080/ledger/ptwist/marketplace/new_shop' | jq -r '.payload')"
+u6_shop="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-username: user6' --header 'X-request-password: cbpassword' --header 'params: myshop|'"$u6"  'http://localhost:8080/ledger/ptwist/marketplace/new_shop' | jq -r '.payload')"
+
+echo "Shop addresses:";
+echo "User1:$u1_shop";
+echo "User2:$u2_shop";
+echo "User3:$u3_shop";
+echo "User4:$u4_shop";
+echo "User5:$u5_shop";
+echo "User6:$u6_shop";
+
+
 
 
 #user 1 create some baskets
