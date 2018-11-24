@@ -30,7 +30,7 @@ function resetInvoice() {
 
 function customer_interface()
 {
-    window.open("http://localhost/what_customer_see.php"); 
+    window.open("http://82.255.42.169/merchant_app/what_customer_see.php"); 
 }
 
 
