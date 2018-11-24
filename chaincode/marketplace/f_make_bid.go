@@ -105,14 +105,17 @@ func makeBid(args []string) (string, error) {
 
 			itm.Price = bidToAdd.Price + 1
 			itm.BidList = append(itm.BidList, autoBidId)
+			itm.Winner = winningBid.Owner
 			bidToAdd.ShownPrice = bidToAdd.Price
 		} else {
+			itm.Winner = bidToAdd.Owner
 			itm.Price = winningBid.Price + 1
 			bidToAdd.ShownPrice = itm.Price
 		}
 	} else {
 
 		bidToAdd.ShownPrice = itm.Price + 1
+		itm.Winner = bidToAdd.Owner
 		itm.Price++
 	}
 

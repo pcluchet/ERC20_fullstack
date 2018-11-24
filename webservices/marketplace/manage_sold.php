@@ -47,6 +47,14 @@ else
             Selling       
         </div>
         </a>
+         <a href="manage_pending.php<?php echo "?shop=".$_GET['shop']."&n=".$_GET['n']?>">
+
+        <div id="actionitem" class="">
+            Pending 
+        </div>
+        </a>
+
+
 
         <a href="manage_sold.php<?php echo "?shop=".$_GET['shop']."&n=".$_GET['n']?>">
 

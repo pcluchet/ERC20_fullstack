@@ -9,6 +9,7 @@ header('Location: '.$newURL);
 }
 else
 {
+    $logged = true;
 //print_r($_SESSION);
 
 }
@@ -32,40 +33,23 @@ else
 <?php include "parts/header.php" ?>
 <div id="maincontainer">
     <br><br>
-    <h2>Shop : <?php echo $_GET["n"] ?></h2>
+    <h2>Bought items :</h2>
     <br>
-    <p><a href="adm.php">Back to shop list</a></p>
     <br>
-
 <div id="contai">
     <div id="actionlist">
-        <a href="manage_sells.php<?php echo "?shop=".$_GET['shop']."&n=".$_GET['n']?>">
+       <a href="manage_boug.php<?php echo "?shop=".$_GET['shop']."&n=".$_GET['n']?>">
+            <div id="actionitem" class="">
+                Boughts 
+            </div>
+        </a>
+       <a href="manage_unpaid.php<?php echo "?shop=".$_GET['shop']."&n=".$_GET['n']?>">
             <div id="actionitem" class="selectedaction">
-                Selling       
+                Unpaid 
             </div>
         </a>
-         <a href="manage_pending.php<?php echo "?shop=".$_GET['shop']."&n=".$_GET['n']?>">
-
-        <div id="actionitem" class="">
-            Pending 
-        </div>
-        </a>
-
-
-
-        <a href="manage_sold.php<?php echo "?shop=".$_GET['shop']."&n=".$_GET['n']?>">
-            <div id="actionitem">
-                Solds 
-            </div>
-        </a>
-        <a href="manage_add.php<?php echo "?shop=".$_GET['shop']."&n=".$_GET['n']?>">
-            <div id="actionitem" >
-                Add Item
-            </div>
-        </a>
-
-    </div>
-   <div id="actionfld">
+   </div>
+    <div id="actionfld">
 
 <?php
 
@@ -75,6 +59,15 @@ include "settings.php";
 //
 
 
+$pk = getPubKey($login, $password);
+
+$esc_pk = preg_quote ( $pk);
+$esc_pk = str_replace('\\','\\\\',$esc_pk);
+$esc_pk = sprintf("%s",$esc_pk);
+
+//echo $esc_pk;
+
+
 $channel = "ptwist";
 $chaincode = "marketplace";
 
@@ -82,8 +75,9 @@ $ch = curl_init();
 
 curl_setopt($ch, CURLOPT_URL,$APIURL."/ledger/$channel/$chaincode/query_data");
 
+
 $now = time();
-$mango_query = '{"selector":{"DocType":"ShopItem","ShopId":"'.$_GET["shop"].'", "ExpireDate": {"$gt": '.$now.' }}}';
+$mango_query = '{"selector":{"DocType":"ShopItem","ExpireDate":{"$lt":'.$now.'}, "Winner": { "$regex" : ".*'.$esc_pk.'.*"}, "Quantity" : { "$ne" :  0} }}';
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
             "X-request-username: $login",
@@ -108,10 +102,6 @@ curl_close ($ch);
 
 $resp = json_decode($server_output, true);
 
-//print_r($resp);
-
-//print_r($resp);
-
 if ($resp['status'] == "200")
 {
 }
@@ -122,7 +112,7 @@ else
 
 if (count($resp['response']) == 0)
 {
-  echo "You are not selling anything right now";
+  echo "You have no unpaid items right now";
 }
 
 foreach ($resp['response'] as $key => $value)
@@ -184,6 +174,13 @@ foreach ($resp['response'] as $key => $value)
             <?php echo $bid_count ?> bids
         </div>
    <?php } ?> 
+       <a href="settle_bid.php?pid=<?php echo $pid?>&shop=<?php echo $shopid?>">
+                <div id="buybtn">
+                     Pay
+                </div>
+           </a>
+
+
 </div>
 
 </div>
@@ -194,6 +191,7 @@ foreach ($resp['response'] as $key => $value)
 <?php 
 } 
 ?>
+
 
 
 

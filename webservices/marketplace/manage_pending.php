@@ -9,6 +9,7 @@ header('Location: '.$newURL);
 }
 else
 {
+    $logged = true;
 //print_r($_SESSION);
 
 }
@@ -36,36 +37,37 @@ else
     <br>
     <p><a href="adm.php">Back to shop list</a></p>
     <br>
-
 <div id="contai">
+
     <div id="actionlist">
+
         <a href="manage_sells.php<?php echo "?shop=".$_GET['shop']."&n=".$_GET['n']?>">
-            <div id="actionitem" class="selectedaction">
-                Selling       
-            </div>
+
+        <div id="actionitem">
+            Selling       
+        </div>
         </a>
          <a href="manage_pending.php<?php echo "?shop=".$_GET['shop']."&n=".$_GET['n']?>">
 
-        <div id="actionitem" class="">
+        <div id="actionitem" class="selectedaction">
             Pending 
         </div>
         </a>
 
 
-
         <a href="manage_sold.php<?php echo "?shop=".$_GET['shop']."&n=".$_GET['n']?>">
-            <div id="actionitem">
-                Solds 
-            </div>
+
+        <div id="actionitem" class="">
+            Solds 
+        </div>
         </a>
         <a href="manage_add.php<?php echo "?shop=".$_GET['shop']."&n=".$_GET['n']?>">
-            <div id="actionitem" >
-                Add Item
-            </div>
+        <div id="actionitem" >
+            Add Item
+        </div>
         </a>
-
-    </div>
-   <div id="actionfld">
+   </div>
+    <div id="actionfld">
 
 <?php
 
@@ -73,7 +75,6 @@ include "settings.php";
 //
 //Now calling API
 //
-
 
 $channel = "ptwist";
 $chaincode = "marketplace";
@@ -83,7 +84,8 @@ $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL,$APIURL."/ledger/$channel/$chaincode/query_data");
 
 $now = time();
-$mango_query = '{"selector":{"DocType":"ShopItem","ShopId":"'.$_GET["shop"].'", "ExpireDate": {"$gt": '.$now.' }}}';
+$mango_query = '{"selector":{"DocType":"ShopItem","ShopId":"'.$_GET["shop"].'", "BidList":{"$ne":null},"ExpireDate":{"$lt":'.$now.'},"Quantity" : {"$ne" : 0} }}';
+//echo $mango_query;
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
             "X-request-username: $login",
@@ -108,10 +110,6 @@ curl_close ($ch);
 
 $resp = json_decode($server_output, true);
 
-//print_r($resp);
-
-//print_r($resp);
-
 if ($resp['status'] == "200")
 {
 }
@@ -122,8 +120,9 @@ else
 
 if (count($resp['response']) == 0)
 {
-  echo "You are not selling anything right now";
+  echo "You have no pending transactions right now";
 }
+
 
 foreach ($resp['response'] as $key => $value)
 {
@@ -184,6 +183,7 @@ foreach ($resp['response'] as $key => $value)
             <?php echo $bid_count ?> bids
         </div>
    <?php } ?> 
+
 </div>
 
 </div>
@@ -194,6 +194,7 @@ foreach ($resp['response'] as $key => $value)
 <?php 
 } 
 ?>
+
 
 
 

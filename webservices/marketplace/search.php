@@ -46,7 +46,8 @@ $ch = curl_init();
 
 curl_setopt($ch, CURLOPT_URL,$APIURL."/ledger/$channel/$chaincode/query_data");
 
-$mango_query = '{"selector":{"DocType":"ShopItem","Name":{"$regex":".*'.$_GET["s"].'.*"}}}';
+$now = time();
+$mango_query = '{"selector":{"DocType":"ShopItem","Name":{"$regex":".*'.$_GET["s"].'.*"}, "ExpireDate": {"$gt": '.$now.' }}}';
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
             "X-request-username: $login",

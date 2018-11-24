@@ -1,37 +1,41 @@
 <?php
-
-//SETTINGS//
-
-$APIURL = "http://api.MEDSOS.example.com:8080";
-//$APIURL = "http://localhost:8080";
-$login = $_SESSION["username"];
-$password = $_SESSION["password"];
-//END SETTINGS//
-
-function getPubKey($login, $password)
+// Start the session
+session_start();
+if (!isset($_SESSION["username"]))
 {
-$APIURL = "http://api.MEDSOS.example.com:8080";
-//$APIURL = "http://localhost:8080";
-$login = $_SESSION["username"];
-$password = $_SESSION["password"];
 
+$newURL = "login.php";
+header('Location: '.$newURL);
+}
+else
+{
+//print_r($_SESSION);
 
-//
-//Now calling API
-//
+}
+?>
+<?php
 
+//print_r($_POST);
+
+include "settings.php";
 
 $channel = "ptwist";
 $chaincode = "marketplace";
 
 $ch = curl_init();
 
-curl_setopt($ch, CURLOPT_URL,$APIURL."/users/$login");
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_URL,$APIURL."/ledger/$channel/$chaincode/settle_bid");
 
+	$ShopId = $_GET["shop"];
+	$pid = $_GET["pid"];
+
+$arf = $pid;
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
             "X-request-username: $login",
-            "X-request-password: $password"
+            "X-request-password: $password",
+            "params: $arf"
         ));
 
 // In real life you should use something like:
@@ -51,7 +55,10 @@ curl_close ($ch);
 
 $resp = json_decode($server_output, true);
 
-return $resp["pubkey"];
-}
+//print_r($resp);
+
+
+$newURL = "manage_boug.php?shop=".$_POST['shop']."&n=".$_POST['name'];
+header('Location: '.$newURL);
 
 ?>

@@ -72,6 +72,7 @@ type ShopItem struct {
 	ExpireDate   uint64
 	ShopId       string
 	BidList      []string // Will be useless with couchdb
+	Winner       string
 }
 
 type ShopItemSubmission struct {

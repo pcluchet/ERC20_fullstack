@@ -44,6 +44,12 @@ else
                 Boughts 
             </div>
         </a>
+       <a href="manage_unpaid.php<?php echo "?shop=".$_GET['shop']."&n=".$_GET['n']?>">
+            <div id="actionitem" class="">
+                Unpaid 
+            </div>
+        </a>
+
    </div>
     <div id="actionfld">
 
