@@ -4,40 +4,10 @@ import "encoding/json"
 import "fmt"
 
 ////////////////////////////////////////////////////////////////////////////////
-/// STATIC FUNCTIONS
-////////////////////////////////////////////////////////////////////////////////
-
-func getSale(userKey string, arg string) (Sale, error) {
-	var err error
-	var submission SaleSubmission
-	var sale Sale
-
-	err = json.Unmarshal([]byte(arg), &submission)
-	if err != nil {
-		return sale, fmt.Errorf("Cannot unmarshal sale submission.")
-	} else if submission.Quantity == 0 {
-		return sale, fmt.Errorf("Sale submission's quantity must be greater than 0.")
-	}
-	sale.User = userKey
-	sale.ItemId = submission.ItemId
-	sale.Quantity = submission.Quantity
-	sale.ShopId = submission.ShopId
-	sale.DocType = "Sale"
-	return sale, nil
-}
-
-func transferMoneyForSale(shop Shop, amount uint64) error {
-	//TODO:	if == 1 admin on shop	-> transfer to admin
-	//		if > 1 admin on shop	-> transfer to shop
-	// Requires couchdb queries
-	return transfer(shop.ERC20Address, amount)
-}
-
-////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-func buyItem(args []string) (string, error) {
+func buyBid(args []string) (string, error) {
 	var err error
 	var userKey string
 	var sale Sale
@@ -76,10 +46,6 @@ func buyItem(args []string) (string, error) {
 		return "", fmt.Errorf("Cannot get bought item.")
 	} else if item.Quantity < sale.Quantity {
 		return "", fmt.Errorf("Not enough available items.")
-	}
-
-	if item.Biddable {
-		return "", fmt.Errorf("This item is an auction")
 	}
 
 	/// UPDATE OBJECTS
