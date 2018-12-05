@@ -84,7 +84,7 @@ $resp = json_decode($server_output, true);
 
 //print_r($resp);
 
-$newURL = "manage_sells.php?shop=".$_POST['shop']."&n=".$_POST['name'];
+$newURL = "manage_sells.php?shop=".$_POST['shop']."&n=".$_POST['n'];
 header('Location: '.$newURL);
 
 ?>

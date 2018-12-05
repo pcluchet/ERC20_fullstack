@@ -72,7 +72,7 @@ else
         <form action="add_itm.php" method="post">
           <input type="text" name="name" placeholder="Item Name" size="40" id="field"><br>
           <input type="hidden" name="shop" value="<?php echo $_GET['shop']?>">
-          <input type="hidden" name="name" value="<?php echo $_GET['n']?>">
+          <input type="hidden" name="n" value="<?php echo $_GET['n']?>">
           <input type="text" name="picurl" placeholder="Picture url" size="40" id="field"><br>
           <input type="text" name="price" placeholder="Price" size="10" id="field"><br>
           <input type="text" name="qtt" placeholder="Quantity" size="10" id="field"><br>
