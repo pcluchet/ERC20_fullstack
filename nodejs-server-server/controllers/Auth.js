@@ -5,37 +5,63 @@ var Auth = require('../service/AuthService');
 
 var users = require('../db/users');
 
-module.exports.getUserInfos = function getUserInfos (req, res, next) {
+module.exports.getUserInfos = function getUserInfos(req, res, next) {
   var username = req.swagger.params['username'].value;
   var xRequestPassword = req.swagger.params['X-request-password'].value;
+  var xRequestUseToken = req.swagger.params['X-request-use-token'].value;
+  var xRequestTokenExpire = req.swagger.params['X-request-token-expire'].value;
 
   users.comparepwd_pub(username, xRequestPassword, function (err, result) {
     if (err) {
 
-    res.writeHead(401, { "Content-Type": "text/plain" });
-    return res.end("Unauthorized");
+      res.writeHead(401, { "Content-Type": "text/plain" });
+      return res.end("Unauthorized");
 
-		//returnResponse(res, 403, "Username or password invalid");
-        //res.send('{"status" : 403, "payload" : "", "message" : "Username or password invalid" }');
+      //returnResponse(res, 403, "Username or password invalid");
+      //res.send('{"status" : 403, "payload" : "", "message" : "Username or password invalid" }');
       //throw err;
     }
     else {
       console.log('user :' + JSON.stringify(result));
       if (result.valid) {
-        const body = {
+        var body = {
           "pubkey": result.pubkey
         };
+
+
+        //works
+        if (xRequestUseToken) {
+          var clientIP = req.connection.remoteAddress;
+          var expire = xRequestTokenExpire;
+          console.log("REQUESTING TOKEN AUTH");
+          users.updatetoken(username, clientIP, expire, function cb(token) {
+
+
+            console.log("TOKEN IS: " + token);
+            body.token = token;
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify(body));
+
+
+          });
+
+          //users.authByToken("fxkoe60cczrv5vo4xao4i9",function cb(){console.log("CALLBACK 2")})
+        }
+        else
+        {
         res.writeHead(200, { "Content-Type": "application/json" });
         return res.end(JSON.stringify(body));
-		    //returnResponse(res, 200, {"pubkey": result.pubkey});
+        //returnResponse(res, 200, {"pubkey": result.pubkey});
         //res.send(util.format('{"status" : "ok", "payload" : "", "message" : "", "pubkey" : "%s" }',result.pubkey));
         console.log('succesfully identified');
+        }   
       }
-      else{
+      else {
         res.writeHead(401, { "Content-Type": "text/plain" });
         return res.end("Unauthorized");
-		      //returnResponse(res, 403, "Username or password invalid");
-        	//res.send('{"status" : 403, "payload" : "", "message" : "Username or password invalid" }');
+        //returnResponse(res, 403, "Username or password invalid");
+        //res.send('{"status" : 403, "payload" : "", "message" : "Username or password invalid" }');
       }
     }
   });

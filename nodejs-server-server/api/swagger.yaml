@@ -24,6 +24,16 @@ paths:
       - "application/json"
       - "text/plain"
       parameters:
+      - name: "X-request-use-token"
+        in: "header"
+        description: "boolean, true if a session token is used"
+        required: false
+        type: "boolean"
+      - name: "X-request-token-expire"
+        in: "header"
+        description: "token duration, in seconds"
+        required: false
+        type: "integer"
       - name: "username"
         in: "path"
         description: "Username of the user you want to authenticate"
@@ -93,16 +103,26 @@ paths:
       - "application/json"
       - "text/plain"
       parameters:
+      - name: "X-request-use-token"
+        in: "header"
+        description: "boolean, true if a session token is used"
+        required: false
+        type: "boolean"
+      - name: "X-request-token"
+        in: "header"
+        description: "session token"
+        required: false
+        type: "string"
       - name: "X-request-username"
         in: "header"
         description: "username"
-        required: true
+        required: false
         type: "string"
         format: "string"
       - name: "X-request-password"
         in: "header"
         description: "Password of the user"
-        required: true
+        required: false
         type: "string"
         format: "string"
       - name: "channel"
@@ -156,16 +176,26 @@ paths:
       - "application/json"
       - "text/plain"
       parameters:
+      - name: "X-request-use-token"
+        in: "header"
+        description: "boolean, true if a session token is used"
+        required: false
+        type: "boolean"
+      - name: "X-request-token"
+        in: "header"
+        description: "session token"
+        required: false
+        type: "string"
       - name: "X-request-username"
         in: "header"
         description: "username"
-        required: true
+        required: false
         type: "string"
         format: "string"
       - name: "X-request-password"
         in: "header"
         description: "Password of the user"
-        required: true
+        required: false
         type: "string"
         format: "string"
       - name: "channel"

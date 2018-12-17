@@ -1,83 +1,147 @@
 var users = require('./couchdb').use('users');
 
-exports.create = function create(user, cb) {  
-	  users.insert(user, user.email, cb);
+exports.create = function create(user, cb) {
+	users.insert(user, user.email, cb);
 };
 
-exports.get = function get(id, cb) {  
-	  users.get(id, cb);
+ function updtoken(user, ip, expire, cb) {
+	users.get(user, function (err, result) {
+		console.log("IN HERE");
+		console.log("RESULT HERE :" + JSON.stringify(result));
+
+		result.token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+		let tk = result.token;
+		result.tokenip = ip;
+		result.expire = Math.round(new Date().getTime()/1000) + expire;
+
+		users.insert(result, user).then ( function (){
+			cb(tk);
+		});
+	});
 };
 
-exports.comparepwd = function get(id,pwd, cb) {  
+exports.updatetoken = updtoken;
+
+exports.get = function get(id, cb) {
+	users.get(id, cb);
+};
+
+exports.authByToken = function get(token, ip, cb) {
+
+	var retour = {
+		valid : false,
+		username : ""
+	}
+	const q = {
+		selector: {
+		  token: token,
+		},
+		limit:1
+	  };
+	  users.find(q).then((doc) => {
+		console.log(doc);
+		if (!doc.docs[0])
+		{
+			cb(retour);
+			return;
+		}
+		console.log("BEARER USER : " + doc.docs[0]._id);
+		var expireDate = doc.docs[0].expire;
+		var tokenIP = doc.docs[0].tokenip;
+		var username = doc.docs[0]._id;
+		if (ip != tokenIP)
+		{
+			cb(retour);
+			return;
+		}
+		if (Math.round(new Date().getTime()/1000) > expireDate)
+		{
+			cb(retour);
+			return;
+		}
+		retour.valid = true;
+		retour.username = username; 
+		cb(retour);
+		return;
+	  });
+
+	  /*
+	users.get(user, function (err, result) {
+		console.log("IN HERE");
+		console.log("RESULT HERE :" + JSON.stringify(result));
+
+		result.token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+		result.tokenip = ip;
+		result.expire = Math.round(new Date().getTime()/1000) + expire;
+
+		users.insert(result, user, cb);
+
+	});
+	*/
+};
+
+exports.comparepwd = function get(id, pwd, cb) {
 
 	var crypto = require('crypto');
-var hash = crypto.createHash('whirlpool');
-//passing the data to be hashed
-data = hash.update(pwd, 'utf-8');
-//Creating the hash in the required format
-gen_hash= data.digest('hex');
+	var hash = crypto.createHash('whirlpool');
+	//passing the data to be hashed
+	data = hash.update(pwd, 'utf-8');
+	//Creating the hash in the required format
+	gen_hash = data.digest('hex');
 
 
-	  users.get(id, function (err,result) {
-			console.log("result : " + JSON.stringify(result))
-			if (!result || !result.password)
-			{
-				console.log("user not found or request problem")
-				cb(err,false);
-			}
-			else
-			{
-			if (gen_hash == result.password)
-			{
+	users.get(id, function (err, result) {
+		console.log("result : " + JSON.stringify(result))
+		if (!result || !result.password) {
+			console.log("user not found or request problem")
+			cb(err, false);
+		}
+		else {
+			if (gen_hash == result.password) {
 				console.log("pass ok")
 				cb(err, true);
 			}
-			else
-			{
+			else {
 				console.log("pass not ok")
 				cb(err, false);
 			}
 		}
-	  });
+	});
 };
 
 
-exports.comparepwd_pub = function get(id,pwd, cb) {  
+exports.comparepwd_pub = function get(id, pwd, cb) {
 
 	var crypto = require('crypto');
-var hash = crypto.createHash('whirlpool');
-//passing the data to be hashed
-data = hash.update(pwd, 'utf-8');
-//Creating the hash in the required format
-gen_hash= data.digest('hex');
+	var hash = crypto.createHash('whirlpool');
+	//passing the data to be hashed
+	data = hash.update(pwd, 'utf-8');
+	//Creating the hash in the required format
+	gen_hash = data.digest('hex');
 
 
-var retu = {  
-	valid: false,
-	pubkey : "",
-};
+	var retu = {
+		valid: false,
+		pubkey: "",
+	};
 
-	  users.get(id, function (err,result) {
-			console.log("result : " + JSON.stringify(result))
-			if (!result || !result.password)
-			{
-				console.log("user not found or request problem")
-				cb(err,retu);
-			}
-			else
-			{
-			if (gen_hash == result.password)
-			{
+	users.get(id, function (err, result) {
+		console.log("result : " + JSON.stringify(result))
+		if (!result || !result.password) {
+			console.log("user not found or request problem")
+			cb(err, retu);
+		}
+		else {
+			if (gen_hash == result.password) {
 				console.log("pass ok")
 				retu.pubkey = result.pubkey;
 				retu.valid = true;
 				cb(err, retu);
 			}
-			else
-			{
+			else {
 				console.log("pass not ok")
 				cb(err, retu);
 			}
 		}
-	  });
+	});
 };
