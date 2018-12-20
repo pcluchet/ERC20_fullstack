@@ -34,6 +34,26 @@ paths:
         description: "token duration, in seconds"
         required: false
         type: "integer"
+      - name: "X-request-auto-expand-token"
+        in: "header"
+        description: "set this to true to automatically expand the token life every time it is used"
+        required: false
+        type: "boolean"
+      - name: "X-request-permanent-token"
+        in: "header"
+        description: "set this to true to make the access token permanent (unsafe)"
+        required: false
+        type: "boolean"
+      - name: "X-request-auto-expand-duration"
+        in: "header"
+        description: "how much time to add on token life expand (sec)"
+        required: false
+        type: "integer"
+      - name: "X-request-link-token-to-ip"
+        in: "header"
+        description: "set this to true to use the token only with this IP"
+        required: false
+        type: "boolean"
       - name: "username"
         in: "path"
         description: "Username of the user you want to authenticate"

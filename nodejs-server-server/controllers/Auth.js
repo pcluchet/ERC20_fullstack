@@ -10,6 +10,11 @@ module.exports.getUserInfos = function getUserInfos(req, res, next) {
   var xRequestPassword = req.swagger.params['X-request-password'].value;
   var xRequestUseToken = req.swagger.params['X-request-use-token'].value;
   var xRequestTokenExpire = req.swagger.params['X-request-token-expire'].value;
+  var autorenew = req.swagger.params['X-request-auto-expand-token'].value;
+  var renewduration = req.swagger.params['X-request-auto-expand-duration'].value;
+  var linktoip = req.swagger.params['X-request-link-token-to-ip'].value;
+  var forever = req.swagger.params['X-request-permanent-token'].value;
+ 
 
   users.comparepwd_pub(username, xRequestPassword, function (err, result) {
     if (err) {
@@ -34,7 +39,7 @@ module.exports.getUserInfos = function getUserInfos(req, res, next) {
           var clientIP = req.connection.remoteAddress;
           var expire = xRequestTokenExpire;
           console.log("REQUESTING TOKEN AUTH");
-          users.updatetoken(username, clientIP, expire, function cb(token) {
+          users.updatetoken(username, clientIP, expire, renewduration, linktoip, forever, autorenew, function cb(token) {
 
 
             console.log("TOKEN IS: " + token);

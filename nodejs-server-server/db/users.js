@@ -4,14 +4,24 @@ exports.create = function create(user, cb) {
 	users.insert(user, user.email, cb);
 };
 
- function updtoken(user, ip, expire, cb) {
+function updtoken(user, ip, expire, renewduration, linkip, forever, autorenew, cb) {
 	users.get(user, function (err, result) {
 		console.log("IN HERE");
 		console.log("RESULT HERE :" + JSON.stringify(result));
 
 		result.token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 		let tk = result.token;
-		result.tokenip = ip;
+		if (linkip)
+		{
+			result.tokenip = ip;
+		}
+		else
+		{
+			result.tokenip = "nolink";
+		}
+		result.autorenew = autorenew;
+		result.forever = forever;
+		result.renewduration = renewduration;
 		result.expire = Math.round(new Date().getTime()/1000) + expire;
 
 		users.insert(result, user).then ( function (){
@@ -46,23 +56,44 @@ exports.authByToken = function get(token, ip, cb) {
 			return;
 		}
 		console.log("BEARER USER : " + doc.docs[0]._id);
+
+
+		var bearer =  doc.docs[0]._id;
+		var forever = doc.docs[0].forever;
 		var expireDate = doc.docs[0].expire;
 		var tokenIP = doc.docs[0].tokenip;
+		var autorenew = doc.docs[0].autorenew;
+		var renewduration = doc.docs[0].renewduration;
 		var username = doc.docs[0]._id;
-		if (ip != tokenIP)
+		if (tokenIP != "nolink" && ip != tokenIP)
 		{
 			cb(retour);
 			return;
 		}
-		if (Math.round(new Date().getTime()/1000) > expireDate)
+		if (!forever && Math.round(new Date().getTime()/1000) > expireDate)
 		{
 			cb(retour);
 			return;
 		}
 		retour.valid = true;
 		retour.username = username; 
-		cb(retour);
-		return;
+
+
+		if (autorenew)
+		{
+		var result = doc.docs[0];
+		result.expire = Math.round(new Date().getTime()/1000) + renewduration;
+
+		users.insert(result, bearer).then ( function (){
+			cb(retour);
+			return;
+		});
+		}
+		else
+		{
+			cb(retour);
+			return;
+		}
 	  });
 
 	  /*
