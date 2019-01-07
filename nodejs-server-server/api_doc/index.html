@@ -569,7 +569,7 @@ SHOP ADD USER
 	<div class="collapsibleContent">
 		<p>
 
-		This function sets the a user as a shop admin.
+		This function sets a user as a shop admin.
 		</br></br>
 		<h5>Parameters : </h5>
 
@@ -589,91 +589,119 @@ SHOP ADD USER
 		</p>
 	</div>
 
+<!--
+==================================================
+SHOP ADD ITEM
+==================================================
+-->
+
 	<button class="collapsible">shop_add_item <div class="RW">Read + Write</div></button>
 	<div class="collapsibleContent">
 		<p>
 
-		This function returns the last 10 transactions involving the user given as parameter.
-															</br>
-															</br>
-															<h5>Parameters : </h5>
+			This function adds an item to a shop.
+			</br></br>
 
-															<ol>
-																<li>
-																	the public key of a user
-																</li>
-															</ol>
+			<h5>Parameters : </h5>
 
-															<h5>Payload : </h5>
-															It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+			<ol>
+				<li>
+					The shop ID
+				</li>
+				<li>
+					The item json (ex:
+					<code>
+						{
+							"Bidable": "false",
+							"Picture": "Picture base64 encoded",
+							"Name": "My new item",
+							"Detail": "This is a wanderful item, really !",
+							"Price": 42,
+							"Quantity": 314,
+							"Duration": 604800
+						}
+					</code>
+					, with duration in hours)
+				</li>
+			</ol>
 
-															</br>
-															</br>
-															<code>
-																<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
-															</code>
+			<h5>Payload : </h5>
+
+			With a successful operation, the function returns the new item ID.
+			</br></br>
 
 		</p>
 	</div>
 
-
-
-
+<!--
+==================================================
+SHOP ADD RAW
+==================================================
+-->
 
 	<button class="collapsible">shop_add_raw <div class="RW">Read + Write</div></button>
 	<div class="collapsibleContent">
 		<p>
 
-		This function returns the last 10 transactions involving the user given as parameter.
-																</br>
-																</br>
-																<h5>Parameters : </h5>
+			This function adds a raw material to a shop.
+			</br></br>
 
-																<ol>
-																	<li>
-																		the public key of a user
-																	</li>
-																</ol>
+			<h5>Parameters : </h5>
 
-																<h5>Payload : </h5>
-																It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+			<ol>
+				<li>
+					The shop ID
+				</li>
+				<li>
+					The material json (ex:
+					<code>
+						{
+							"RawId": "PP456...",
+							"Price": 42,
+							"Quantity": 314,
+						}
+					</code>
+					)
+				</li>
+			</ol>
 
-																</br>
-																</br>
-																<code>
-																	<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
-																</code>
+			<h5>Payload : </h5>
 
+			With a successful operation, the function returns the material ID.
+			</br></br>
 		</p>
 	</div>
 
-
-
-
+<!--
+==================================================
+SHOP SET ITEM QUANTITY
+==================================================
+-->
 
 	<button class="collapsible">shop_set_item_quantity <div class="RW">Read + Write</div></button>
 	<div class="collapsibleContent">
 		<p>
 
-		This function returns the last 10 transactions involving the user given as parameter.
-																	</br>
-																	</br>
-																	<h5>Parameters : </h5>
+		This function updates the quantity of an item.
+		</br></br>
 
-																	<ol>
-																		<li>
-																			the public key of a user
-																		</li>
-																	</ol>
+		<h5>Parameters : </h5>
 
-																	<h5>Payload : </h5>
-																	It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+		<ol>
+			<li>
+				The shop ID
+			</li>
+			<li>
+				The item ID
+			</li>
+			<li>
+				The new quantity
+			</li>
+		</ol>
 
-																	</br>
-																	</br>
-																	<code>
-																		<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
-																	</code>
+		<h5>Payload : </h5>
+		With a successful operation, the function returns the item ID.
+		</br></br>
 
 		</p>
 	</div>
