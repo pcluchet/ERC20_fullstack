@@ -405,7 +405,7 @@ BUY ITEM
 	<div class="collapsibleContent">
 		<p>
 
-			This function makes the given item bought by the user.
+			This function makes the user buy the given item.
 			</br></br>
 
 			<h5>Parameters : </h5>
@@ -431,36 +431,47 @@ BUY ITEM
 		</p>
 	</div>
 
-
+<!--
+==================================================
+BUY RAW
+==================================================
+-->
 
 	<button class="collapsible">buy_raw <div class="RW">Read + Write</div></button>
 	<div class="collapsibleContent">
 		<p>
 
-		This function returns the last 10 transactions involving the user given as parameter.
-										</br>
-										</br>
-										<h5>Parameters : </h5>
+			This function makes the user buy the given raw material.
+			</br></br>
 
-										<ol>
-											<li>
-												the public key of a user
-											</li>
-										</ol>
+			<h5>Parameters : </h5>
 
-										<h5>Payload : </h5>
-										It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+			<ol>
+				<li>
+					Item purchase json (ex:
+					<code>
+						{
+							"ItemId":"EG54...",
+							"Quantity": 2,
+							"ShopId": "Shop42"
+						}
+					</code>)
+				</li>
+			</ol>
 
-										</br>
-										</br>
-										<code>
-											<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
-										</code>
+			<h5>Payload : </h5>
+
+			If the opperation works, it returns the transaction ID.
+			</br></br>
 
 		</p>
 	</div>
 
-
+<!--
+==================================================
+MAKE BID
+==================================================
+-->
 
 	<button class="collapsible">make_bid <div class="RW">Read + Write</div></button>
 	<div class="collapsibleContent">
