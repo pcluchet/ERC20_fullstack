@@ -643,7 +643,7 @@ SHOP ADD RAW
 	<div class="collapsibleContent">
 		<p>
 
-			This function adds a raw material to a shop.
+			This function tells that the shop sells an existing raw material.
 			</br></br>
 
 			<h5>Parameters : </h5>
@@ -682,154 +682,156 @@ SHOP SET ITEM QUANTITY
 	<div class="collapsibleContent">
 		<p>
 
-		This function updates the quantity of an item.
+			This function updates the quantity of an item.
+			</br></br>
+
+			<h5>Parameters : </h5>
+
+			<ol>
+				<li>
+					The shop ID
+				</li>
+				<li>
+					The item ID
+				</li>
+				<li>
+					The new quantity
+				</li>
+			</ol>
+
+			<h5>Payload : </h5>
+			With a successful operation, the function returns the item ID.
+			</br></br>
+
+		</p>
+	</div>
+
+<!--
+==================================================
+ADD RAW
+==================================================
+-->
+
+	<button class="collapsible">add_raw <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+			This function creates a new raw material.
+			</br></br>
+
+			<h5>Parameters : </h5>
+
+			<ol>
+				<li>
+					The material json (ex:
+					<code>
+						{
+							"Name": "PP"
+							"Detail": "Melt from 200 celsius degres"
+							"Picture": "Picture Base64 encoded"
+						}
+					</code>
+					)
+				</li>
+			</ol>
+
+			<h5>Payload : </h5>
+
+			With a successful operation, the function returns the new material ID.
+			</br></br>
+
+		</p>
+	</div>
+
+<!--
+==================================================
+IS ADMIN
+==================================================
+-->
+
+	<button class="collapsible">is_admin <div class="R">Read Only</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+			This function check whether the user is blockchain admin or not.
+			</br></br>
+			<h5>No parameter </h5>
+
+			<ol>
+				<li>
+					The user public key
+				</li>
+			</ol>
+
+			<h5>Payload : </h5>
+
+			The function returns a "true" string if the user is blockchain
+			admin. If not, the result will be either a "false" string or a
+			blockchain error message.
+			</br></br>
+
+		</p>
+	</div>
+
+<!--
+==================================================
+ADMIN GET
+==================================================
+-->
+
+	<button class="collapsible">admin_get <div class="R">Read Only</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+			This function returns the list of the blockchain administrators.
+			</br></br>
+
+			<h5>No parameter </h5>
+
+			<h5>Payload : </h5>
+			The function returns a json array of blockchain administrators:
+
+			<code>
+				["User4", "User2", ...]
+			</code>
+
+			</br></br>
+
+		</p>
+	</div>
+
+<!--
+==================================================
+ADMIN SET
+==================================================
+-->
+
+	<button class="collapsible">admin_set <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function updated the blockchain administrators list.
 		</br></br>
 
 		<h5>Parameters : </h5>
 
 		<ol>
 			<li>
-				The shop ID
-			</li>
-			<li>
-				The item ID
-			</li>
-			<li>
-				The new quantity
+				New blockchain administrators list as json array (ex:
+				<code>
+					["User4", "User2", ...]
+				</code>)
 			</li>
 		</ol>
 
 		<h5>Payload : </h5>
-		With a successful operation, the function returns the item ID.
+		With a successful update, the function returns the blockchain
+		administrators list.
 		</br></br>
 
 		</p>
 	</div>
 
-
-
-
-
-	<button class="collapsible">add_raw <div class="RW">Read + Write</div></button>
-	<div class="collapsibleContent">
-		<p>
-
-		This function returns the last 10 transactions involving the user given as parameter.
-																		</br>
-																		</br>
-																		<h5>Parameters : </h5>
-
-																		<ol>
-																			<li>
-																				the public key of a user
-																			</li>
-																		</ol>
-
-																		<h5>Payload : </h5>
-																		It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
-
-																		</br>
-																		</br>
-																		<code>
-																			<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
-																		</code>
-
-		</p>
-	</div>
-
-
-
-
-
-	<button class="collapsible">is_admin <div class="R">Read Only</div></button>
-	<div class="collapsibleContent">
-		<p>
-
-		This function returns the last 10 transactions involving the user given as parameter.
-																			</br>
-																			</br>
-																			<h5>Parameters : </h5>
-
-																			<ol>
-																				<li>
-																					the public key of a user
-																				</li>
-																			</ol>
-
-																			<h5>Payload : </h5>
-																			It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
-
-																			</br>
-																			</br>
-																			<code>
-																				<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
-																			</code>
-
-		</p>
-	</div>
-
-
-
-
-
-	<button class="collapsible">admin_get <div class="R">Read Only</div></button>
-	<div class="collapsibleContent">
-		<p>
-
-		This function returns the last 10 transactions involving the user given as parameter.
-																				</br>
-																				</br>
-																				<h5>Parameters : </h5>
-
-																				<ol>
-																					<li>
-																						the public key of a user
-																					</li>
-																				</ol>
-
-																				<h5>Payload : </h5>
-																				It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
-
-																				</br>
-																				</br>
-																				<code>
-																					<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
-																				</code>
-
-		</p>
-	</div>
-
-
-
-
-
-	<button class="collapsible">admin_set <div class="RW">Read + Write</div></button>
-	<div class="collapsibleContent">
-		<p>
-
-		This function returns the last 10 transactions involving the user given as parameter.
-																					</br>
-																					</br>
-																					<h5>Parameters : </h5>
-
-																					<ol>
-																						<li>
-																							the public key of a user
-																						</li>
-																					</ol>
-
-																					<h5>Payload : </h5>
-																					It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
-
-																					</br>
-																					</br>
-																					<code>
-																						<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
-																					</code>
-
-		</p>
-	</div>
 	</body>
-
 
 </html> 
