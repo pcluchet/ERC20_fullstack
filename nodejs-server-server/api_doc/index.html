@@ -522,70 +522,69 @@ SETTLE BID
 		</ol>
 
 		<h5>Payload : </h5>
-		With a working sale, the function returns the sale transaction ID.
+		With a successful sale, the function returns the sale transaction ID.
 
 		</p>
 	</div>
 
 <!--
 ==================================================
-NEW SHOP
+SHOP CREATE
 ==================================================
 -->
 
-	<button class="collapsible">new_shop <div class="RW">Read + Write</div></button>
+	<button class="collapsible">shop_create<div class="RW">Read + Write</div></button>
 	<div class="collapsibleContent">
 		<p>
 
-		This function returns the last 10 transactions involving the user given as parameter.
-													</br>
-													</br>
-													<h5>Parameters : </h5>
+		This function creates a shop a set the user as admin.
+		</br></br>
 
-													<ol>
-														<li>
-															the public key of a user
-														</li>
-													</ol>
+		<h5>Parameters : </h5>
 
-													<h5>Payload : </h5>
-													It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+		<ol>
+			<li>
+				The shop name
+			</li>
+			<li>
+				The ERC20 address to transfer money to when a purchase occures
+			</li>
+		</ol>
 
-													</br>
-													</br>
-													<code>
-														<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
-													</code>
+		<h5>Payload : </h5>
+
+		With a successful shop creation, the function returns the new shop ID.
+		</br></br>
 
 		</p>
 	</div>
 
-
-
+<!--
+==================================================
+SHOP ADD USER
+==================================================
+-->
 
 	<button class="collapsible">shop_add_user <div class="RW">Read + Write</div></button>
 	<div class="collapsibleContent">
 		<p>
 
-		This function returns the last 10 transactions involving the user given as parameter.
-														</br>
-														</br>
-														<h5>Parameters : </h5>
+		This function sets the a user as a shop admin.
+		</br></br>
+		<h5>Parameters : </h5>
 
-														<ol>
-															<li>
-																the public key of a user
-															</li>
-														</ol>
+		<ol>
+			<li>
+				The shop ID
+			</li>
+			<li>
+				User public key
+			</li>
+		</ol>
 
-														<h5>Payload : </h5>
-														It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
-
-														</br>
-														</br>
-														<code>
-															<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
-														</code>
+		<h5>Payload : </h5>
+		With a successful operation, the function returns a "Success" string.
+		</br></br>
 
 		</p>
 	</div>
