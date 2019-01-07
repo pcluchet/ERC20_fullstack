@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<style>
+body {
+	font-family: Helvetica, Arial, Sans-Serif;
+}
+				/* Collapsible Button */
+				.collapsible {
+					display: flex;
+					background: #C9D6E6  repeat-x scroll left bottom;
+					border: 1px solid #BFBFBF;
+					color: #3E608F;
+					cursor: pointer;
+					font: bold 14px Verdana, Tahoma, "Times New Roman";
+					padding: 0.55em 8px;
+					outline: none;
+					text-align: left; 
+					width: 100%;
+				}
+				.collapsible.active, .collapsible:hover {
+					background-color: #C3D0E0;
+				}
+
+				.R {
+					margin-left : 20px;
+					color : #273746;
+					font-size : 10px;
+					padding : 5px;
+					width : 65px;
+					border-radius : 20px;
+					background-color :  #2ecc71 ;
+				}
+				.RW {
+
+					margin-left : 20px;
+					color : #273746;
+					font-size : 10px;
+					padding : 5px;
+					width : 78px;
+
+					border-radius : 20px;
+					background-color : #3498db;
+				}
+
+				.collapsible:focus {
+					background-color: #C3D0E0;
+					border: 2px solid #3E608F; 
+					text-decoration: underline
+				}
+
+				/* Arrows */
+				.collapsible:before {
+					content: '+'; /* right arrow */
+					float: left;
+					font-weight: bold;
+					margin-right: 1em;
+				}
+				.collapsible.active:before {
+					content: '-'; /* down arrow */
+				}
+
+				/* Collapsible Content */
+				.collapsibleContent {
+					background-color: #ffffff;
+					border: 1px solid #bfbfbf;
+					border-top: 0;
+					display: none;
+					padding: 1em;
+				}
+
+		</style>
+		<script>
+$(document).ready(function() {
+
+	/************************************************************************
+	 * Initialize the collapsible effect for elements that follow this markup:
+	 *
+	 * button.collapsible
+	 * .collapsibleContent
+	 *
+	 * if the button.collapsible has an active class, it will start open.
+	 */
+	function initCollapsibles() {
+		var collapsibleButtons$ = $(".collapsible");
+		collapsibleButtons$.each(function(index, ele) {
+			var collapsible$ = $(ele),
+			content$ = collapsible$.next(".collapsibleContent");
+			collapsible$.click(function() {
+				collapsible$.toggleClass("active");
+				if (!collapsible$.hasClass("active")) {
+					content$.slideUp();     
+				} else {
+					content$.slideDown();           
+				}
+			});     
+
+			if (collapsible$.hasClass("active")) {
+				content$.slideDown();     
+			}
+		}); 
+	} 
+
+	initCollapsibles();
+});
+
+		</script>
+
+
+	</head> 
+	<body>
+
+		<h1>Chaincodes functions list</h1>
+		<h2>ERC20</h2>
+		<button class="collapsible">latest<div class="R">Read Only</div></button>
+		<div class="collapsibleContent">
+			<p>
+
+			This function returns the last 10 transactions involving the user given as parameter.
+			</br>
+			</br>
+			<h5>Parameters : </h5>
+
+			<ol>
+				<li>
+					the public key of a user
+				</li>
+			</ol>
+
+			<h5>Payload : </h5>
+			It returns a json array similar to this example, each of them is a transaction involving the user (either from or to):
+
+			</br>
+			</br>
+			<code>
+				<p>[{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}]</p>
+			</code>
+
+			</p>
+		</div>
+
+		<button class="collapsible">balanceOf  <div class="R">Read Only</div> </button>
+		<div class="collapsibleContent">
+			<p>
+			This function returns how much token a given user have.
+				</br>
+				</br>
+				<h5>Parameters : </h5>
+
+				<ol>
+					<li>
+						the public key of a user
+					</li>
+				</ol>
+
+				<h5>Payload : </h5>
+				It returns a plain text value of the token amount, like :
+
+				</br>
+				</br>
+				<code>10080</code>
+			</p>
+		</div>
+
+
+		<button class="collapsible">transfer <div class="RW">Read + Write</div></button>
+		<div class="collapsibleContent">
+			<p>
+
+			This function transfer the given amount of tokens to a given user.</br>
+				The funds originate from the user logged in.
+				</br>
+				</br>
+				<h5>Parameters : </h5>
+
+				<ol>
+					<li>
+						The public key of the user to which you want to tranfer tokens
+					</li>
+					<li>
+						Amount of tokens to transfer
+					</li>
+
+				</ol>
+
+				<h5>Payload : </h5>
+				It returns a plain text string saying if it worked, like :</br>
+				Successfull transaction
+
+				</br>
+				</br>
+
+			</p>
+		</div>
+
+
+		<button class="collapsible">transferFrom <div class="RW">Read + Write</div></button>
+		<div class="collapsibleContent">
+			<p>
+			This function transfer the given amount of tokens to a given user.
+			The funds originate from the user given as parameter.
+			For the operation to be successfull, the specified user spending tokens must have allowed the user triggering the transaction to withdraw from his account a sufficient amount of funds. This action can be done by the "approve" function.
+			 
+			</br>
+			</br>
+			<h5>Parameters : </h5>
+
+			<ol>
+				<li>
+					The public key of the user spending tokens
+				</li>
+				<li>
+
+					The public key of the user receiving tokens
+				</li>
+				<li>
+					Amount of tokens to transfer
+				</li>
+
+
+			</ol>
+
+			<h5>Payload : </h5>
+It returns a plain text string saying if it worked, like :
+
+			</br>
+Successfull transaction
+			</p>
+		</div>
+
+
+		<button class="collapsible">approve <div class="RW">Read + Write</div></button>
+		<div class="collapsibleContent">
+			<p>
+
+			This function allow a given user to withdraw tokens from your account on your behalf, with a given limit regarding the total amount he can withdraw. 
+				</br>
+				</br>
+				<h5>Parameters : </h5>
+
+				<ol>
+					<li>
+The public key of the user you want to allow spending your token
+					</li>
+<li>
+	Total amount of tokens you allow the given user to use on your behalf
+					</li>
+
+				</ol>
+
+				<h5>Payload : </h5>
+				It returns a plain text string saying if it worked, like :</br>
+Successfull approval
+
+			</p>
+		</div>
+
+		<h2>invoicing</h2>
+
+
+
+		<button class="collapsible">createBill <div class="RW">Read + Write</div></button>
+		<div class="collapsibleContent">
+			<p>
+			Create a bill in the blockchain, the bill is owned by the one logged in.
+			He will be the one who receive the funds when the bill is eventually 
+					</br>
+					</br>
+					<h5>Parameters : </h5>
+
+					<ol>
+						<li>
+							A json array of this format:
+							</br>
+							<code>
+								<p>[<br /> {<br /> "Name":"product_name",<br /> "Amount": [product price (number)] ,<br /> "Count": [product quantity (number)]<br /> },<br /> {"Name":"salad","Amount":3, &ldquo;Count" : 1}<br />]</p>
+							</code>
+						</li>
+					</ol>
+
+					<h5>Payload : </h5>
+					It returns a plain text string of the bill id created , like :</br>
+					4a42b55c1b2e8f277c3386faed6ba55e1972766c02c9e1cb0754b9998b5bb33d
+					 
+			</p>
+		</div>
+
+
+
+		<button class="collapsible">payBill <div class="RW">Read + Write</div></button>
+		<div class="collapsibleContent">
+			<p>
+			Attempt to pay the bill identified by his id passed as parameter.
+			This function calls the ERC20 chaincode and transfer the bill amount from the one signing the transaction to the one who created the bill. 
+						</br>
+						</br>
+						<h5>Parameters : </h5>
+
+						<ol>
+							<li>
+								the id given by a “createBill" call, identifying the bill you want to pay.
+							</li>
+						</ol>
+
+						<h5>Payload : </h5>
+						It returns a plain text string containing the recipient address, and the total amount paid , and the response from ERC20 chaincode (this needs to be formalized,  in the future it might return a proper json)
+						For now it returns this messy thing:
+						Invoke chaincode successful. ownerid : MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtq9gN/GrtZEGlq0KMZaRU1vsKxt++LUabVYj88n5u7X6/GIqz55dS4NHA2GAR2EqpQQ5kmsMxjS+PmzftTgq4Q==, totalamount: 5, Got response Successfull transaction
+
+			</p>
+		</div>
+
+
+		<h2>marketplace</h2>
+
+
+
+		<button class="collapsible">new_user <div class="RW">Read + Write</div></button>
+		<div class="collapsibleContent">
+			<p>
+
+			This function returns the last 10 transactions involving the user given as parameter.
+							</br>
+							</br>
+							<h5>Parameters : </h5>
+
+							<ol>
+								<li>
+									the public key of a user
+								</li>
+							</ol>
+
+							<h5>Payload : </h5>
+							It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+							</br>
+							</br>
+							<code>
+								<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+							</code>
+
+			</p>
+		</div>
+
+
+
+
+		<button class="collapsible">query_data <div class="R">Read Only</div></button>
+		<div class="collapsibleContent">
+			<p>
+
+			This function returns the last 10 transactions involving the user given as parameter.
+								</br>
+								</br>
+								<h5>Parameters : </h5>
+
+								<ol>
+									<li>
+										the public key of a user
+									</li>
+								</ol>
+
+								<h5>Payload : </h5>
+								It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+								</br>
+								</br>
+								<code>
+									<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+								</code>
+
+			</p>
+		</div>
+
+	</body>
+
+
+
+
+
+	<button class="collapsible">buy_item <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function returns the last 10 transactions involving the user given as parameter.
+									</br>
+									</br>
+									<h5>Parameters : </h5>
+
+									<ol>
+										<li>
+											the public key of a user
+										</li>
+									</ol>
+
+									<h5>Payload : </h5>
+									It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+									</br>
+									</br>
+									<code>
+										<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+									</code>
+
+		</p>
+	</div>
+
+
+
+	<button class="collapsible">buy_raw <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function returns the last 10 transactions involving the user given as parameter.
+										</br>
+										</br>
+										<h5>Parameters : </h5>
+
+										<ol>
+											<li>
+												the public key of a user
+											</li>
+										</ol>
+
+										<h5>Payload : </h5>
+										It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+										</br>
+										</br>
+										<code>
+											<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+										</code>
+
+		</p>
+	</div>
+
+
+
+	<button class="collapsible">make_bid <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function returns the last 10 transactions involving the user given as parameter.
+											</br>
+											</br>
+											<h5>Parameters : </h5>
+
+											<ol>
+												<li>
+													the public key of a user
+												</li>
+											</ol>
+
+											<h5>Payload : </h5>
+											It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+											</br>
+											</br>
+											<code>
+												<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+											</code>
+
+		</p>
+	</div>
+
+
+
+
+
+
+	<button class="collapsible">settle_bid <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function returns the last 10 transactions involving the user given as parameter.
+												</br>
+												</br>
+												<h5>Parameters : </h5>
+
+												<ol>
+													<li>
+														the public key of a user
+													</li>
+												</ol>
+
+												<h5>Payload : </h5>
+												It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+												</br>
+												</br>
+												<code>
+													<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+												</code>
+
+		</p>
+	</div>
+
+
+
+
+	<button class="collapsible">new_shop <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function returns the last 10 transactions involving the user given as parameter.
+													</br>
+													</br>
+													<h5>Parameters : </h5>
+
+													<ol>
+														<li>
+															the public key of a user
+														</li>
+													</ol>
+
+													<h5>Payload : </h5>
+													It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+													</br>
+													</br>
+													<code>
+														<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+													</code>
+
+		</p>
+	</div>
+
+
+
+
+	<button class="collapsible">shop_add_user <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function returns the last 10 transactions involving the user given as parameter.
+														</br>
+														</br>
+														<h5>Parameters : </h5>
+
+														<ol>
+															<li>
+																the public key of a user
+															</li>
+														</ol>
+
+														<h5>Payload : </h5>
+														It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+														</br>
+														</br>
+														<code>
+															<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+														</code>
+
+		</p>
+	</div>
+
+	<button class="collapsible">shop_add_item <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function returns the last 10 transactions involving the user given as parameter.
+															</br>
+															</br>
+															<h5>Parameters : </h5>
+
+															<ol>
+																<li>
+																	the public key of a user
+																</li>
+															</ol>
+
+															<h5>Payload : </h5>
+															It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+															</br>
+															</br>
+															<code>
+																<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+															</code>
+
+		</p>
+	</div>
+
+
+
+
+
+	<button class="collapsible">shop_add_raw <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function returns the last 10 transactions involving the user given as parameter.
+																</br>
+																</br>
+																<h5>Parameters : </h5>
+
+																<ol>
+																	<li>
+																		the public key of a user
+																	</li>
+																</ol>
+
+																<h5>Payload : </h5>
+																It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+																</br>
+																</br>
+																<code>
+																	<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+																</code>
+
+		</p>
+	</div>
+
+
+
+
+
+	<button class="collapsible">shop_set_item_quantity <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function returns the last 10 transactions involving the user given as parameter.
+																	</br>
+																	</br>
+																	<h5>Parameters : </h5>
+
+																	<ol>
+																		<li>
+																			the public key of a user
+																		</li>
+																	</ol>
+
+																	<h5>Payload : </h5>
+																	It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+																	</br>
+																	</br>
+																	<code>
+																		<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+																	</code>
+
+		</p>
+	</div>
+
+
+
+
+
+	<button class="collapsible">add_raw <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function returns the last 10 transactions involving the user given as parameter.
+																		</br>
+																		</br>
+																		<h5>Parameters : </h5>
+
+																		<ol>
+																			<li>
+																				the public key of a user
+																			</li>
+																		</ol>
+
+																		<h5>Payload : </h5>
+																		It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+																		</br>
+																		</br>
+																		<code>
+																			<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+																		</code>
+
+		</p>
+	</div>
+
+
+
+
+
+	<button class="collapsible">is_admin <div class="R">Read Only</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function returns the last 10 transactions involving the user given as parameter.
+																			</br>
+																			</br>
+																			<h5>Parameters : </h5>
+
+																			<ol>
+																				<li>
+																					the public key of a user
+																				</li>
+																			</ol>
+
+																			<h5>Payload : </h5>
+																			It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+																			</br>
+																			</br>
+																			<code>
+																				<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+																			</code>
+
+		</p>
+	</div>
+
+
+
+
+
+	<button class="collapsible">admin_get <div class="R">Read Only</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function returns the last 10 transactions involving the user given as parameter.
+																				</br>
+																				</br>
+																				<h5>Parameters : </h5>
+
+																				<ol>
+																					<li>
+																						the public key of a user
+																					</li>
+																				</ol>
+
+																				<h5>Payload : </h5>
+																				It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+																				</br>
+																				</br>
+																				<code>
+																					<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+																				</code>
+
+		</p>
+	</div>
+
+
+
+
+
+	<button class="collapsible">admin_set <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+		This function returns the last 10 transactions involving the user given as parameter.
+																					</br>
+																					</br>
+																					<h5>Parameters : </h5>
+
+																					<ol>
+																						<li>
+																							the public key of a user
+																						</li>
+																					</ol>
+
+																					<h5>Payload : </h5>
+																					It returns a json array of this kind of object, each of them is a transaction involving the user (either from or to):
+
+																					</br>
+																					</br>
+																					<code>
+																						<p>{<br />&nbsp; "txid": "The transaction uuid",<br />&nbsp; "timestamp": POSIX timestamp of the transaction,<br />&nbsp; "value": <br />{<br />&nbsp;&nbsp;&nbsp; "From": "Public key sending the funds",<br />&nbsp;&nbsp;&nbsp; "To": "Public key receiving the funds",<br />&nbsp;&nbsp;&nbsp; "Value": Amount of tokens transfered<br />&nbsp; }<br />}</p>
+																					</code>
+
+		</p>
+	</div>
+
+
+</html> 

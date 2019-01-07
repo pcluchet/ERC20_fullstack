@@ -13,6 +13,9 @@ var serverPort = 8080;
 
 app.use(cors());
 app.use(serveStatic("public"));
+app.use("/cc_docs",serveStatic(path.join(__dirname, '/api_doc')))
+//app.use(serveStatic("public/api_doc"));
+//app.use('/cc_docs', app.static(__dirname + '/api_doc'))
 
 // swaggerRouter configuration
 var options = {
