@@ -3,6 +3,17 @@
 var fs = require('fs'),
     path = require('path'),
     http = require('http');
+const https = require('https');
+// Certificate
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/api.plastictwist.com/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/api.plastictwist.com/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/api.plastictwist.com/chain.pem', 'utf8');
+
+const credentials = {
+	key: privateKey,
+	cert: certificate,
+	ca: ca
+};
 
 var app = require('connect')();
 var cors = require('cors');
@@ -47,6 +58,12 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   http.createServer(app).listen(serverPort, function () {
     console.log('Your server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
     console.log('Swagger-ui is available on http://localhost:%d/docs', serverPort);
+  });
+
+  const httpsServer = https.createServer(credentials, app);
+  
+  httpsServer.listen(8080, () => {
+    console.log('HTTPS Server running on port 8080');
   });
 
 });
