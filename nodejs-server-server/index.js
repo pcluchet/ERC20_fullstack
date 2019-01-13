@@ -2,12 +2,12 @@
 
 var fs = require('fs'),
     path = require('path'),
-    http = require('http');
-const https = require('https');
+    http = require('http'),
+	https = require('https');
 // Certificate
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/api.plastictwist.com/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/api.plastictwist.com/cert.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/api.plastictwist.com/chain.pem', 'utf8');
+const privateKey = fs.readFileSync(path.join(__dirname, '/_certs/privkey1.pem'), 'utf8');
+const certificate = fs.readFileSync(path.join(__dirname, '/_certs/cert1.pem'), 'utf8');
+const ca = fs.readFileSync(path.join(__dirname, '/_certs/chain1.pem'), 'utf8');
 
 const credentials = {
 	key: privateKey,
@@ -20,7 +20,7 @@ var cors = require('cors');
 var serveStatic = require('serve-static');
 var swaggerTools = require('swagger-tools');
 var jsyaml = require('js-yaml');
-var serverPort = 8080;
+var serverPort = 80;
 
 app.use(cors());
 app.use(serveStatic("public"));
@@ -62,8 +62,8 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
 
   const httpsServer = https.createServer(credentials, app);
   
-  httpsServer.listen(8080, () => {
-    console.log('HTTPS Server running on port 8080');
+  httpsServer.listen(443, () => {
+    console.log('HTTPS Server running on port 443');
   });
 
 });

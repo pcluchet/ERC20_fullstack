@@ -100,7 +100,8 @@ services:
     command: bash -c "source parse.sh && npm start"
     # command: peer node start --peer-chaincodedev=true
     ports:
-      - 8080:8080
+      - 80:80
+      - 443:443
     #volumes:
     depends_on:
       - peer0.MEDSOS.example.com
@@ -113,7 +114,7 @@ services:
     working_dir: /
     # commd: peer node start --peer-chaincodedev=true
     ports:
-      - 80:80
+      - 81:80
     #volumes:
     depends_on:
       - api.MEDSOS.example.com
