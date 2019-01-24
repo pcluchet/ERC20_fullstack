@@ -8,3 +8,9 @@ network/go/*
 node_modules/
 Pwallet/android/build
 centralbank_pubkey.txt
+
+.*.swp
+*/.*.swp
+*/*/.*.swp
+*/*/*/.*.swp
+*/*/*/*/.*.swp
