@@ -26,25 +26,18 @@ func getSale(userKey string, arg string) (Sale, error) {
 	return sale, nil
 }
 
-func transferMoneyForSale(shop Shop, amount uint64) error {
-	//TODO:	if == 1 admin on shop	-> transfer to admin
-	//		if > 1 admin on shop	-> transfer to shop
-	// Requires couchdb queries
-	return transfer(shop.ERC20Address, amount)
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-func buyItem(args []string) (string, error) {
-	var err error
-	var userKey string
-	var sale Sale
-	var item ShopItem
-	var bytes []byte
-	var txId string
-	//var	user			User
+func	buyItem(args []string) (string, error) {
+	var	err			error
+	var	userKey		string
+	var	sale		Sale
+	var	shop		Shop
+	var	item		ShopItem
+	var	bytes		[]byte
+	var	txId		string
 
 	/// CHECK ARGUMENTS
 	/// TODO : when better API, check this better
@@ -89,14 +82,13 @@ func buyItem(args []string) (string, error) {
 	//////////////////////
 	//TODO: MONEY TRANSFER
 	//////////////////////
-	var shop Shop
 
 	shop, err = getShop(item.ShopId)
 	if err != nil {
 		return "", err
 	}
 
-	err = transferMoneyForSale(shop, sale.Price*sale.Quantity)
+	err = transferMoneyItem(shop, item, sale)
 	if err != nil {
 		return "", err
 	}

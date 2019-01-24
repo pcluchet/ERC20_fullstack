@@ -7,43 +7,18 @@ import "fmt"
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-//func	getSale(userKey string, arg string) (Sale, error) {
-//	var	err				error
-//	var	submission		SaleSubmission
-//	var	sale			Sale
-//
-//	err = json.Unmarshal([]byte(arg), &submission)
-//	if err != nil {
-//		return sale, fmt.Errorf("Cannot unmarshal sale submission.")
-//	} else if submission.Quantity == 0 {
-//		return sale, fmt.Errorf("Sale submission's quantity must be greater than 0.")
-//	}
-//	sale.User = userKey
-//	sale.ItemId = submission.ItemId
-//	sale.Quantity = submission.Quantity
-//	sale.DocType = "Sale"
-//	return sale, nil
-//}
-//
-//func	transferMoneyForSale(shopId string, amount uint64) (error) {
-//	//TODO:	if == 1 admin on shop	-> transfer to admin
-//	//		if > 1 admin on shop	-> transfer to shop
-//	// Requires couchdb queries
-//	return transfer(shopId, amount)
-//}
-
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-func buyRaw(args []string) (string, error) {
-	var err error
-	var userKey string
-	var sale Sale
-	var raw ShopRaw
-	var bytes []byte
-	var txId string
-	//var	user			User
+func	buyRaw(args []string) (string, error) {
+	var	err		error
+	var	userKey	string
+	var	sale	Sale
+	var	shop	Shop
+	var	raw		ShopRaw
+	var	bytes	[]byte
+	var	txId	string
 
 	/// CHECK ARGUMENTS
 	/// TODO : when better API, check this better
@@ -85,14 +60,12 @@ func buyRaw(args []string) (string, error) {
 	//TODO: MONEY TRANSFER
 	//////////////////////
 
-	var shop Shop
-
 	shop, err = getShop(raw.ShopId)
 	if err != nil {
 		return "", err
 	}
 
-	err = transferMoneyForSale(shop, sale.Price*sale.Quantity)
+	err = transferMoneyRaw(shop, raw, sale)
 	if err != nil {
 		return "", err
 	}
