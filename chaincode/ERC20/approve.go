@@ -52,7 +52,7 @@ func approve(argv []string) (string, error) {
 	if err = changeStateFrom(tx, _approve); err != nil {
 		return "", err
 	}
-	if err = event(tx.From, tx.To, tx.Amount, "approval"); err != nil {
+	if err = event(tx.From, tx.To, tx.Amount, "", "approval"); err != nil {
 		return "", err
 	}
 
