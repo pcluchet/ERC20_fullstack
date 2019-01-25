@@ -272,7 +272,7 @@ paths:
       - name: "X-request-misc-public"
         in: "header"
         description: "misc data stored off the blockchain, accessible by everyone"
-        required: true
+        required: false
         type: "string"
         format: "string"
       responses:
