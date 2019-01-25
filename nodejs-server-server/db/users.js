@@ -32,6 +32,25 @@ function updtoken(user, ip, expire, renewduration, linkip, forever, autorenew, c
 	});
 };
 
+//newpass should be already hashed
+function updpassword(user, newpass, cb) {
+	users.get(user, function (err, result) {
+		console.log("IN HERE");
+		console.log("RESULT HERE :" + JSON.stringify(result));
+
+		result.password = newpass;
+		users.insert(result, user).then(
+			function () 
+			{ 
+				var ret = "Password updated successfully";
+				cb(ret); 
+			});
+		});
+};
+
+exports.updpassword = updpassword;
+
+
 exports.updatetoken = updtoken;
 
 exports.get = function get(id, cb) {
