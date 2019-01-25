@@ -8,6 +8,8 @@ var users = require('../db/users');
 module.exports.register = function register (req, res, next) {
   var username = req.swagger.params['username'].value;
   var xRequestPassword = req.swagger.params['X-request-password'].value;
+  var misc_private = req.swagger.params['X-request-misc-private'].value;
+  var misc_public = req.swagger.params['X-request-misc-public'].value;
 
   console.log("Register !!");
 
@@ -24,14 +26,13 @@ query.ca_register(username, caAddr).then(
 
     if (JSON.parse(result).status == "failed")
     {
-
-    res.writeHead(409, { "Content-Type": "text/plain" });
-    return res.end("username already exists");
-
+      res.writeHead(409, { "Content-Type": "text/plain" });
+      return res.end("username already exists");
     }
-
     var user = {  
       email: username,
+      misc_private : misc_private,
+      misc_public : misc_public,
       password: xRequestPassword,
       pubkey : JSON.parse(result).pubkey,
   };

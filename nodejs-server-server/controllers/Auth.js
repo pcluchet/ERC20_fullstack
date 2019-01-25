@@ -30,7 +30,9 @@ module.exports.getUserInfos = function getUserInfos(req, res, next) {
       console.log('user :' + JSON.stringify(result));
       if (result.valid) {
         var body = {
-          "pubkey": result.pubkey
+          "pubkey": result.pubkey,
+          "misc_public": result.fulluser.misc_public,
+          "misc_private": result.fulluser.misc_private
         };
 
 
