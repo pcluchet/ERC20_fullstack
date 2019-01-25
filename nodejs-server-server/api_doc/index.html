@@ -4,9 +4,9 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<style>
-body {
-	font-family: Helvetica, Arial, Sans-Serif;
-}
+				body {
+					font-family: Helvetica, Arial, Sans-Serif;
+				}
 				/* Collapsible Button */
 				.collapsible {
 					display: flex;
@@ -20,6 +20,7 @@ body {
 					text-align: left; 
 					width: 100%;
 				}
+
 				.collapsible.active, .collapsible:hover {
 					background-color: #C3D0E0;
 				}
@@ -172,6 +173,23 @@ ERC20
 			</p>
 		</div>
 
+		<button class="collapsible">register  <div class="RW">Read + Write</div> </button>
+		<div class="collapsibleContent">
+			<p>
+			This function open an ERC20 account for the calling user, it must be called before any other operation
+				</br>
+				</br>
+				<h5>Parameters : </h5>
+				None
+
+				<h5>Payload : </h5>
+				It returns a plain text value if the registration is successfull:
+
+				</br>
+				</br>
+				<code>Success</code>
+			</p>
+		</div>
 
 		<button class="collapsible">transfer <div class="RW">Read + Write</div></button>
 		<div class="collapsibleContent">
