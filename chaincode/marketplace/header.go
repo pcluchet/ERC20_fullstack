@@ -66,7 +66,7 @@ type ShopItem			struct {
 	Picture				string
 	Name				string
 	Detail				string
-	Weight				uint64
+	AdditionalFields	string
 	Price				uint64
 	Quantity			uint64
 	MinQuantity			uint64
@@ -82,7 +82,7 @@ type ShopItemSubmission	struct {
 	Picture				string
 	Name				string
 	Detail				string
-	Weight				uint64
+	AdditionalFields	string
 	Price				uint64
 	Quantity			uint64
 	MinQuantity			uint64
