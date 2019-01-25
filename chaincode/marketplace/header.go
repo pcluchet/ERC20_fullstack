@@ -63,7 +63,7 @@ type Shop struct {
 type ShopItem			struct {
 	Biddable			bool
 	DocType				string
-	Picture				string
+	Pictures			[]string
 	Name				string
 	Detail				string
 	Weight				uint64
@@ -79,7 +79,7 @@ type ShopItem			struct {
 
 type ShopItemSubmission	struct {
 	Bidable				bool
-	Picture				string
+	Pictures			[]string
 	Name				string
 	Detail				string
 	Weight				uint64
@@ -123,17 +123,17 @@ type BidSubmission		struct {
 /// RAW
 //////////////////////////////////////////////////
 
-type Raw struct {
-	Picture string
-	Name    string
-	Detail  string
-	DocType string
+type Raw				struct {
+	Pictures			[]string
+	Name				string
+	Detail				string
+	DocType				string
 }
 
-type RawSubmission struct {
-	Name    string
-	Detail  string
-	Picture string
+type RawSubmission		struct {
+	Name				string
+	Detail				string
+	Pictures			[]string
 }
 
 type AdminList []string

@@ -21,7 +21,7 @@ func	getRaw(arg string) ([]byte, error) {
 	}
 	raw.Name = rawSubmission.Name
 	raw.Detail = rawSubmission.Detail
-	raw.Picture = rawSubmission.Picture
+	raw.Pictures = rawSubmission.Pictures
 	raw.DocType = "Raw"
 	//TODO: check if raw name is taken ?
 	rawBytes, err = json.Marshal(raw)
