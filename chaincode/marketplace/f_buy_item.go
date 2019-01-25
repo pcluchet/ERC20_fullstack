@@ -62,7 +62,6 @@ func	buyItem(args []string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	/// GET ITEM
 	item, err = getItem(sale.ItemId)
 	if err != nil {
@@ -70,30 +69,28 @@ func	buyItem(args []string) (string, error) {
 	} else if item.Quantity < sale.Quantity {
 		return "", fmt.Errorf("Not enough available items.")
 	}
+	/// GET SHOP
+	shop, err = getShop(item.ShopId)
+	if err != nil {
+		return "", err
+	}
 
 	if item.Biddable {
 		return "", fmt.Errorf("This item is an auction")
 	}
 
 	/// UPDATE OBJECTS
+	if sale.Quantity < item.MinQuantity {
+		return "", fmt.Errorf("Minimum required quantity of %s", item.MinQuantity)
+	}
 	sale.Price = item.Price
 	item.Quantity -= sale.Quantity
 
-	//////////////////////
-	//TODO: MONEY TRANSFER
-	//////////////////////
-
-	shop, err = getShop(item.ShopId)
-	if err != nil {
-		return "", err
-	}
-
+	/// MONEY TRANSFER
 	err = transferMoneyItem(shop, item, sale)
 	if err != nil {
 		return "", err
 	}
-	//////////////////////
-	//////////////////////
 
 	txId = STUB.GetTxID()
 

@@ -69,6 +69,7 @@ type ShopItem			struct {
 	Weight				uint64
 	Price				uint64
 	Quantity			uint64
+	MinQuantity			uint64
 	CreationDate		uint64
 	ExpireDate			uint64
 	ShopId				string
@@ -84,6 +85,7 @@ type ShopItemSubmission	struct {
 	Weight				uint64
 	Price				uint64
 	Quantity			uint64
+	MinQuantity			uint64
 	Duration			uint64
 }
 
@@ -91,42 +93,31 @@ type ShopRaw			struct {
 	RawId				string
 	Price				uint64
 	Quantity			uint64
+	MinQuantity			uint64
 	ShopId				string
 	DocType				string
 }
 
-type ShopRawSubmission struct {
-	RawId    string
-	Price    uint64
-	Quantity uint64
+type ShopRawSubmission	struct {
+	RawId				string
+	Price				uint64
+	Quantity			uint64
+	MinQuantity			uint64
 }
 
-type Bid struct {
-	ItemId     string
-	Price      uint64
-	DocType    string
-	Owner      string
-	ShownPrice uint64
-	Timestamp  uint64
+type Bid				struct {
+	ItemId				string
+	Price				uint64
+	DocType				string
+	Owner				string
+	ShownPrice			uint64
+	Timestamp			uint64
 }
 
-type BidSubmission struct {
-	ItemId string
-	Price  uint64
+type BidSubmission		struct {
+	ItemId				string
+	Price				uint64
 }
-
-//type ShopLastSold		struct {
-//	Id					string
-//	Price				uint64
-//	Quantity			uint64
-//	User				string
-//}
-//
-//type ShopLastOffer		struct {
-//	Id					string
-//	Offer				uint64
-//	User				string
-//}
 
 //////////////////////////////////////////////////
 /// RAW

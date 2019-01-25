@@ -58,12 +58,16 @@ func	shopAddItem(args []string) (string, error) {
 	} else if itemToAdd.Duration <= 0 {
 		return "", fmt.Errorf("Offer duration cannot be 0 or negative")
 	}
+	if itemToAdd.Bidable == false && itemToAdd.MinQuantity < 0 {
+		return "", fmt.Errorf("Cannot set a minimum quantity purchase of 0")
+	}
 	newItem.Name = itemToAdd.Name
 	newItem.Quantity = itemToAdd.Quantity
+	newItem.MinQuantity = itemToAdd.MinQuantity
 	newItem.Detail = itemToAdd.Detail
 	newItem.Weight = itemToAdd.Weight
 	newItem.Picture = itemToAdd.Picture
-	//TODO : verify arg
+	//TODO: verify arg
 	newItem.ShopId = args[0]
 	newItem.Biddable = itemToAdd.Bidable
 	newItem.DocType = "ShopItem"

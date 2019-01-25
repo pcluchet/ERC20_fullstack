@@ -43,7 +43,6 @@ func	buyRaw(args []string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	/// GET RAW
 	raw, err = getShopRaw(sale.ItemId)
 	if err != nil {
@@ -51,27 +50,25 @@ func	buyRaw(args []string) (string, error) {
 	} else if raw.Quantity >= sale.Quantity {
 		return "", fmt.Errorf("Not enough raw material.")
 	}
-
-	/// UPDATE OBJECTS
-	sale.Price = raw.Price
-	raw.Quantity -= sale.Quantity
-
-	//////////////////////
-	//TODO: MONEY TRANSFER
-	//////////////////////
-
+	/// GET SHOP
 	shop, err = getShop(raw.ShopId)
 	if err != nil {
 		return "", err
 	}
 
+
+	/// UPDATE OBJECTS
+	if sale.Quantity < raw.MinQuantity {
+		return "", fmt.Errorf("Minimum required quantity of %s", raw.MinQuantity)
+	}
+	sale.Price = raw.Price
+	raw.Quantity -= sale.Quantity
+
+	/// TRANSFER MONEY
 	err = transferMoneyRaw(shop, raw, sale)
 	if err != nil {
 		return "", err
 	}
-
-	//////////////////////
-	//////////////////////
 
 	txId = STUB.GetTxID()
 
