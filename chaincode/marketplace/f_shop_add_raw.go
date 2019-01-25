@@ -25,6 +25,7 @@ func	getRawStruct(submitString string, shopId string) (ShopRaw, error) {
 	raw.Price = submission.Price
 	raw.Quantity = submission.Quantity
 	raw.MinQuantity = submission.MinQuantity
+	raw.AdditionalFields = submission.AdditionalFields
 	raw.ShopId = shopId
 	raw.DocType = "ShopRaw"
 	return raw, nil

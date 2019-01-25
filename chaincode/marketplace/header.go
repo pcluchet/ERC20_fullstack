@@ -94,6 +94,7 @@ type ShopRaw			struct {
 	Price				uint64
 	Quantity			uint64
 	MinQuantity			uint64
+	AdditionalFields	string
 	ShopId				string
 	DocType				string
 }
@@ -103,6 +104,7 @@ type ShopRawSubmission	struct {
 	Price				uint64
 	Quantity			uint64
 	MinQuantity			uint64
+	AdditionalFields	string
 }
 
 type Bid				struct {
