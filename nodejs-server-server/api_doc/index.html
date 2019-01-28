@@ -190,6 +190,9 @@ ERC20
 					<li>
 						Amount of tokens to transfer
 					</li>
+					<li>
+						Detail string of the transaction
+					</li>
 
 				</ol>
 
@@ -225,6 +228,9 @@ ERC20
 				</li>
 				<li>
 					Amount of tokens to transfer
+				</li>
+				<li>
+					Detail string of the transaction
 				</li>
 
 
@@ -599,7 +605,14 @@ SHOP ADD ITEM
 	<div class="collapsibleContent">
 		<p>
 
-			This function adds an item to a shop.
+			This function adds an item to a shop.</br>
+			Fields explanation:</br>
+			<ul>
+				<li>MinQuantity: Minimum purchase quantity</li>
+				<li>Duration: Duraction of the sale in hours</li>
+				<li>AdditionalFields: A json containing additional fields like
+				weight, size or anything else</li>
+			</ul>
 			</br></br>
 
 			<h5>Parameters : </h5>
@@ -612,16 +625,18 @@ SHOP ADD ITEM
 					The item json (ex:
 					<code>
 						{
-							"Bidable": "false",
-							"Picture": "Picture base64 encoded",
 							"Name": "My new item",
 							"Detail": "This is a wanderful item, really !",
+							"Bidable": "false",
 							"Price": 42,
 							"Quantity": 314,
-							"Duration": 604800
+							"MinQuantity": 10,
+							"Duration": 604800,
+							"Pictures": "Picture base64 encoded list",
+							"AdditionalFields": "{\"weight\": 42, \"size\": 24}"
 						}
 					</code>
-					, with duration in hours)
+					)
 				</li>
 			</ol>
 
@@ -644,6 +659,13 @@ SHOP ADD RAW
 		<p>
 
 			This function tells that the shop sells an existing raw material.
+			</br>
+			Fields explanation:</br>
+			<ul>
+				<li>MinQuantity: Minimum purchase quantity</li>
+				<li>AdditionalFields: A json containing additional fields like
+				weight, size or anything else</li>
+			</ul>
 			</br></br>
 
 			<h5>Parameters : </h5>
@@ -659,6 +681,8 @@ SHOP ADD RAW
 							"RawId": "PP456...",
 							"Price": 42,
 							"Quantity": 314,
+							"MinQuantity": 10,
+							"AdditionalFields": "{\"weight\": 42, \"size\": 24}"
 						}
 					</code>
 					)
@@ -727,8 +751,8 @@ ADD RAW
 					<code>
 						{
 							"Name": "PP"
-							"Detail": "Melt from 200 celsius degres"
-							"Picture": "Picture Base64 encoded"
+							"Detail": "Melt from 200 celsius degres",
+							"Pictures: "Picture Base64 encoded list"
 						}
 					</code>
 					)
