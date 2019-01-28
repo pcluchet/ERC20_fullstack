@@ -18,9 +18,14 @@ func	getRawStruct(submitString string, shopId string) (ShopRaw, error) {
 	if err != nil {
 		return raw, fmt.Errorf("Cannot unmarshal raw submission.")
 	}
+	if submission.MinQuantity == 0 {
+		return raw, fmt.Errorf("Cannot set a minimum quantity purchase of 0")
+	}
 	raw.RawId = submission.RawId
 	raw.Price = submission.Price
 	raw.Quantity = submission.Quantity
+	raw.MinQuantity = submission.MinQuantity
+	raw.AdditionalFields = submission.AdditionalFields
 	raw.ShopId = shopId
 	raw.DocType = "ShopRaw"
 	return raw, nil

@@ -34,7 +34,7 @@ func getTransferTx(argv []string) (Transaction, error) {
 		return Transaction{}, err
 	}
 
-	return (Transaction{publicKey, argv[0], amount, user}).ParseTransfer()
+	return (Transaction{ publicKey, argv[0], amount, user }).ParseTransfer()
 }
 
 /* ************************************************************************** */
@@ -45,7 +45,7 @@ func transfer(argv []string) (string, error) {
 	var tx Transaction
 	var err error
 
-	if err = parseArgv(argv, "transfer", 2); err != nil {
+	if err = parseArgv(argv, "transfer", 3); err != nil {
 		return "", err
 	}
 	if tx, err = getTransferTx(argv); err != nil {
@@ -58,7 +58,7 @@ func transfer(argv []string) (string, error) {
 	if err = changeStateTo(tx); err != nil {
 		return "", err
 	}
-	if err = event(tx.From, tx.To, tx.Amount, "transfer"); err != nil {
+	if err = event(tx.From, tx.To, tx.Amount, argv[2], "transfer"); err != nil {
 		return "", err
 	}
 

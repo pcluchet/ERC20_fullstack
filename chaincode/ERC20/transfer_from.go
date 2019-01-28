@@ -45,7 +45,7 @@ func	transferFrom(argv []string) (string, error) {
 	var tx		Transaction
 	var err		error
 
-	if err = parseArgv(argv, "transferFrom", 3); err != nil {
+	if err = parseArgv(argv, "transferFrom", 4); err != nil {
 		return "", err
 	}
 	if tx, err = getTransferFromTx(argv); err != nil {
@@ -58,7 +58,7 @@ func	transferFrom(argv []string) (string, error) {
 	if err = changeStateTo(tx); err != nil {
 		return "", err
 	}
-	if err = event(tx.From, tx.To, tx.Amount, "transfer"); err != nil {
+	if err = event(tx.From, tx.To, tx.Amount, argv[3], "transfer"); err != nil {
 		return "", err
 	}
 

@@ -54,16 +54,29 @@ func deleteBill(ownerId string, billId string) error {
 	return nil
 }
 
+func	computeTransactionDetails(bill Bill) string {
+	var	details	string
+	var	item	Item
+
+	details = fmt.Sprintf("invoicing of %v:", bill.TotalAmount)
+	for _, item = range(bill.Items) {
+		details = fmt.Sprintf("%s [%s (%v) x %v]", details, item.Name,
+		item.Amount, item.Count)
+	}
+	return (details)
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-func payBill(args []string) (string, error) {
-	var err error
-	var bill Bill
-	var billBytes []byte
-	var billId string
-	var ccArgs [][]byte
+func	payBill(args []string) (string, error) {
+	var	err			error
+	var	bill		Bill
+	var	billBytes	[]byte
+	var	billId		string
+	var	ccArgs		[][]byte
+	var	txDetails	string
 
 	/// CHECK ARGUMENT
 	if len(args) != 1 {
@@ -100,10 +113,12 @@ func payBill(args []string) (string, error) {
 		return "", err
 	}
 
+	/// COMPUTE TRANSACTION DETAILS
+	txDetails = computeTransactionDetails(bill)
+
 	/// CALL CHAINCODE TO PAY BILL
-	ccArgs = toChaincodeArgs("transfer", bill.OwnerId, fmt.Sprintf("%d", bill.TotalAmount))
-	//InvokeChaincode(chaincodeName string, args [][]byte, channel string)
-	//response := STUB.InvokeChaincode("ERC20", ccArgs, STUB.GetChannelID())
+	ccArgs = toChaincodeArgs("transfer", bill.OwnerId,
+	fmt.Sprintf("%d", bill.TotalAmount), txDetails)
 	response := STUB.InvokeChaincode("ERC20", ccArgs, "")
 
 	if response.Status != shim.OK {

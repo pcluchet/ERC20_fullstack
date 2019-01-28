@@ -62,7 +62,7 @@ func buyBid(args []string) (string, error) {
 		return "", err
 	}
 
-	err = transferMoneyForSale(shop, sale.Price*sale.Quantity)
+	err = transferMoneyItem(shop, item, sale)
 	if err != nil {
 		return "", err
 	}

@@ -26,25 +26,18 @@ func getSale(userKey string, arg string) (Sale, error) {
 	return sale, nil
 }
 
-func transferMoneyForSale(shop Shop, amount uint64) error {
-	//TODO:	if == 1 admin on shop	-> transfer to admin
-	//		if > 1 admin on shop	-> transfer to shop
-	// Requires couchdb queries
-	return transfer(shop.ERC20Address, amount)
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-func buyItem(args []string) (string, error) {
-	var err error
-	var userKey string
-	var sale Sale
-	var item ShopItem
-	var bytes []byte
-	var txId string
-	//var	user			User
+func	buyItem(args []string) (string, error) {
+	var	err			error
+	var	userKey		string
+	var	sale		Sale
+	var	shop		Shop
+	var	item		ShopItem
+	var	bytes		[]byte
+	var	txId		string
 
 	/// CHECK ARGUMENTS
 	/// TODO : when better API, check this better
@@ -69,7 +62,6 @@ func buyItem(args []string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	/// GET ITEM
 	item, err = getItem(sale.ItemId)
 	if err != nil {
@@ -77,31 +69,28 @@ func buyItem(args []string) (string, error) {
 	} else if item.Quantity < sale.Quantity {
 		return "", fmt.Errorf("Not enough available items.")
 	}
+	/// GET SHOP
+	shop, err = getShop(item.ShopId)
+	if err != nil {
+		return "", err
+	}
 
 	if item.Biddable {
 		return "", fmt.Errorf("This item is an auction")
 	}
 
 	/// UPDATE OBJECTS
+	if sale.Quantity < item.MinQuantity {
+		return "", fmt.Errorf("Minimum required quantity of %s", item.MinQuantity)
+	}
 	sale.Price = item.Price
 	item.Quantity -= sale.Quantity
 
-	//////////////////////
-	//TODO: MONEY TRANSFER
-	//////////////////////
-	var shop Shop
-
-	shop, err = getShop(item.ShopId)
+	/// MONEY TRANSFER
+	err = transferMoneyItem(shop, item, sale)
 	if err != nil {
 		return "", err
 	}
-
-	err = transferMoneyForSale(shop, sale.Price*sale.Quantity)
-	if err != nil {
-		return "", err
-	}
-	//////////////////////
-	//////////////////////
 
 	txId = STUB.GetTxID()
 

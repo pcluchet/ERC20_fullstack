@@ -60,87 +60,82 @@ type Shop struct {
 	ERC20Address string
 }
 
-type ShopItem struct {
-	Biddable     bool
-	DocType      string
-	Picture      string
-	Name         string
-	Detail       string
-	Price        uint64
-	Quantity     uint64
-	CreationDate uint64
-	ExpireDate   uint64
-	ShopId       string
-	BidList      []string // Will be useless with couchdb
-	Winner       string
+type ShopItem			struct {
+	Biddable			bool
+	DocType				string
+	Pictures			[]string
+	Name				string
+	Detail				string
+	AdditionalFields	string
+	Price				uint64
+	Quantity			uint64
+	MinQuantity			uint64
+	CreationDate		uint64
+	ExpireDate			uint64
+	ShopId				string
+	BidList				[]string // Will be useless with couchdb
+	Winner				string
 }
 
-type ShopItemSubmission struct {
-	Bidable  bool
-	Picture  string
-	Name     string
-	Detail   string
-	Price    uint64
-	Quantity uint64
-	Duration uint64
+type ShopItemSubmission	struct {
+	Bidable				bool
+	Pictures			[]string
+	Name				string
+	Detail				string
+	AdditionalFields	string
+	Price				uint64
+	Quantity			uint64
+	MinQuantity			uint64
+	Duration			uint64
 }
 
-type ShopRaw struct {
-	RawId    string
-	Price    uint64
-	Quantity uint64
-	ShopId   string
-	DocType  string
+type ShopRaw			struct {
+	RawId				string
+	Price				uint64
+	Quantity			uint64
+	MinQuantity			uint64
+	AdditionalFields	string
+	ShopId				string
+	DocType				string
 }
 
-type ShopRawSubmission struct {
-	RawId    string
-	Price    uint64
-	Quantity uint64
+type ShopRawSubmission	struct {
+	RawId				string
+	Price				uint64
+	Quantity			uint64
+	MinQuantity			uint64
+	AdditionalFields	string
 }
 
-type Bid struct {
-	ItemId     string
-	Price      uint64
-	DocType    string
-	Owner      string
-	ShownPrice uint64
-	Timestamp  uint64
+type Bid				struct {
+	ItemId				string
+	Price				uint64
+	DocType				string
+	Owner				string
+	ShownPrice			uint64
+	Timestamp			uint64
 }
 
-type BidSubmission struct {
-	ItemId string
-	Price  uint64
+type BidSubmission		struct {
+	ItemId				string
+	Price				uint64
 }
-
-//type ShopLastSold		struct {
-//	Id					string
-//	Price				uint64
-//	Quantity			uint64
-//	User				string
-//}
-//
-//type ShopLastOffer		struct {
-//	Id					string
-//	Offer				uint64
-//	User				string
-//}
 
 //////////////////////////////////////////////////
 /// RAW
 //////////////////////////////////////////////////
 
-type Raw struct {
-	Picture string
-	Name    string
-	Detail  string
-	DocType string
+type Raw				struct {
+	Pictures			[]string
+	Name				string
+	Detail				string
+	DocType				string
 }
 
-type RawSubmission struct {
-	Name    string
-	Detail  string
-	Picture string
+type RawSubmission		struct {
+	Name				string
+	Detail				string
+	Pictures			[]string
 }
 
 type AdminList []string

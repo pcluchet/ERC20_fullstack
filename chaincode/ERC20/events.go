@@ -9,12 +9,13 @@ import (
 /*		PUBLIC																  */
 /* ************************************************************************** */
 
-func event(from string, to string, value uint64, typeofEvent string) error {
-	var err error
-	var ret []byte
-	var last10_key string
+func	event(from string, to string, value uint64, details string,
+		typeofEvent string) error {
+	var	err			error
+	var	ret			[]byte
+	var	last10_key	string
 
-	if ret, err = json.Marshal(Events{from, to, value}); err != nil {
+	if ret, err = json.Marshal(Events{from, to, value, details}); err != nil {
 		return err
 	}
 	if err = STUB.PutState(typeofEvent, ret); err != nil {
