@@ -60,10 +60,16 @@ type Shop struct {
 	ERC20Address string
 }
 
+type ShippingFee struct {
+	To  string
+	Fee uint64
+}
+
 type ShopItem struct {
 	Biddable     bool
 	DocType      string
 	Pictures     []string
+	Shipping     []ShippingFee
 	Name         string
 	Detail       string
 	Price        uint64
@@ -80,6 +86,7 @@ type ShopItem struct {
 }
 
 type ShopItemSubmission struct {
+	Shipping    []ShippingFee
 	Bidable     bool
 	Pictures    []string
 	Name        string

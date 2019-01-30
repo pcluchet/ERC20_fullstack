@@ -69,6 +69,7 @@ func shopAddItem(args []string) (string, error) {
 	newItem.Detail = itemToAdd.Detail
 	newItem.Pictures = itemToAdd.Pictures
 	newItem.Weight = itemToAdd.Weight
+	newItem.Shipping = itemToAdd.Shipping
 	//TODO: verify arg
 	newItem.ShopId = args[0]
 	newItem.Biddable = itemToAdd.Bidable
