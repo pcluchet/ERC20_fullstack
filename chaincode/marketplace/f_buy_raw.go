@@ -19,6 +19,7 @@ func	buyRaw(args []string) (string, error) {
 	var	raw		ShopRaw
 	var	bytes	[]byte
 	var	txId	string
+	var	details	string
 
 	/// CHECK ARGUMENTS
 	/// TODO : when better API, check this better
@@ -56,7 +57,6 @@ func	buyRaw(args []string) (string, error) {
 		return "", err
 	}
 
-
 	/// UPDATE OBJECTS
 	if sale.Items[0].Quantity < raw.MinQuantity {
 		return "", fmt.Errorf("Minimum required quantity of %s", raw.MinQuantity)
@@ -65,10 +65,14 @@ func	buyRaw(args []string) (string, error) {
 	raw.Quantity -= sale.Items[0].Quantity
 
 	/// TRANSFER MONEY
-	err = transferMoneyRaw(shop, raw, sale)
-	if err != nil {
-		return "", err
-	}
+	sale.Price = raw.Price * sale.Items[0].Quantity
+	details = fmt.Sprintf("purchase of %v: [raw %s from %s (%v) x %v]",
+	sale.Price, raw.RawId, shop.Name, sale.Items[0].Quantity)
+	err = transfer(shop.ERC20Address, sale.Price, details)
+	//err = transferMoneyRaw(shop, raw, sale)
+	//if err != nil {
+	//	return "", err
+	//}
 
 	txId = STUB.GetTxID()
 
