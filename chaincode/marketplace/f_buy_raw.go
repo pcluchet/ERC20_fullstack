@@ -44,10 +44,10 @@ func	buyRaw(args []string) (string, error) {
 		return "", err
 	}
 	/// GET RAW
-	raw, err = getShopRaw(sale.ItemId)
+	raw, err = getShopRaw(sale.Items[0].ItemId)
 	if err != nil {
 		return "", fmt.Errorf("Cannot get raw.")
-	} else if raw.Quantity >= sale.Quantity {
+	} else if raw.Quantity >= sale.Items[0].Quantity {
 		return "", fmt.Errorf("Not enough raw material.")
 	}
 	/// GET SHOP
@@ -58,11 +58,11 @@ func	buyRaw(args []string) (string, error) {
 
 
 	/// UPDATE OBJECTS
-	if sale.Quantity < raw.MinQuantity {
+	if sale.Items[0].Quantity < raw.MinQuantity {
 		return "", fmt.Errorf("Minimum required quantity of %s", raw.MinQuantity)
 	}
 	sale.Price = raw.Price
-	raw.Quantity -= sale.Quantity
+	raw.Quantity -= sale.Items[0].Quantity
 
 	/// TRANSFER MONEY
 	err = transferMoneyRaw(shop, raw, sale)
@@ -87,7 +87,7 @@ func	buyRaw(args []string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("Cannot marshal shop raw struct.")
 	}
-	err = STUB.PutState(sale.ItemId, bytes)
+	err = STUB.PutState(sale.Items[0].ItemId, bytes)
 	if err != nil {
 		return "", fmt.Errorf("Cannot update shop raw to ledger.")
 	}

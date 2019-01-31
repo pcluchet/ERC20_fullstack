@@ -35,27 +35,28 @@ func	transfer(to string, amount uint64, details string) (error) {
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-func	transferMoneyItem(shop Shop, item ShopItem, sale Sale) error {
-	var	details		string
-	var	totalAmount	uint64
+//func	transferMoneyItem(shop Shop, item ShopItem, sale Sale) error {
+//	var	details		string
+//	var	totalAmount	uint64
+//
+//	/// COMPUTE TOTAL AMOUNT
+//	totalAmount = sale.Price * sale.Quantity
+//	/// BUILD TRANSACTION DETAILS
+//	details = fmt.Sprintf("purchase of %v: [%s from %s (%v) x %v]", totalAmount,
+//	item.Name, shop.Name, item.Price, sale.Quantity)
+//	/// MAKE TRANSFER
+//	return transfer(shop.ERC20Address, totalAmount, details)
+//}
 
-	/// COMPUTE TOTAL AMOUNT
-	totalAmount = sale.Price * sale.Quantity
-	/// BUILD TRANSACTION DETAILS
-	details = fmt.Sprintf("purchase of %v: [%s from %s (%v) x %v]", totalAmount,
-	item.Name, shop.Name, item.Price, sale.Quantity)
-	/// MAKE TRANSFER
-	return transfer(shop.ERC20Address, totalAmount, details)
-}
-func	transferMoneyRaw(shop Shop, raw ShopRaw, sale Sale) error {
-	var	details		string
-	var	totalAmount	uint64
-
-	/// COMPUTE TOTAL AMOUNT
-	totalAmount = sale.Price * sale.Quantity
-	/// BUILD TRANSACTION DETAILS
-	details = fmt.Sprintf("purchase of %v: [raw %s from %s (%v) x %v]",
-	totalAmount, raw.RawId, shop.Name, raw.Price, sale.Quantity)
-	/// MAKE TRANSFER
-	return transfer(shop.ERC20Address, totalAmount, details)
-}
+//func	transferMoneyRaw(shop Shop, raw ShopRaw, sale Sale) error {
+//	var	details		string
+//	var	totalAmount	uint64
+//
+//	/// COMPUTE TOTAL AMOUNT
+//	totalAmount = sale.Price * sale.Quantity
+//	/// BUILD TRANSACTION DETAILS
+//	details = fmt.Sprintf("purchase of %v: [raw %s from %s (%v) x %v]",
+//	totalAmount, raw.RawId, shop.Name, raw.Price, sale.Quantity)
+//	/// MAKE TRANSFER
+//	return transfer(shop.ERC20Address, totalAmount, details)
+//}

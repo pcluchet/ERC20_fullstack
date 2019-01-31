@@ -37,17 +37,6 @@ type Sale				struct {
 	DocType				string
 }
 
-//type Sale				struct {
-//	User				string
-//	ItemId				string
-//	ShopId				string
-//	Price				uint64
-//	Quantity			uint64
-//	//StateShop			uint8 // When both states are TRUE,
-//	//StateUser			uint8 // the Sale key is deleted.
-//	DocType				string
-//}
-
 type SaleItem			struct {
 	ItemId				string
 	ShopId				string
