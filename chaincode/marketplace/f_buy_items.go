@@ -7,33 +7,85 @@ import "fmt"
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-func	getSalePrice(submission SaleSubmission) (uint64, error) {
+func	checkSaleItem(saleItem SaleItem) (uint64, error) {
+	var	err		error
+	var	item	ShopItem
+	var	bytes	[]byte
+
+	/// CHECK QUANTITY
+	if (saleItem.Quantity == 0) {
+		return 0, fmt.Errorf("Uncorrect item %s purchase quantity of 0.",
+		SaleItem.ItemId)
+	}
+	/// CHECK ITEM EXISTENCE
+	item, err = getItem(saleItem.ItemId)
+	if err != nil {
+		return 0, fmt.Errorf("Cannot get item %s", SaleItem.ItemId)
+	} else if saleItem.Quantity > item.Quantity {
+		return 0, fmt.Errorf("Not enough item %s in the shop")
+	} else if item.Bidable == true {
+		return 0, fmt.Errorf("Cannot buy bidable item %s", SaleItem.ItemId)
+	}
+	/// UPDATE ITEM INTO LEDGER
+	item.Quantity -= saleItem.Quantity
+	bytes, err = json.Marshal(Item)
+	if err != nil {
+		return "", fmt.Errorf("Cannot marshal item %s.", SaleItem.ItemId)
+	}
+	err = STUB.PutState(SaleItem.ItemId, bytes)
+	if err != nil {
+		return "", fmt.Errorf("Cannot update item %s.", SaleItem.ItemId)
+	}
+	/// GET PRICE
+	return item.Price * SaleItem.Quantity, nil
+}
+
+func	transferToShops(shops map[string][]SaleItem) error {
+	var	shop
+
+	for shop = range(toPay) {
+	}
+}
+
+func	handleSaleItems(submission SaleSubmission) (uint64, error) {
 	var	err			error
+	var	totalPrice	uint64
 	var	price		uint64
 	var	saleItem	SaleItem
 	var	item		ShopItem
+	var	shops		map[string][]SaleItem
+	var	isIn		bool
 
+	shops = make(map[string][]SaleItem)
+	totalPrice = 0
 	/// LOOP THROUGH ITEMS
 	for _, saleItem = range(submission) {
-		/// CHECK QUANTITY
-		if (saleItem.Quantity == 0) {
-			return 0, fmt.Errorf("Uncorrect item %s purchase quantity of 0.",
-			SaleItem.ItemId)
-		}
-		/// CHECK ITEM EXISTANCE
-		item, err = getItem(saleItem.ItemId)
+		/// HANDLE ITEM
+		price, err = checkSaleItem(saleItem)
 		if err != nil {
-			return 0, fmt.Errorf("Cannot get item %s", SaleItem.ItemId)
-		} else if item.Bidable == true {
-			return 0, fmt.Errorf("Cannot buy bidable item %s", SaleItem.ItemId)
+			return 0, err
 		}
-		/// GET PRICE
-		price += item.Price * SaleItem.Quantity
+		totalPrice += price
+		/// HANDLE SHOP
+		_, err = getShop(item.ShopId)
+		if err != nil {
+			return 0, fmt.Errorf("Cannot get shop of item %s", SaleItem.ItemId)
+		}
+		/// GET TRANSFER TO DO
+		_, isIn = shops[saleItem.ShopId]
+		if isIn == false {
+			shops[saleItem.ShopId] = make([]SaleItem)
+		}
+		append(shops[saleItem.ShopId], saleItem)
 	}
-	return price, nil
+	err = transferToShops(shops)
+	if err != nil {
+		return 0, err
+	}
+	return totalPrice, nil
 }
 
-func	getSale(userKey string, arg string) (Sale, error) {
+func	handleSale(userKey string, arg string) (Sale, error) {
 	var	err			error
 	var	sale		Sale
 	var	submission	SaleSubmission
@@ -50,7 +102,7 @@ func	getSale(userKey string, arg string) (Sale, error) {
 	sale.Items = submission
 	sale.DocType = "Sale"
 	/// GET SALE PRICE
-	sale.Price, err = getSalePrice(submission)
+	sale.Price, err = handleSaleItems(submission)
 	if err != nil {
 		return sale, err
 	}
@@ -89,7 +141,7 @@ func	buyItem(args []string) (string, error) {
 	}
 
 	/// GET SALE
-	sale, err = getSale(userKey, args[0])
+	sale, err = handleSale(userKey, args[0])
 	if err != nil {
 		return "", err
 	}
