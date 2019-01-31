@@ -609,9 +609,10 @@ SHOP ADD ITEM
 			Fields explanation:</br>
 			<ul>
 				<li>MinQuantity: Minimum purchase quantity</li>
-				<li>Duration: Duraction of the sale in hours</li>
+				<li>Duration: Duration of the sale in hours</li>
+				<li>Weight: Weight of the item in grams</li>
 				<li>AdditionalFields: A json containing additional fields like
-				weight, size or anything else</li>
+				volume, size or anything else</li>
 			</ul>
 			</br></br>
 
@@ -633,7 +634,8 @@ SHOP ADD ITEM
 							"MinQuantity": 10,
 							"Duration": 604800,
 							"Pictures": "Picture base64 encoded list",
-							"AdditionalFields": "{\"weight\": 42, \"size\": 24}"
+							"Weight": 2500,
+							"AdditionalFields": "{\"size\": 24}"
 						}
 					</code>
 					)

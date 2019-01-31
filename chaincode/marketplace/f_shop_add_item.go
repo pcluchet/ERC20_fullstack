@@ -66,6 +66,7 @@ func	shopAddItem(args []string) (string, error) {
 	newItem.MinQuantity = itemToAdd.MinQuantity
 	newItem.Detail = itemToAdd.Detail
 	newItem.Pictures = itemToAdd.Pictures
+	newItem.Weight = itemToAdd.Weight
 	newItem.AdditionalFields = itemToAdd.AdditionalFields
 	//TODO: verify arg
 	newItem.ShopId = args[0]
