@@ -27,7 +27,7 @@ func	checkSaleItem(saleItem SaleItem) (string, uint64, error) {
 		return "", 0, fmt.Errorf("Not enough item %s in the shop", item.Name)
 	} else if saleItem.Quantity < item.MinQuantity {
 		return "", 0, fmt.Errorf("Minimum purchase quantity of item %s of %v",
-		item.Name, item.Min.Quantity)
+		item.Name, item.MinQuantity)
 	}
 	/// UPDATE ITEM INTO LEDGER
 	item.Quantity -= saleItem.Quantity
