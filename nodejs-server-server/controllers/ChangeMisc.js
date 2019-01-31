@@ -12,17 +12,53 @@ module.exports.ChangeMisc = function query (req, res, next) {
   var xRequestPassword = req.swagger.params['X-request-password'].value;
   var xRequestUseToken = req.swagger.params['X-request-use-token'].value;
   var xRequestToken = req.swagger.params['X-request-token'].value;
+
   var miscpv = req.swagger.params['X-request-new-misc-private'].value;
+
+  if (typeof miscpv !== 'undefined')
+  {
+    try {
+    miscpv  = JSON.parse(miscpv);
+    }
+ catch (e) {
+  if (e instanceof SyntaxError) {
+    res.writeHead(400, { "Content-Type": "text/plain" });
+    return res.end("If provided, misc private data must be a correctly formated JSON string");
+  } else {
+    res.writeHead(400, { "Content-Type": "text/plain" });
+    return res.end(e);
+  }
+  }
+
+}
+
   var miscpu = req.swagger.params['X-request-new-misc-public'].value;
+  if (typeof miscpu !== 'undefined')
+  {
+    try {
+    miscpu  = JSON.parse(miscpu);
+    }
+ catch (e) {
+  if (e instanceof SyntaxError) {
+    res.writeHead(400, { "Content-Type": "text/plain" });
+    return res.end("If provided, misc public data must be a correctly formated JSON string");
+  } else {
+    res.writeHead(400, { "Content-Type": "text/plain" });
+    return res.end(e);
+  }
+  }
+  
+}
+
 
   if (xRequestUseToken)
   {
     var clientIP = req.connection.remoteAddress;
     console.log("USING TOKEN AUTH");
     //users.updatetoken("jx",clientIP,expire,function (){console.log("CALLBACK")});
-    users.authByToken(xRequestToken, clientIP, function cb(ret){
-      console.log("CALLBACK 2 valid :" + ret);
-      if (!ret.valid)
+    users.authByToken(xRequestToken, clientIP, function (retu){
+      console.log("CALLBACK 2 valid :" + retu);
+      if (!retu.valid)
       {
         res.writeHead(401, { "Content-Type": "text/plain" });
         return res.end("Invalid/Expired token provided");
@@ -30,12 +66,14 @@ module.exports.ChangeMisc = function query (req, res, next) {
       else
       {
             console.log('succesfully identified');
-            users.updmisc(username, miscpu, miscpv, function cb(ret){
-            console.log(ret);
+            users.updmisc(retu.username, miscpu, miscpv, function (retz){
+            console.log(retz);
             console.log("mouai");
-           });
+
             res.writeHead(200, { "Content-Type": "application/json" });
-            return res.end(ret.value);
+            return res.end("");
+
+           });
       }
     })
   }

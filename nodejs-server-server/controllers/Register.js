@@ -8,9 +8,42 @@ var users = require('../db/users');
 module.exports.register = function register (req, res, next) {
   var username = req.swagger.params['username'].value;
   var xRequestPassword = req.swagger.params['X-request-password'].value;
+  
   var misc_private = req.swagger.params['X-request-misc-private'].value;
+
+  if (typeof misc_private !== 'undefined')
+  {
+    try {
+    misc_private  = JSON.parse(misc_private);
+    }
+   catch (e) {
+    if (e instanceof SyntaxError) {
+      res.writeHead(400, { "Content-Type": "text/plain" });
+      return res.end("If provided, misc private data must be a correctly formated JSON string");
+    } else {
+      res.writeHead(400, { "Content-Type": "text/plain" });
+      return res.end(e);
+    }
+}
+  }
+
   var misc_public = req.swagger.params['X-request-misc-public'].value;
 
+    if (typeof misc_public !== 'undefined')
+    {
+      try {
+      misc_public  = JSON.parse(misc_public);
+      }
+   catch (e) {
+    if (e instanceof SyntaxError) {
+      res.writeHead(400, { "Content-Type": "text/plain" });
+      return res.end("If provided, misc public data must be a correctly formated JSON string");
+    } else {
+      res.writeHead(400, { "Content-Type": "text/plain" });
+      return res.end(e);
+    }
+    }
+  }
   console.log("Register !!");
 
   

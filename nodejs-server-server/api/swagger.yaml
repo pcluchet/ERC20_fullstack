@@ -89,12 +89,12 @@ paths:
       - name: "X-request-new-misc-private"
         in: "header"
         description: "new misc private data for this user"
-        required: true
+        required: false
         type: "string"
       - name: "X-request-new-misc-public"
         in: "header"
         description: "new misc public data for this user"
-        required: true
+        required: false
         type: "string"
       - name: "username"
         in: "path"

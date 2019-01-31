@@ -57,8 +57,19 @@ function updmisc(user, newpublic, newprivate, cb) {
 		console.log("IN HERE");
 		console.log("RESULT HERE :" + JSON.stringify(result));
 
-		result.misc_private = newprivate;
-		result.misc_public = newpublic;
+
+
+		  if (typeof newprivate !== 'undefined')
+		  {
+			result.misc_private = newprivate;
+		  }
+
+		  
+		  if (typeof newpublic !== 'undefined')
+		  {
+			result.misc_public = newpublic;
+		  }
+
 		users.insert(result, user).then(
 			function () 
 			{ 
