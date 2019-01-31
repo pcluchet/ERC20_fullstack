@@ -14,42 +14,80 @@ func	checkSaleItem(saleItem SaleItem) (uint64, error) {
 
 	/// CHECK QUANTITY
 	if (saleItem.Quantity == 0) {
-		return 0, fmt.Errorf("Uncorrect item %s purchase quantity of 0.",
+		return "", 0, fmt.Errorf("Uncorrect item %s purchase quantity of 0.",
 		SaleItem.ItemId)
 	}
 	/// CHECK ITEM EXISTENCE
 	item, err = getItem(saleItem.ItemId)
 	if err != nil {
-		return 0, fmt.Errorf("Cannot get item %s", SaleItem.ItemId)
+		return "", 0, fmt.Errorf("Cannot get item %s", SaleItem.ItemId)
 	} else if saleItem.Quantity > item.Quantity {
-		return 0, fmt.Errorf("Not enough item %s in the shop")
+		return "", 0, fmt.Errorf("Not enough item %s in the shop")
 	} else if item.Bidable == true {
-		return 0, fmt.Errorf("Cannot buy bidable item %s", SaleItem.ItemId)
+		return "", 0, fmt.Errorf("Cannot buy bidable item %s", SaleItem.ItemId)
 	}
 	/// UPDATE ITEM INTO LEDGER
 	item.Quantity -= saleItem.Quantity
 	bytes, err = json.Marshal(Item)
 	if err != nil {
-		return "", fmt.Errorf("Cannot marshal item %s.", SaleItem.ItemId)
+		return "", 0, fmt.Errorf("Cannot marshal item %s.", SaleItem.ItemId)
 	}
 	err = STUB.PutState(SaleItem.ItemId, bytes)
 	if err != nil {
-		return "", fmt.Errorf("Cannot update item %s.", SaleItem.ItemId)
+		return "", 0, fmt.Errorf("Cannot update item %s.", SaleItem.ItemId)
 	}
-	/// GET PRICE
-	return item.Price * SaleItem.Quantity, nil
+	/// RETURN NAME & PRICE
+	return item.Name, item.Price * SaleItem.Quantity, nil
 }
 
-func	transferToShops(shops map[string][]SaleItem) error {
-	var	shop
+func	transferToShops(shops map[string][]SaleItem) (uint64, error) {
+	var	shopId			string
+	var	item			SaleItem
+	var	items			[]SaleItem
+	var	totalPrice		uint64
+	var	shopPrice		uint64
+	var	price			uint64
+	var	name			string
+	var	details			string
+	var	itemsDetails	string
+	var	shop			Shop
 
-	for shop = range(toPay) {
+	totalPrice = 0
+	for shopId, items = range(toPay) {
+		/// GET SHOP
+		shop, err = getShop(item.ShopId)
+		if err != nil {
+			return 0, fmt.Errorf("Cannot get shop of item %s", SaleItem.ItemId)
+		}
+		itemsDetails = ""
+		shopPrice = 0
+		for _, item = range(items) {
+			/// CHECK ITEM
+			name, price, err = checkSaleItem(saleItem)
+			if err != nil {
+				return 0, err
+			}
+			/// ADD DETAILS
+			itemsDetails += fmt.Sprintf("%s (%v) x %v", name, price,
+			saleItem.Quantity)
+			/// SET SHOP PRICE
+			shopPrice += price
+		}
+		/// BUILD SALE DETAILS
+		details = fmt.Sprintf("purchase of %v from %s: [%s]", ShopPrice, shopId,
+		itemsDetails)
+		/// TRANSFER TO SHOP
+		err = transfer(shop.ERC20Address, shopPrice, details)
+		if err != nil {
+			return 0, err
+		}
+		totalPrice += shopPrice
 	}
+	return totalPrice, nil
 }
 
 func	handleSaleItems(submission SaleSubmission) (uint64, error) {
 	var	err			error
-	var	totalPrice	uint64
 	var	price		uint64
 	var	saleItem	SaleItem
 	var	item		ShopItem
@@ -57,32 +95,16 @@ func	handleSaleItems(submission SaleSubmission) (uint64, error) {
 	var	isIn		bool
 
 	shops = make(map[string][]SaleItem)
-	totalPrice = 0
-	/// LOOP THROUGH ITEMS
+	/// BUILD SHOPS MAP OF ITEMS
 	for _, saleItem = range(submission) {
-		/// HANDLE ITEM
-		price, err = checkSaleItem(saleItem)
-		if err != nil {
-			return 0, err
-		}
-		totalPrice += price
-		/// HANDLE SHOP
-		_, err = getShop(item.ShopId)
-		if err != nil {
-			return 0, fmt.Errorf("Cannot get shop of item %s", SaleItem.ItemId)
-		}
-		/// GET TRANSFER TO DO
+		/// ADD TO TRANSFER TO DO
 		_, isIn = shops[saleItem.ShopId]
 		if isIn == false {
 			shops[saleItem.ShopId] = make([]SaleItem)
 		}
 		append(shops[saleItem.ShopId], saleItem)
 	}
-	err = transferToShops(shops)
-	if err != nil {
-		return 0, err
-	}
-	return totalPrice, nil
+	return transferToShops(shops)
 }
 
 func	handleSale(userKey string, arg string) (Sale, error) {
@@ -145,36 +167,8 @@ func	buyItem(args []string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	/// GET ITEM
-	item, err = getItem(sale.ItemId)
-	if err != nil {
-		return "", fmt.Errorf("Cannot get bought item.")
-	} else if item.Quantity < sale.Quantity {
-		return "", fmt.Errorf("Not enough available items.")
-	}
-	/// GET SHOP
-	shop, err = getShop(item.ShopId)
-	if err != nil {
-		return "", err
-	}
 
-	if item.Biddable {
-		return "", fmt.Errorf("This item is an auction")
-	}
-
-	/// UPDATE OBJECTS
-	if sale.Quantity < item.MinQuantity {
-		return "", fmt.Errorf("Minimum required quantity of %s", item.MinQuantity)
-	}
-	sale.Price = item.Price
-	item.Quantity -= sale.Quantity
-
-	/// MONEY TRANSFER
-	err = transferMoneyItem(shop, item, sale)
-	if err != nil {
-		return "", err
-	}
-
+	/// GET TRANSACTION ID
 	txId = STUB.GetTxID()
 
 	/// PUT SALE TO LEDGER
@@ -187,14 +181,6 @@ func	buyItem(args []string) (string, error) {
 		return "", fmt.Errorf("Cannot put sale to ledger.")
 	}
 
-	/// UPADTE ITEM FROM LEDGER
-	bytes, err = json.Marshal(item)
-	if err != nil {
-		return "", fmt.Errorf("Cannot marshal item struct.")
-	}
-	err = STUB.PutState(sale.ItemId, bytes)
-	if err != nil {
-		return "", fmt.Errorf("Cannot put sale to ledger.")
-	}
+	/// RETURN TRANSACTION ID
 	return txId, nil
 }
