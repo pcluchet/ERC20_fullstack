@@ -9,11 +9,12 @@ import (
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 func settleBid(args []string) (string, error) {
+	var err			error
+	var winningBid	Bid
+	var saidItem	ShopItem
+	var saleId		string
+	var	saleSpoof	SaleItem
 
-	var err error
-	var winningBid Bid
-	var saidItem ShopItem
-	var saleId string
 
 	/// CHECK ARGUMENTS
 	/// TODO : when better API, check this better
@@ -49,15 +50,12 @@ func settleBid(args []string) (string, error) {
 		return "", fmt.Errorf("Auctions on this item are not over")
 	}
 
-	//everything is ok, settle bid
-	var sale_spoof SaleSubmission
-
-	sale_spoof.ItemId = args[0]
-	sale_spoof.ShopId = saidItem.ShopId
-	sale_spoof.Quantity = 1
+	saleSpoof.ItemId = args[0]
+	saleSpoof.ShopId = saidItem.ShopId
+	saleSpoof.Quantity = 1
 
 	var bytes []byte
-	bytes, err = json.Marshal(sale_spoof)
+	bytes, err = json.Marshal(saleSpoof)
 
 	var fakeargs []string
 

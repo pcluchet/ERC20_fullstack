@@ -91,10 +91,7 @@ func	transferToShops(shops map[string][]SaleItem) (uint64, error) {
 }
 
 func	handleSaleItems(submission SaleSubmission) (uint64, error) {
-	var	err			error
-	var	price		uint64
 	var	saleItem	SaleItem
-	var	item		ShopItem
 	var	shops		map[string][]SaleItem
 	var	isIn		bool
 
@@ -143,8 +140,6 @@ func	buyItems(args []string) (string, error) {
 	var	err			error
 	var	userKey		string
 	var	sale		Sale
-	var	shop		Shop
-	var	item		ShopItem
 	var	bytes		[]byte
 	var	txId		string
 
