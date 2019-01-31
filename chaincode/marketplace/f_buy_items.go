@@ -7,22 +7,53 @@ import "fmt"
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-func getSale(userKey string, arg string) (Sale, error) {
-	var err error
-	var submission SaleSubmission
-	var sale Sale
+func	getSalePrice(submission SaleSubmission) (uint64, error) {
+	var	err			error
+	var	price		uint64
+	var	saleItem	SaleItem
+	var	item		ShopItem
 
-	err = json.Unmarshal([]byte(arg), &submission)
+	/// LOOP THROUGH ITEMS
+	for _, saleItem = range(submission) {
+		/// CHECK QUANTITY
+		if (saleItem.Quantity == 0) {
+			return 0, fmt.Errorf("Uncorrect item %s purchase quantity of 0.",
+			SaleItem.ItemId)
+		}
+		/// CHECK ITEM EXISTANCE
+		item, err = getItem(saleItem.ItemId)
+		if err != nil {
+			return 0, fmt.Errorf("Cannot get item %s", SaleItem.ItemId)
+		} else if item.Bidable == true {
+			return 0, fmt.Errorf("Cannot buy bidable item %s", SaleItem.ItemId)
+		}
+		/// GET PRICE
+		price += item.Price * SaleItem.Quantity
+	}
+	return price, nil
+}
+
+func	getSale(userKey string, arg string) (Sale, error) {
+	var	err			error
+	var	sale		Sale
+	var	submission	SaleSubmission
+
+	/// GET PURCHASE ITEMS
+	err = json.Unmarshal([]byte(arg), &submissions)
 	if err != nil {
 		return sale, fmt.Errorf("Cannot unmarshal sale submission.")
-	} else if submission.Quantity == 0 {
-		return sale, fmt.Errorf("Sale submission's quantity must be greater than 0.")
+	} else if len(submission) == 0 {
+		return sale, fmt.Errorf("Sale submission requires at least one item.")
 	}
+	/// BUILD SALE
 	sale.User = userKey
-	sale.ItemId = submission.ItemId
-	sale.Quantity = submission.Quantity
-	sale.ShopId = submission.ShopId
+	sale.Items = submission
 	sale.DocType = "Sale"
+	/// GET SALE PRICE
+	sale.Price, err = getSalePrice(submission)
+	if err != nil {
+		return sale, err
+	}
 	return sale, nil
 }
 
@@ -42,7 +73,7 @@ func	buyItem(args []string) (string, error) {
 	/// CHECK ARGUMENTS
 	/// TODO : when better API, check this better
 	if len(args) != 1 {
-		return "", fmt.Errorf("buyItem requires one argument.")
+		return "", fmt.Errorf("buyItems requires one argument. A list of items")
 	}
 
 	println("Some log")

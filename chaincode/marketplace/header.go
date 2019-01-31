@@ -6,15 +6,15 @@ import "github.com/hyperledger/fabric/core/chaincode/shim"
 /// STRUCTURES
 ////////////////////////////////////////////////////////////////////////////////
 
-type SimpleAsset struct {
+type SimpleAsset		struct {
 }
 
 //////////////////////////////////////////////////
 /// USERS
 //////////////////////////////////////////////////
 
-type User struct {
-	DocType string
+type User				struct {
+	DocType				string
 }
 
 //type UserLastBought		struct {
@@ -30,34 +30,43 @@ type User struct {
 //	Offer				uint64
 //}
 
-type Sale struct {
-	User      string
-	ItemId    string
-	ShopId    string
-	Price     uint64
-	Quantity  uint64
-	StateShop uint8 // When both states are TRUE,
-	StateUser uint8 // the Sale key is deleted.
-	DocType   string
+type Sale				struct {
+	User				string
+	Items				[]SaleItem
+	Price				uint64
+	DocType				string
 }
 
-type SaleSubmission struct {
-	ItemId   string
-	ShopId   string
-	Quantity uint64
+//type Sale				struct {
+//	User				string
+//	ItemId				string
+//	ShopId				string
+//	Price				uint64
+//	Quantity			uint64
+//	//StateShop			uint8 // When both states are TRUE,
+//	//StateUser			uint8 // the Sale key is deleted.
+//	DocType				string
+//}
+
+type SaleItem			struct {
+	ItemId				string
+	ShopId				string
+	Quantity			uint64
 }
+
+type SaleSubmission		[]SaleItem
 
 //////////////////////////////////////////////////
 /// SHOP
 //////////////////////////////////////////////////
 
-type Shop struct {
-	Name         string
-	Users        []string
-	Items        []string // Will be useless with couchdb
-	Raw          []string // Will be useless with couchdb
-	DocType      string
-	ERC20Address string
+type Shop				struct {
+	Name				string
+	Users				[]string
+	Items				[]string // Will be useless with couchdb
+	Raw					[]string // Will be useless with couchdb
+	DocType				string
+	ERC20Address		string
 }
 
 type ShopItem			struct {
@@ -140,7 +149,7 @@ type RawSubmission		struct {
 	Pictures			[]string
 }
 
-type AdminList []string
+type AdminList			[]string
 
 ////////////////////////////////////////////////////////////////////////////////
 /// GLOBAL VARIABLES
