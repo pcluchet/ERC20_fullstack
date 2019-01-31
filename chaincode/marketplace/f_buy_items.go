@@ -20,11 +20,14 @@ func	checkSaleItem(saleItem SaleItem) (string, uint64, error) {
 	/// CHECK ITEM EXISTENCE
 	item, err = getItem(saleItem.ItemId)
 	if err != nil {
-		return "", 0, fmt.Errorf("Cannot get item %s", saleItem.ItemId)
-	} else if saleItem.Quantity > item.Quantity {
-		return "", 0, fmt.Errorf("Not enough item %s in the shop")
+		return "", 0, fmt.Errorf("Cannot get item %s", item.Name)
 	} else if item.Biddable == true {
-		return "", 0, fmt.Errorf("Cannot buy bidable item %s", saleItem.ItemId)
+		return "", 0, fmt.Errorf("Cannot buy bidable item %s", item.Name)
+	} else if saleItem.Quantity > item.Quantity {
+		return "", 0, fmt.Errorf("Not enough item %s in the shop", item.Name)
+	} else if saleItem.Quantity < item.MinQuantity {
+		return "", 0, fmt.Errorf("Minimum purchase quantity of item %s of %v",
+		item.Name, item.Min.Quantity)
 	}
 	/// UPDATE ITEM INTO LEDGER
 	item.Quantity -= saleItem.Quantity
