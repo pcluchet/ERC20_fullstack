@@ -1,93 +1,93 @@
 package main
 
-//import "encoding/json"
-//import "fmt"
+import "encoding/json"
+import "fmt"
 
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
 /// TODO: Handle this with buyItems
-func buyBid(args []string) (string, error) {
-	return "COUCOU", nil
-	//var err error
-	//var userKey string
-	//var sale Sale
-	//var item ShopItem
-	//var bytes []byte
-	//var txId string
-	////var	user			User
+func	buyBid(args []string) (string, error) {
+	var	err		error
+	var	userKey	string
+	var	sale	Sale
+	var	item	ShopItem
+	var	bytes	[]byte
+	var	txId	string
+	var	shop	Shop
+	var	details	string
 
-	///// CHECK ARGUMENTS
-	///// TODO : when better API, check this better
-	//if len(args) != 1 {
-	//	return "", fmt.Errorf("buyItem requires one argument.")
-	//}
+	//var	user			User
 
-	//println("Some log")
+	/// CHECK ARGUMENTS
+	/// TODO : when better API, check this better
+	if len(args) != 1 {
+		return "", fmt.Errorf("buyItem requires one argument.")
+	}
 
-	///// GET USER INFO
-	//userKey, err = getPublicKey()
-	//if err != nil {
-	//	return "", fmt.Errorf("Cannot get user public key.")
-	//}
-	//_, err = getUser(userKey)
-	//if err != nil {
-	//	return "", fmt.Errorf("Cannot get user informations.")
-	//}
+	println("Some log")
 
-	///// GET SALE
-	////sale, err = getSale(userKey, args[0])
-	////if err != nil {
-	////	return "", err
-	////}
+	/// GET USER INFO
+	userKey, err = getPublicKey()
+	if err != nil {
+		return "", fmt.Errorf("Cannot get user public key.")
+	}
+	_, err = getUser(userKey)
+	if err != nil {
+		return "", fmt.Errorf("Cannot get user informations.")
+	}
 
-	///// GET ITEM
-	//item, err = getItem(sale.ItemId)
-	//if err != nil {
-	//	return "", fmt.Errorf("Cannot get bought item.")
-	//} else if item.Quantity < sale.Quantity {
-	//	return "", fmt.Errorf("Not enough available items.")
-	//}
-
-	///// UPDATE OBJECTS
-	//sale.Price = item.Price
-	//item.Quantity -= sale.Quantity
-
-	//var shop Shop
-
-	//shop, err = getShop(item.ShopId)
+	/// GET SALE
+	//sale, err = getSale(userKey, args[0])
 	//if err != nil {
 	//	return "", err
 	//}
 
-	//err = transferMoneyItem(shop, item, sale)
-	//if err != nil {
-	//	return "", err
-	//}
-	////////////////////////
-	////////////////////////
+	/// GET ITEM
+	item, err = getItem(sale.Items[0].ItemId)
+	if err != nil {
+		return "", fmt.Errorf("Cannot get bought item.")
+	} else if item.Quantity < sale.Items[0].Quantity {
+		return "", fmt.Errorf("Not enough available items.")
+	}
 
-	//txId = STUB.GetTxID()
+	/// UPDATE OBJECTS
+	sale.Price = item.Price
+	item.Quantity -= sale.Items[0].Quantity
 
-	///// PUT SALE TO LEDGER
-	//bytes, err = json.Marshal(sale)
-	//if err != nil {
-	//	return "", fmt.Errorf("Cannot marshal sale struct.")
-	//}
-	//err = STUB.PutState(txId, bytes)
-	//if err != nil {
-	//	return "", fmt.Errorf("Cannot put sale to ledger.")
-	//}
+	shop, err = getShop(item.ShopId)
+	if err != nil {
+		return "", err
+	}
 
-	///// UPADTE ITEM FROM LEDGER
-	//bytes, err = json.Marshal(item)
-	//if err != nil {
-	//	return "", fmt.Errorf("Cannot marshal item struct.")
-	//}
-	//err = STUB.PutState(sale.ItemId, bytes)
-	//if err != nil {
-	//	return "", fmt.Errorf("Cannot put sale to ledger.")
-	//}
-	//return txId, nil
+	details = fmt.Sprintf("bid won: [%s from %s (%v)]", item.Name,
+	shop.Name, sale.Price)
+	err = transfer(shop.ERC20Address, sale.Price, details)
+	if err != nil {
+		return "", err
+	}
+
+	txId = STUB.GetTxID()
+
+	/// PUT SALE TO LEDGER
+	bytes, err = json.Marshal(sale)
+	if err != nil {
+		return "", fmt.Errorf("Cannot marshal sale struct.")
+	}
+	err = STUB.PutState(txId, bytes)
+	if err != nil {
+		return "", fmt.Errorf("Cannot put sale to ledger.")
+	}
+
+	/// UPADTE ITEM FROM LEDGER
+	bytes, err = json.Marshal(item)
+	if err != nil {
+		return "", fmt.Errorf("Cannot marshal item struct.")
+	}
+	err = STUB.PutState(sale.Items[0].ItemId, bytes)
+	if err != nil {
+		return "", fmt.Errorf("Cannot put sale to ledger.")
+	}
+	return txId, nil
 }
