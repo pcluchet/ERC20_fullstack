@@ -7,7 +7,7 @@ import "fmt"
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-func	checkSaleItem(saleItem SaleItem) (uint64, error) {
+func	checkSaleItem(saleItem SaleItem) (string, uint64, error) {
 	var	err		error
 	var	item	ShopItem
 	var	bytes	[]byte
@@ -15,32 +15,33 @@ func	checkSaleItem(saleItem SaleItem) (uint64, error) {
 	/// CHECK QUANTITY
 	if (saleItem.Quantity == 0) {
 		return "", 0, fmt.Errorf("Uncorrect item %s purchase quantity of 0.",
-		SaleItem.ItemId)
+		saleItem.ItemId)
 	}
 	/// CHECK ITEM EXISTENCE
 	item, err = getItem(saleItem.ItemId)
 	if err != nil {
-		return "", 0, fmt.Errorf("Cannot get item %s", SaleItem.ItemId)
+		return "", 0, fmt.Errorf("Cannot get item %s", saleItem.ItemId)
 	} else if saleItem.Quantity > item.Quantity {
 		return "", 0, fmt.Errorf("Not enough item %s in the shop")
-	} else if item.Bidable == true {
-		return "", 0, fmt.Errorf("Cannot buy bidable item %s", SaleItem.ItemId)
+	} else if item.Biddable == true {
+		return "", 0, fmt.Errorf("Cannot buy bidable item %s", saleItem.ItemId)
 	}
 	/// UPDATE ITEM INTO LEDGER
 	item.Quantity -= saleItem.Quantity
-	bytes, err = json.Marshal(Item)
+	bytes, err = json.Marshal(item)
 	if err != nil {
-		return "", 0, fmt.Errorf("Cannot marshal item %s.", SaleItem.ItemId)
+		return "", 0, fmt.Errorf("Cannot marshal item %s.", saleItem.ItemId)
 	}
-	err = STUB.PutState(SaleItem.ItemId, bytes)
+	err = STUB.PutState(saleItem.ItemId, bytes)
 	if err != nil {
-		return "", 0, fmt.Errorf("Cannot update item %s.", SaleItem.ItemId)
+		return "", 0, fmt.Errorf("Cannot update item %s.", saleItem.ItemId)
 	}
 	/// RETURN NAME & PRICE
-	return item.Name, item.Price * SaleItem.Quantity, nil
+	return item.Name, item.Price * saleItem.Quantity, nil
 }
 
 func	transferToShops(shops map[string][]SaleItem) (uint64, error) {
+	var	err				error
 	var	shopId			string
 	var	item			SaleItem
 	var	items			[]SaleItem
@@ -53,28 +54,28 @@ func	transferToShops(shops map[string][]SaleItem) (uint64, error) {
 	var	shop			Shop
 
 	totalPrice = 0
-	for shopId, items = range(toPay) {
+	for shopId, items = range(shops) {
 		/// GET SHOP
 		shop, err = getShop(item.ShopId)
 		if err != nil {
-			return 0, fmt.Errorf("Cannot get shop of item %s", SaleItem.ItemId)
+			return 0, err
 		}
 		itemsDetails = ""
 		shopPrice = 0
 		for _, item = range(items) {
 			/// CHECK ITEM
-			name, price, err = checkSaleItem(saleItem)
+			name, price, err = checkSaleItem(item)
 			if err != nil {
 				return 0, err
 			}
 			/// ADD DETAILS
 			itemsDetails += fmt.Sprintf("%s (%v) x %v", name, price,
-			saleItem.Quantity)
+			item.Quantity)
 			/// SET SHOP PRICE
 			shopPrice += price
 		}
 		/// BUILD SALE DETAILS
-		details = fmt.Sprintf("purchase of %v from %s: [%s]", ShopPrice, shopId,
+		details = fmt.Sprintf("purchase of %v from %s: [%s]", shopPrice, shopId,
 		itemsDetails)
 		/// TRANSFER TO SHOP
 		err = transfer(shop.ERC20Address, shopPrice, details)
@@ -100,9 +101,9 @@ func	handleSaleItems(submission SaleSubmission) (uint64, error) {
 		/// ADD TO TRANSFER TO DO
 		_, isIn = shops[saleItem.ShopId]
 		if isIn == false {
-			shops[saleItem.ShopId] = make([]SaleItem)
+			shops[saleItem.ShopId] = make([]SaleItem, 0)
 		}
-		append(shops[saleItem.ShopId], saleItem)
+		shops[saleItem.ShopId] = append(shops[saleItem.ShopId], saleItem)
 	}
 	return transferToShops(shops)
 }
@@ -113,7 +114,7 @@ func	handleSale(userKey string, arg string) (Sale, error) {
 	var	submission	SaleSubmission
 
 	/// GET PURCHASE ITEMS
-	err = json.Unmarshal([]byte(arg), &submissions)
+	err = json.Unmarshal([]byte(arg), &submission)
 	if err != nil {
 		return sale, fmt.Errorf("Cannot unmarshal sale submission.")
 	} else if len(submission) == 0 {
@@ -135,7 +136,7 @@ func	handleSale(userKey string, arg string) (Sale, error) {
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-func	buyItem(args []string) (string, error) {
+func	buyItems(args []string) (string, error) {
 	var	err			error
 	var	userKey		string
 	var	sale		Sale
