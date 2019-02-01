@@ -21,15 +21,16 @@ func	checkSaleItem(saleItem SaleItem) (string, uint64, error) {
 	item, err = getItem(saleItem.ItemId)
 	if err != nil {
 		return "", 0, fmt.Errorf("Cannot get item %s", item.Name)
+	/// CHECK ITEM PROPERTIES
 	} else if item.Biddable == true {
-		return "", 0, fmt.Errorf("Cannot buy bidable item %s", item.Name)
+		return "", 0, fmt.Errorf("Cannot buy biddable item %s", item.Name)
 	} else if saleItem.Quantity > item.Quantity {
 		return "", 0, fmt.Errorf("Not enough item %s in the shop", item.Name)
 	} else if saleItem.Quantity < item.MinQuantity {
 		return "", 0, fmt.Errorf("Minimum purchase quantity of item %s of %v",
 		item.Name, item.MinQuantity)
 	}
-	/// UPDATE ITEM INTO LEDGER
+	/// UPDATE ITEM TO LEDGER
 	item.Quantity -= saleItem.Quantity
 	bytes, err = json.Marshal(item)
 	if err != nil {
@@ -40,7 +41,7 @@ func	checkSaleItem(saleItem SaleItem) (string, uint64, error) {
 		return "", 0, fmt.Errorf("Cannot update item %s.", saleItem.ItemId)
 	}
 	/// RETURN NAME & PRICE
-	return item.Name, item.Price * saleItem.Quantity, nil
+	return item.Name, item.Price, nil
 }
 
 func	transferToShops(shops map[string][]SaleItem) (uint64, error) {
@@ -53,18 +54,19 @@ func	transferToShops(shops map[string][]SaleItem) (uint64, error) {
 	var	price			uint64
 	var	name			string
 	var	details			string
-	var	itemsDetails	string
 	var	shop			Shop
 
 	totalPrice = 0
+	/// FOR EACH SHOP
 	for shopId, items = range(shops) {
 		/// GET SHOP
 		shop, err = getShop(item.ShopId)
 		if err != nil {
 			return 0, err
 		}
-		itemsDetails = ""
+		details = ""
 		shopPrice = 0
+		/// FOR EACH ITEM
 		for _, item = range(items) {
 			/// CHECK ITEM
 			name, price, err = checkSaleItem(item)
@@ -72,14 +74,14 @@ func	transferToShops(shops map[string][]SaleItem) (uint64, error) {
 				return 0, err
 			}
 			/// ADD DETAILS
-			itemsDetails += fmt.Sprintf("%s (%v) x %v", name, price,
+			details = fmt.Sprintf("%s [%s (%v) x %v]", details, name, price,
 			item.Quantity)
 			/// SET SHOP PRICE
-			shopPrice += price
+			shopPrice += price * item.Quantity
 		}
 		/// BUILD SALE DETAILS
-		details = fmt.Sprintf("purchase of %v from %s: [%s]", shopPrice, shopId,
-		itemsDetails)
+		details = fmt.Sprintf("purchase of %v from %s:%s", shopPrice, shopId,
+		details)
 		/// TRANSFER TO SHOP
 		err = transfer(shop.ERC20Address, shopPrice, details)
 		if err != nil {
@@ -95,16 +97,18 @@ func	handleSaleItems(submission SaleSubmission) (uint64, error) {
 	var	shops		map[string][]SaleItem
 	var	isIn		bool
 
-	shops = make(map[string][]SaleItem)
 	/// BUILD SHOPS MAP OF ITEMS
+	shops = make(map[string][]SaleItem)
+	/// FOR EACH ITEM
 	for _, saleItem = range(submission) {
-		/// ADD TO TRANSFER TO DO
+		/// ADD ITEM TO MAP
 		_, isIn = shops[saleItem.ShopId]
 		if isIn == false {
 			shops[saleItem.ShopId] = make([]SaleItem, 0)
 		}
 		shops[saleItem.ShopId] = append(shops[saleItem.ShopId], saleItem)
 	}
+	/// TRANSFER MONEY TO SHOPS
 	return transferToShops(shops)
 }
 
@@ -124,7 +128,7 @@ func	handleSale(userKey string, arg string) (Sale, error) {
 	sale.User = userKey
 	sale.Items = submission
 	sale.DocType = "Sale"
-	/// GET SALE PRICE
+	/// HANDLE ITEM BY ITEM
 	sale.Price, err = handleSaleItems(submission)
 	if err != nil {
 		return sale, err
@@ -149,8 +153,6 @@ func	buyItems(args []string) (string, error) {
 		return "", fmt.Errorf("buyItems requires one argument. A list of items")
 	}
 
-	println("Some log")
-
 	/// GET USER INFO
 	userKey, err = getPublicKey()
 	if err != nil {
@@ -161,7 +163,7 @@ func	buyItems(args []string) (string, error) {
 		return "", fmt.Errorf("Cannot get user informations.")
 	}
 
-	/// GET SALE
+	/// HANDLE SALE
 	sale, err = handleSale(userKey, args[0])
 	if err != nil {
 		return "", err
