@@ -407,24 +407,38 @@ BUY ITEM
 ==================================================
 -->
 
-	<button class="collapsible">buy_item <div class="RW">Read + Write</div></button>
+	<button class="collapsible">buy_items <div class="RW">Read + Write</div></button>
 	<div class="collapsibleContent">
 		<p>
 
-			This function makes the user buy the given item.
+			This function makes the user buy the given items.</br>
+			An item object must contains these following properties:
+			<ul>
+				<li>ItemId: Item ID in the blockchain</li>
+				<li>ShopId: Shop item ID in the blockchain</li>
+				<li>Quantity: Number of item to buy</li>
+			</ul>
 			</br></br>
 
 			<h5>Parameters : </h5>
 
 			<ol>
 				<li>
-					Item purchase json (ex:
+					A json list of items (ex:
 					<code>
+					[
 						{
 							"ItemId":"EG54...",
-							"Quantity": 2,
-							"ShopId": "Shop42"
-						}
+							"ShopId": "Shop42",
+							"Quantity": 2
+						},
+						{
+							"ItemId":"F09R...",
+							"ShopId": "Shop24",
+							"Quantity": 1
+						},
+						...
+					]
 					</code>)
 				</li>
 			</ol>
