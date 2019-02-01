@@ -16,9 +16,9 @@ func	getSale(userKey string, arg string) (Sale, error) {
 
 	err = json.Unmarshal([]byte(arg), &item)
 	if err != nil {
-			return sale, fmt.Errorf("Cannot unmarshal sale submission.")
+		return sale, fmt.Errorf("Cannot unmarshal sale submission.")
 	} else if item.Quantity == 0 {
-			return sale, fmt.Errorf("Sale submission's quantity must be greater than 0.")
+		return sale, fmt.Errorf("Sale submission's quantity must be greater than 0.")
 	}
 	sale.User = userKey
 	sale.Items = SaleSubmission{item}

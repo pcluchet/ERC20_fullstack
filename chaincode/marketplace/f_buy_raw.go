@@ -27,8 +27,6 @@ func	buyRaw(args []string) (string, error) {
 		return "", fmt.Errorf("buyItem requires one argument.")
 	}
 
-	println("Some log")
-
 	/// GET USER INFO
 	userKey, err = getPublicKey()
 	if err != nil {
@@ -48,8 +46,6 @@ func	buyRaw(args []string) (string, error) {
 	raw, err = getShopRaw(sale.Items[0].ItemId)
 	if err != nil {
 		return "", fmt.Errorf("Cannot get raw.")
-	} else if raw.Quantity >= sale.Items[0].Quantity {
-		return "", fmt.Errorf("Not enough raw material.")
 	}
 	/// GET SHOP
 	shop, err = getShop(raw.ShopId)
@@ -57,26 +53,24 @@ func	buyRaw(args []string) (string, error) {
 		return "", err
 	}
 
-	/// UPDATE OBJECTS
+	/// CHECK SALE
 	if sale.Items[0].Quantity < raw.MinQuantity {
 		return "", fmt.Errorf("Minimum required quantity of %s", raw.MinQuantity)
+	} else if sale.Items[0].Quantity > raw.Quantity {
+		return "", fmt.Errorf("Not enough raw material.")
 	}
-	sale.Price = raw.Price
-	raw.Quantity -= sale.Items[0].Quantity
 
 	/// TRANSFER MONEY
 	sale.Price = raw.Price * sale.Items[0].Quantity
 	details = fmt.Sprintf("purchase of %v: [raw %s from %s (%v) x %v]",
-	sale.Price, raw.RawId, shop.Name, sale.Items[0].Quantity)
+	sale.Price, raw.RawId, shop.Name, raw.Price, sale.Items[0].Quantity)
 	err = transfer(shop.ERC20Address, sale.Price, details)
-	//err = transferMoneyRaw(shop, raw, sale)
-	//if err != nil {
-	//	return "", err
-	//}
-
-	txId = STUB.GetTxID()
+	if err != nil {
+		return "", err
+	}
 
 	/// PUT SALE TO LEDGER
+	txId = STUB.GetTxID()
 	bytes, err = json.Marshal(sale)
 	if err != nil {
 		return "", fmt.Errorf("Cannot marshal sale struct.")
@@ -86,7 +80,8 @@ func	buyRaw(args []string) (string, error) {
 		return "", fmt.Errorf("Cannot put sale to ledger.")
 	}
 
-	/// UPADTE ITEM FROM LEDGER
+	/// UPADTE RAW TO LEDGER
+	raw.Quantity -= sale.Items[0].Quantity
 	bytes, err = json.Marshal(raw)
 	if err != nil {
 		return "", fmt.Errorf("Cannot marshal shop raw struct.")
