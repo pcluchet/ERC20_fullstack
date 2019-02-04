@@ -167,7 +167,7 @@ export const TransferTokens = (username, password, to, amount) => {
           'Content-Type': 'application/json',
           'X-request-username': username,
           'X-request-password': password,
-          'params': argarray[0] + '|' + argarray[1] 
+          'params': argarray[0] + '|' + argarray[1] + '|' + "Triggered from wallet app"  
         },
 
       /*
@@ -375,6 +375,7 @@ export default class App extends Component {
       billaddress : '',
       scanningContact: false,
       scanningBill: false,
+      ManualContact: false,
       BalanceIsLoading: false, // la requête API est-elle en cours ?
       UserListIsLoading: false, // la requête API est-elle en cours ?
       contactlist : '[{"username" : "john", "pubkey" : "abc" }]',
@@ -394,6 +395,41 @@ for (var i = 0; i < arrayLength; i++) {
 }
 return true;
 
+  }
+
+
+addContactManual = () => {
+
+    var raw = this.state.contactlist;
+    console.log("contactlist = " + raw);
+    try 
+    {
+    var obj = JSON.parse(raw);
+    }
+    catch (e)
+    {
+      console.log("shit happens");
+    }
+    var newusr = {
+      username : this.state.ContactToAdd_usr,
+      pubkey : this.state.ContactToAdd_addr,
+    }
+    if (!obj)
+     obj = new Array();
+    if (this.notAlreadyIn(newusr,this.state.contactlist))
+    {
+      obj.push(newusr);
+      alert(" User added successfully ");
+    }
+    else
+    {
+      alert(" User not added : already in list ❌ ");
+    }
+    
+    console.log("newlist = " + JSON.stringify(obj));
+    this._storeData("@Pwallet:contacts_"+this.state.username, JSON.stringify(obj));
+    this.state.ManualContact= false;
+    this.RefreshContactList();
   }
 
   addContactFromQR = (data) => {
@@ -889,7 +925,6 @@ RefreshContactList =  () => {
       reee = AsyncStorage.getItem("@Pwallet:contacts_"+this.state.username).then(
         (localdata) => {
   this.setState({"contactlist": localdata});
-
 
         }
       );
@@ -1400,15 +1435,70 @@ scancontact = () => {
       ></Camera>
       <View style={{flex: 0.2, backgroundColor: '#4CB676'}}>
       <TouchableOpacity onPress={() => this.setState({ scanningContact : false })}>
-            <Text style={{marginTop: '5%', textAlign: 'center', fontSize: 42, fontWeight: '100'}}>
+            <Text style={{marginTop: '5%', textAlign: 'center', fontSize: 21, fontWeight: '100'}}>
               Cancel
             </Text>
           </TouchableOpacity>
+      <TouchableOpacity onPress={() => this.setState({ scanningContact : false, ManualContact : true })}>
+            <Text style={{marginTop: '5%', textAlign: 'center', fontSize: 21, fontWeight: '100'}}>
+              Add a contact manually
+            </Text>
+          </TouchableOpacity>
+
       </View>
       </View>
 
     );
 }
+
+manualcontact = () => {
+  //this.myContacts();
+  
+  //myContacts = "";
+    return (
+      <View style={styles.container}>
+
+      <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold', marginTop: '2%'}}>
+            Add a contact manually :
+      </Text>
+  <TextInput style={{ marginTop: '10%', textAlign: 'center', fontSize: 19, fontWeight: '200', borderWidth : 1, borderColor: "gray"}}
+            placeholder="Username"
+            onChangeText={(username) => this.setState({ ContactToAdd_usr : username })}
+            autoCorrect={false}
+            autoCapitalize={"none"}
+            autoComplete={"off"}
+            >
+          </TextInput>
+
+
+  <TextInput style={{ marginTop: '10%', textAlign: 'center', fontSize: 12, fontWeight: '200', borderWidth : 1, borderColor: "gray"}}
+            placeholder="Address"
+            onChangeText={(addr) => this.setState({ ContactToAdd_addr : addr })}
+            autoCorrect={false}
+            autoCapitalize={"none"}
+            autoComplete={"off"}
+            >
+          </TextInput>
+
+      <View style={{flex: 0.25, backgroundColor: '#4CB676'}}>
+      <TouchableOpacity onPress={ this.addContactManual }>
+            <Text style={{marginTop: '5%', textAlign: 'center', fontSize: 21, fontWeight: '100'}}>
+              Add
+            </Text>
+          </TouchableOpacity>
+      <TouchableOpacity onPress={() => this.setState({ ManualContact : false })}>
+            <Text style={{marginTop: '5%', textAlign: 'center', fontSize: 21, fontWeight: '100'}}>
+              Cancel
+            </Text>
+          </TouchableOpacity>
+
+      </View>
+      </View>
+
+    );
+}
+
+
 
 
 scanbill = () => {
@@ -1640,6 +1730,7 @@ ft_approve = () => {
      var createbill = this.createbill();
      var scancontact = this.scancontact();
      var scanbill = this.scanbill();
+     var manualcontact = this.manualcontact();
 
 
      if (this.state.logged != true)
@@ -1658,6 +1749,16 @@ ft_approve = () => {
         </View>
          );
      }
+
+    else if (this.state.ManualContact == true)
+     {
+       return (
+        <View style={styles.slide}>
+          {manualcontact}
+        </View>
+         );
+     }
+
 
     else if (this.state.scanningBill == true)
      {
