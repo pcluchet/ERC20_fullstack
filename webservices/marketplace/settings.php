@@ -2,7 +2,7 @@
 
 //SETTINGS//
 
-$APIURL = "http://api.MEDSOS.example.com:8080";
+$APIURL = "http://api.plastictwist.com";
 //$APIURL = "http://localhost:8080";
 $login = $_SESSION["username"];
 $password = $_SESSION["password"];
@@ -10,7 +10,7 @@ $password = $_SESSION["password"];
 
 function getPubKey($login, $password)
 {
-$APIURL = "http://api.MEDSOS.example.com:8080";
+$APIURL = "http://api.plastictwist.com";
 //$APIURL = "http://localhost:8080";
 $login = $_SESSION["username"];
 $password = $_SESSION["password"];
@@ -26,7 +26,7 @@ $chaincode = "marketplace";
 
 $ch = curl_init();
 
-curl_setopt($ch, CURLOPT_URL,$APIURL."/users/$login");
+curl_setopt($ch, CURLOPT_URL,$APIURL."/users/$login/auth");
 
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',

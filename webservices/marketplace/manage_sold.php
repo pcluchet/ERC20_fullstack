@@ -194,7 +194,7 @@ foreach ($sales as $key => $value)
   $price = $value['Record']['Price'];
   $pid = $value['Record']['ItemId'];
   $name = $itms[$pid]['Record']['Name'];
-  $picurl = $itms[$pid]['Record']['Picture'];
+  $picurl = $itms[$pid]['Record']['Pictures'][0];
   $details = $itms[$pid]['Record']['Detail'];
   if (strlen($details) > 130)
   {
