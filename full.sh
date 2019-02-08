@@ -1,14 +1,48 @@
+#!/usr/bin/env bash
+
+function		part() {
+	echo "################################################################################"
+	echo "### ${1}"
+	echo "################################################################################"
+}
+
+### STRICT MODE
+set -e
+
+### NODE SERVER
+part "NODE SERVER"
 cd ./nodejs-server-server
 ./build_container.sh
+
+### WEBSERVICES
+part "WEBSERVICES"
 cd ../webservices
 ./build_container.sh
-cd ../network
-./ptwist.sh init
-./ptwist.sh up
-docker exec api.MEDSOS.example.com node create_db.js
-docker exec api.MEDSOS.example.com node enrollAdmin.js
-cbkey="$(curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'X-request-password: cbpassword' 'http://localhost:8080/users/centralbank' | jq -r '.pubkey')"
-echo "central bank user address :${cbkey}"
-echo "${cbkey}" > ../centralbank_pubkey.txt
-./ptwist.sh deploy $cbkey
 
+### NETWORK
+cd ../network
+part "NETWORK INIT"
+./ptwist.sh init
+part "NETWORK UP"
+./ptwist.sh up
+
+### DATABASE
+part "CREATE DATABASE"
+docker exec api.MEDSOS.example.com node create_db.js
+
+### ENROLL ADMIN
+part "ENROLL ADMIN"
+docker exec api.MEDSOS.example.com node enrollAdmin.js
+
+### CENTRALBANK PUBLIC KEY
+curl \
+	-X POST \
+	--header 'Content-Type: application/json' \
+	--header 'Accept: application/json' \
+	--header 'X-request-password: cbpassword' \
+	'http://localhost:8080/users/centralbank' > .tmp
+cat .tmp | jq -r .pubkey > ../centralbank_pubkey.txt
+
+### DEPLOY
+part "DEPLOY"
+./ptwist.sh deploy "$(cat ../centralbank_pubkey.txt)"
