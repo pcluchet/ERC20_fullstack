@@ -19,9 +19,11 @@ func newUser(args []string) (string, error) {
 
 	/// CHECK ARGUMENTS
 	/// TODO : when better API, check this better
-	if len(args) != 1 {
-		return "", fmt.Errorf("createBill requires one argument. An item list")
-	}
+	/*
+		if len(args) != 1 {
+			return "", fmt.Errorf("createBill requires one argument. An item list")
+		}
+	*/
 
 	println("Some log")
 

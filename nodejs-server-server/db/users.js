@@ -32,6 +32,54 @@ function updtoken(user, ip, expire, renewduration, linkip, forever, autorenew, c
 	});
 };
 
+//newpass should be already hashed
+
+exports.updpassword = updpassword;
+function updpassword(user, newpass, cb) {
+	users.get(user, function (err, result) {
+		console.log("IN HERE");
+		console.log("RESULT HERE :" + JSON.stringify(result));
+
+		result.password = newpass;
+		users.insert(result, user).then(
+			function () 
+			{ 
+				var ret = "Password updated successfully";
+				cb(ret); 
+			});
+		});
+};
+
+
+exports.updmisc = updmisc;
+function updmisc(user, newpublic, newprivate, cb) {
+	users.get(user, function (err, result) {
+		console.log("IN HERE");
+		console.log("RESULT HERE :" + JSON.stringify(result));
+
+
+
+		  if (typeof newprivate !== 'undefined')
+		  {
+			result.misc_private = newprivate;
+		  }
+
+		  
+		  if (typeof newpublic !== 'undefined')
+		  {
+			result.misc_public = newpublic;
+		  }
+
+		users.insert(result, user).then(
+			function () 
+			{ 
+				var ret = "success";
+				cb(ret); 
+			});
+		});
+};
+
+
 exports.updatetoken = updtoken;
 
 exports.get = function get(id, cb) {
@@ -167,6 +215,8 @@ exports.comparepwd = function get(id, pwd, cb) {
 };
 
 
+
+
 exports.comparepwd_pub = function get(id, pwd, cb) {
 
 	var crypto = require('crypto');
@@ -192,6 +242,7 @@ exports.comparepwd_pub = function get(id, pwd, cb) {
 			if (gen_hash == result.password) {
 				console.log("pass ok")
 				retu.pubkey = result.pubkey;
+				retu.fulluser = result;
 				retu.valid = true;
 				cb(err, retu);
 			}

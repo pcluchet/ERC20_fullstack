@@ -8,7 +8,8 @@ session_start();
 <?php
 
 //SETTINGS//
-$APIURL = "http://api.MEDSOS.example.com:8080";
+
+$APIURL = "http://api.plastictwist.com/";
 $login = $_SESSION["username"];
 $password = $_SESSION["password"];
 

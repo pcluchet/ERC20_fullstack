@@ -43,7 +43,7 @@ curl_setopt($ch, CURLOPT_URL,$APIURL."/ledger/$channel/$chaincode/shop_add_item"
 	$Quantity			 = $_POST["qtt"];
     $Duration			 = $_POST["duration"];
 
-$jsobj = '{"Bidable" : '.$Bidable.', "Picture" : "'.$Picture.'", "Name" : "'.$Name.'" , "Detail" : "'.$Detail.'", "Quantity" : '.$Quantity.', "Duration" : '.$Duration.', "Price" : '.$Price.'}';
+$jsobj = '{"Bidable" : '.$Bidable.', "Pictures" : ["'.$Picture.'"], "Name" : "'.$Name.'" , "Detail" : "'.$Detail.'", "Quantity" : '.$Quantity.', "Duration" : '.$Duration.', "Price" : '.$Price.'}';
 
     //echo "OBJ=".$jsobj;
 //print_r($_POST);

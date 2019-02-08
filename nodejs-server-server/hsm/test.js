@@ -1,23 +1,26 @@
 "use strict";
 
+//
+// DOC:
+// https://hyperledger-fabric.readthedocs.io/en/latest/developapps/wallet.html
+// https://hyperledger-fabric.readthedocs.io/en/release-1.4/tutorial/commercial_paper.html
+//
+
 const {
-	HSMWalletMixin:		hsm_wallet,
-	InMemoryWallet:		in_mem_wallet,
-	Gateway:			gateway
+	HSMWalletMixin,
+	InMemoryWallet,
+	Gateway,
+	X509WalletMixin
 } = require('fabric-network');
 
 async function	main() {
 	const		pkcs_lib_path = "/usr/lib/softhsm/libsofthsm2.so";
 	const		slot = "0";
 	const		pin = "98765432";
-	const		wallet = new in_mem_wallet(new hsm_wallet(pkcs_lib_path, slot,
-				pin));
+	const		wallet = new InMemoryWallet(new HSMWalletMixin(pkcs_lib_path,
+				slot, pin));
 
-	console.log(hsm_wallet);
-	console.log(gateway);
-	console.log(in_mem_wallet);
-	console.log(wallet);
-	console.log(await wallet.exists("user1"));
+	//await wallet.import("user1", {});
 }
 
 main();

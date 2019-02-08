@@ -1,9 +1,11 @@
 'use strict';
+
 /*
 * Copyright IBM Corp All Rights Reserved
 *
 * SPDX-License-Identifier: Apache-2.0
 */
+
 /*
  * Register and Enroll a user
  */
@@ -18,13 +20,6 @@ var Fabric_CA_Client = require('fabric-ca-client');
 var path = require('path');
 var util = require('util');
 var os = require('os');
-
-/*
-if (process.argv.length != 3) {
-	console.log("Usage: node registerUser.js [name]") 
-	return ;
-}
-*/
 
 //
 var fabric_client = new Fabric_Client();
@@ -90,8 +85,7 @@ return Fabric_Client.newDefaultKeyValueStore({ path: store_path
     //certif = enrollment.enrollmentCert();
     pp = enrollment.key.getPublicKey().toBytes();
 
-    // Close to one fucking hour wasted here to replace all occurences of newlines in a string
-    // JS go to hell
+    // JS FTW !
     console.log(pp);
     pp = pp.replace(/-----BEGIN PUBLIC KEY-----/g, "");
     pp = pp.replace(/-----END PUBLIC KEY-----/g, "");

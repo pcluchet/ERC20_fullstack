@@ -40,8 +40,9 @@ curl \
 	--header 'Content-Type: application/json' \
 	--header 'Accept: application/json' \
 	--header 'X-request-password: cbpassword' \
-	'http://localhost:8080/users/centralbank' > .tmp
+	'http://localhost:80/users/centralbank/auth' > .tmp
 cat .tmp | jq -r .pubkey > ../centralbank_pubkey.txt
+rm .tmp
 
 ### DEPLOY
 part "DEPLOY"

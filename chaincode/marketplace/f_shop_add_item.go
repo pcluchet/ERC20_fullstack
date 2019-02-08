@@ -11,19 +11,18 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
-func	shopAddItem(args []string) (string, error) {
-	var	err			error
-	var	shop		Shop
-	var	userKey		string
-	var	bytes		[]byte
-	var	newItemId	string
-	var	itemToAdd	ShopItemSubmission
-	var	newItem		ShopItem
-	var	endtime		uint64
+func shopAddItem(args []string) (string, error) {
+	var err error
+	var shop Shop
+	var userKey string
+	var bytes []byte
+	var newItemId string
+	var itemToAdd ShopItemSubmission
+	var newItem ShopItem
+	var endtime uint64
 	//var listBytes []byte
 
 	/// CHECK ARGUMENTS
-	/// TODO : when better API, check this better
 	if len(args) != 2 {
 		return "", fmt.Errorf("add item requires two arguments, the shop id where to add the item, and a item json")
 	}
@@ -61,13 +60,16 @@ func	shopAddItem(args []string) (string, error) {
 	if itemToAdd.Bidable == false && itemToAdd.MinQuantity < 0 {
 		return "", fmt.Errorf("Cannot set a minimum quantity purchase of 0")
 	}
+
+	newItem.Latitude = itemToAdd.Latitude
+	newItem.Longitude = itemToAdd.Longitude
 	newItem.Name = itemToAdd.Name
 	newItem.Quantity = itemToAdd.Quantity
 	newItem.MinQuantity = itemToAdd.MinQuantity
 	newItem.Detail = itemToAdd.Detail
 	newItem.Pictures = itemToAdd.Pictures
 	newItem.Weight = itemToAdd.Weight
-	newItem.AdditionalFields = itemToAdd.AdditionalFields
+	newItem.Shipping = itemToAdd.Shipping
 	//TODO: verify arg
 	newItem.ShopId = args[0]
 	newItem.Biddable = itemToAdd.Bidable

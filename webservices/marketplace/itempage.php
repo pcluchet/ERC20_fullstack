@@ -79,7 +79,7 @@ $value = $resp['response'][0];
   $price = $value['Record']['Price'];
   $pid = $value['Key'];
   $name = $value['Record']['Name'];
-  $picurl = $value['Record']['Picture'];
+  $picurl = $value['Record']['Pictures'][0];
   $details = $value['Record']['Detail'];
   $shopid = $value['Record']['ShopId'];
   if (strlen($details) > 130)

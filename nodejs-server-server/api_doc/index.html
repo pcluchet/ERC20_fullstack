@@ -4,9 +4,9 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<style>
-body {
-	font-family: Helvetica, Arial, Sans-Serif;
-}
+				body {
+					font-family: Helvetica, Arial, Sans-Serif;
+				}
 				/* Collapsible Button */
 				.collapsible {
 					display: flex;
@@ -20,6 +20,7 @@ body {
 					text-align: left; 
 					width: 100%;
 				}
+
 				.collapsible.active, .collapsible:hover {
 					background-color: #C3D0E0;
 				}
@@ -172,6 +173,23 @@ ERC20
 			</p>
 		</div>
 
+		<button class="collapsible">register  <div class="RW">Read + Write</div> </button>
+		<div class="collapsibleContent">
+			<p>
+			This function open an ERC20 account for the calling user, it must be called before any other operation
+				</br>
+				</br>
+				<h5>Parameters : </h5>
+				None
+
+				<h5>Payload : </h5>
+				It returns a plain text value if the registration is successfull:
+
+				</br>
+				</br>
+				<code>Success</code>
+			</p>
+		</div>
 
 		<button class="collapsible">transfer <div class="RW">Read + Write</div></button>
 		<div class="collapsibleContent">
@@ -539,7 +557,7 @@ SHOP CREATE
 ==================================================
 -->
 
-	<button class="collapsible">shop_create<div class="RW">Read + Write</div></button>
+	<button class="collapsible">new_shop<div class="RW">Read + Write</div></button>
 	<div class="collapsibleContent">
 		<p>
 
@@ -609,10 +627,9 @@ SHOP ADD ITEM
 			Fields explanation:</br>
 			<ul>
 				<li>MinQuantity: Minimum purchase quantity</li>
-				<li>Duration: Duration of the sale in hours</li>
-				<li>Weight: Weight of the item in grams</li>
+				<li>Duration: Duraction of the sale in hours</li>
 				<li>AdditionalFields: A json containing additional fields like
-				volume, size or anything else</li>
+				weight, size or anything else</li>
 			</ul>
 			</br></br>
 
@@ -625,18 +642,31 @@ SHOP ADD ITEM
 				<li>
 					The item json (ex:
 					<code>
-						{
-							"Name": "My new item",
-							"Detail": "This is a wanderful item, really !",
-							"Bidable": "false",
-							"Price": 42,
-							"Quantity": 314,
-							"MinQuantity": 10,
-							"Duration": 604800,
-							"Pictures": ["url_image_1", "url_image_2"],
-							"Weight": 2500,
-							"AdditionalFields": "{\"size\": 24}"
-						}
+							{
+								"Bidable": false,
+								"Pictures": [
+								  "picA",
+								  "picB"
+								],
+								"Shipping": [
+								  {
+									"To": "anywhere",
+									"Fee": 12
+								  },
+								  {
+									"To": "fr",
+									"Fee": 3
+								  }
+								],
+								"Name": "My new item",
+								"Detail": "This is a wanderful item, really !",
+								"Price": 42,
+								"Quantity": 314,
+								"Duration": 604800,
+								"Weight": 45,
+								"Latitude": 48.9070592,
+								"Longitude": 2.3371776
+							  }
 					</code>
 					)
 				</li>
