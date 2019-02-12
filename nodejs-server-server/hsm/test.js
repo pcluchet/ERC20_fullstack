@@ -6,7 +6,11 @@
 // https://hyperledger-fabric.readthedocs.io/en/release-1.4/tutorial/commercial_paper.html
 //
 
-const {
+const	fs = require("fs");
+const	id_manager = new (require("./idmanager"))();
+
+const	ccp = JSON.parse(fs.readFileSync("./network.json").toString());
+const	{
 	HSMWalletMixin,
 	InMemoryWallet,
 	Gateway,
@@ -20,6 +24,8 @@ async function	main() {
 	const		wallet = new InMemoryWallet(new HSMWalletMixin(pkcs_lib_path,
 				slot, pin));
 
+	console.log(ccp);
+	//id_manager.initialize(ccp);
 	//await wallet.import("user1", {});
 }
 

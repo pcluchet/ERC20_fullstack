@@ -3,7 +3,7 @@
 	"description": "The network to be in if you want to stay in the global trade business",
 	"version": "1.0",
 	"client": {
-		"organization": "MEDSOS",
+		"organization": "Org1",
 		"credentialStore": {
 			"path": "/tmp/hfc-kvs",
 			"cryptoStore": {
@@ -13,18 +13,18 @@
 		}
 	},
 	"channels": {
-		"ptwist": {
+		"mychannel": {
 			"orderers": [
 				"orderer.example.com"
 			],
 			"peers": {
-				"peer0.MEDSOS.example.com": {
+				"peer0.org1.example.com": {
 					"endorsingPeer":true,
 					"chaincodeQuery":true,
 					"ledgerQuery":true,
 					"eventSource":true
 				},
-				"peer1.MEDSOS.example.com": {
+				"peer0.org2.example.com": {
 					"endorsingPeer":true,
 					"chaincodeQuery":false,
 					"ledgerQuery":true,
@@ -32,27 +32,34 @@
 				}
 			},
 			"chaincodes": [
-				"ERC20:v1"
+				"example02:v1",
+				"marbles:1.0"
 			]
 		}
 	},
 	"organizations": {
-		"MEDSOS": {
-			"mspid": "MEDSOSMSP",
+		"Org1": {
+			"mspid": "Org1MSP",
 			"peers": [
-				"peer0.MEDSOS.example.com",
-				"peer1.MEDSOS.example.com"
+				"peer0.org1.example.com",
+				"peer1.org1.example.com"
 			],
 			"certificateAuthorities": [
-				"ca.example.com"
+				"ca-org1"
 			],
 			"adminPrivateKeyPEM": "-----BEGIN PRIVATE KEY----- <etc>",
 			"signedCertPEM": "-----BEGIN CERTIFICATE----- <etc>"
+		},
+		"Org2": {
+			"mspid": "Org2MSP",
+			"peers": [
+				"peer0.org2.example.com"
+			]
 		}
 	},
 	"orderers": {
 		"orderer.example.com": {
-			"url": "grpcs://localhost:7054",
+			"url": "grpcs://localhost:7050",
 			"grpcOptions": {
 				"ssl-target-name-override": "orderer.example.com"
 			},
@@ -62,27 +69,27 @@
 		}
 	},
 	"peers": {
-		"peer0.MEDSOS.example.com": {
+		"peer0.org1.example.com": {
 			"url": "grpcs://localhost:7051",
 			"grpcOptions": {
-				"ssl-target-name-override": "peer0.MEDSOS.example.com"
+				"ssl-target-name-override": "peer0.org1.example.com"
 			},
 			"tlsCACerts": {
-				"path": "test/fixtures/channel/crypto-config/peerOrganizations/MEDSOS.example.com/peers/peer0.MEDSOS.example.com/tlscacerts/MEDSOS.example.com-cert.pem"
+				"path": "test/fixtures/channel/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tlscacerts/org1.example.com-cert.pem"
 			}
 		},
-		"peer1.MEDSOS.example.com": {
+		"peer0.org2.example.com": {
 			"url": "grpcs://localhost:8051",
 			"grpcOptions": {
-				"ssl-target-name-override": "peer0.MEDSOS.example.com"
+				"ssl-target-name-override": "peer0.org2.example.com"
 			},
 			"tlsCACerts": {
-				"path": "test/fixtures/channel/crypto-config/peerOrganizations/MEDSOS.example.com/peers/peer0.MEDSOS.example.com/tlscacerts/MEDSOS.example.com-cert.pem"
+				"path": "test/fixtures/channel/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tlscacerts/org2.example.com-cert.pem"
 			}
 		}
 	},
 	"certificateAuthorities": {
-		"ca.example.com": {
+		"ca-org1": {
 			"url": "https://localhost:7054",
 			"httpOptions": {
 				"verify": false
