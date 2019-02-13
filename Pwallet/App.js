@@ -848,8 +848,6 @@ if (json.status == 200)
     return (
       <View style={styles.container}>
         <Text style={styles.headerStyle}>Pcoin Wallet</Text>
-
-
         <View style={[{flex: 3}, styles.elementsContainer]}>
         <View style={{flex: 1, backgroundColor: '#d9d9d9'}}>
           <TextInput style={{height: '50%', marginTop: '10%', textAlign: 'center', fontSize: 42, fontWeight: '200'}}
@@ -858,7 +856,6 @@ if (json.status == 200)
             autoCorrect={false}
             autoCapitalize={"none"}
             autoComplete={"off"}
-            
             >
           </TextInput>
         </View>
@@ -990,14 +987,14 @@ other guy
   
   var myContacts = this.ParseContactList(this.state.contactlist);
   //myContacts = "";
-  console.log("mycontactsXYTCUYGVKUBHILJHLVYCFTXDHJKNBVCJFGHXDCGVJKLNMJBVHCGXDFWSXHCVK" +  myContacts);
+  //console.log("mycontactsXYTCUYGVKUBHILJHLVYCFTXDHJKNBVCJFGHXDCGVJKLNMJBVHCGXDFWSXHCVK" +  myContacts);
     return (
       <View style={styles.container}>
 
       <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold', marginTop: '2%'}}>
             My Saved addresses :
           </Text>
-          <ScrollView  style={styles.scrollview}>
+          <ScrollView  style={{margin: '10%', flex: 0.7}}>
           <Text style={{fontSize: 20, textAlign: 'left', fontWeight: '100'}}>
             {myContacts}
           </Text>
@@ -1017,6 +1014,8 @@ other guy
   paybill = () => {
     return (
       <View style={styles.container}>
+
+      <View style={{flex : 0.6}}>
       <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold', marginTop: '2%'}}>
             Pay a bill :
           </Text>
@@ -1024,7 +1023,8 @@ other guy
           Bill total : {this.state.billtotal}{"\n"} 
           Bill address : {this.state.billaddress} 
           </Text>
-          <View style={{flex: 0.3, backgroundColor: '#4CB676'}}>
+      </View>
+          <View style={{flex: 0.2, backgroundColor: '#4CB676'}}>
             <TouchableOpacity onPress={this.ft_paybill}>
             <Text style={{marginTop: '5%', textAlign: 'center', fontSize: 42, fontWeight: '100'}}>
               Pay this bill
@@ -1032,7 +1032,7 @@ other guy
           </TouchableOpacity>
 
           </View>
-      <View style={{flex: 0.3, backgroundColor: '#4CB676'}}>
+      <View style={{flex: 0.2, backgroundColor: '#4CB676'}}>
             <TouchableOpacity onPress={() => this.setState({ scanningBill : true })}>
             <Text style={{marginTop: '5%', textAlign: 'center', fontSize: 42, fontWeight: '100'}}>
               scan a bill
@@ -1461,7 +1461,7 @@ manualcontact = () => {
       <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold', marginTop: '2%'}}>
             Add a contact manually :
       </Text>
-  <TextInput style={{ marginTop: '10%', textAlign: 'center', fontSize: 19, fontWeight: '200', borderWidth : 1, borderColor: "gray"}}
+  <TextInput style={{ margin: '10%', textAlign: 'center', fontSize: 19, fontWeight: '200', borderWidth : 1, borderColor: "gray"}}
             placeholder="Username"
             onChangeText={(username) => this.setState({ ContactToAdd_usr : username })}
             autoCorrect={false}
@@ -1471,7 +1471,7 @@ manualcontact = () => {
           </TextInput>
 
 
-  <TextInput style={{ marginTop: '10%', textAlign: 'center', fontSize: 12, fontWeight: '200', borderWidth : 1, borderColor: "gray"}}
+  <TextInput style={{ margin: '10%', textAlign: 'center', fontSize: 19, fontWeight: '200', borderWidth : 1, borderColor: "gray"}}
             placeholder="Address"
             onChangeText={(addr) => this.setState({ ContactToAdd_addr : addr })}
             autoCorrect={false}
