@@ -46,7 +46,7 @@
 	"orderers": {
 		"orderer.example.com": {
 			"url_tmp": "grpcs://localhost:7050",
-			"url": "grpc://orderer.example.com:7050",
+			"url": "grpc://localhost:7050",
 			"grpcOptions": {
 				"ssl-target-name-override": "orderer.example.com"
 			},
@@ -58,7 +58,7 @@
 	"peers": {
 		"peer0.MEDSOS.example.com": {
 			"url_tmp": "grpcs://localhost:7051",
-			"url": "grpc://peer0.MEDSOS.example.com:7051",
+			"url": "grpc://localhost:7051",
 			"grpcOptions": {
 				"ssl-target-name-override": "peer0.MEDSOS.example.com"
 			},
@@ -70,7 +70,7 @@
 	"certificateAuthorities": {
 		"ca.example.com": {
 			"url_tmp": "https://localhost:7054",
-			"url": "http://ca.example.com:7054",
+			"url": "http://localhost:7054",
 			"httpOptions": {
 				"verify": false
 			},

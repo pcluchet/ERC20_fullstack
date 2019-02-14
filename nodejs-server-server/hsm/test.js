@@ -20,7 +20,7 @@ const	{
 async function	main() {
 	const		pkcs_lib_path = "/usr/lib/softhsm/libsofthsm2.so";
 	const		slot = "0";
-	const		pin = "98765432";
+	const		pin = "1234";
 	const		wallet_mem = new InMemoryWallet();
 	const		wallet_hsm = new InMemoryWallet(new HSMWalletMixin(
 				pkcs_lib_path, slot, pin));
@@ -28,7 +28,8 @@ async function	main() {
 	//console.log(ccp);
 	id_manager.initialize(ccp);
 	console.log(await wallet_mem.exists("admin"));
-	await id_manager.enrollToWallet("admin", "adminpw", "MEDSOS", wallet_mem);
+	await id_manager.enrollToWallet("admin", "adminpw", "MEDSOS", wallet_hsm);
+	console.log(await wallet_mem.exists("admin"));
 	//await wallet_hsm.import("user1", {});
 }
 
