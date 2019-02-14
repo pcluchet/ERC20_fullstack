@@ -23,12 +23,6 @@
 					"chaincodeQuery":true,
 					"ledgerQuery":true,
 					"eventSource":true
-				},
-				"peer1.MEDSOS.example.com": {
-					"endorsingPeer":true,
-					"chaincodeQuery":false,
-					"ledgerQuery":true,
-					"eventSource":false
 				}
 			},
 			"chaincodes": [
@@ -40,8 +34,7 @@
 		"MEDSOS": {
 			"mspid": "MEDSOSMSP",
 			"peers": [
-				"peer0.MEDSOS.example.com",
-				"peer1.MEDSOS.example.com"
+				"peer0.MEDSOS.example.com"
 			],
 			"certificateAuthorities": [
 				"ca.example.com"
@@ -52,43 +45,37 @@
 	},
 	"orderers": {
 		"orderer.example.com": {
-			"url": "grpcs://localhost:7054",
+			"url_tmp": "grpcs://localhost:7050",
+			"url": "grpc://orderer.example.com:7050",
 			"grpcOptions": {
 				"ssl-target-name-override": "orderer.example.com"
 			},
 			"tlsCACerts": {
-				"path": "test/fixtures/channel/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tlscacerts/example.com-cert.pem"
+				"path": "../../network/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
 			}
 		}
 	},
 	"peers": {
 		"peer0.MEDSOS.example.com": {
-			"url": "grpcs://localhost:7051",
+			"url_tmp": "grpcs://localhost:7051",
+			"url": "grpc://peer0.MEDSOS.example.com:7051",
 			"grpcOptions": {
 				"ssl-target-name-override": "peer0.MEDSOS.example.com"
 			},
 			"tlsCACerts": {
-				"path": "test/fixtures/channel/crypto-config/peerOrganizations/MEDSOS.example.com/peers/peer0.MEDSOS.example.com/tlscacerts/MEDSOS.example.com-cert.pem"
-			}
-		},
-		"peer1.MEDSOS.example.com": {
-			"url": "grpcs://localhost:8051",
-			"grpcOptions": {
-				"ssl-target-name-override": "peer0.MEDSOS.example.com"
-			},
-			"tlsCACerts": {
-				"path": "test/fixtures/channel/crypto-config/peerOrganizations/MEDSOS.example.com/peers/peer0.MEDSOS.example.com/tlscacerts/MEDSOS.example.com-cert.pem"
+				"path": "../../network/crypto-config/peerOrganizations/MEDSOS.example.com/peers/peer0.MEDSOS.example.com/msp/tlscacerts/tlsca.MEDSOS.example.com-cert.pem"
 			}
 		}
 	},
 	"certificateAuthorities": {
 		"ca.example.com": {
-			"url": "https://localhost:7054",
+			"url_tmp": "https://localhost:7054",
+			"url": "http://ca.example.com:7054",
 			"httpOptions": {
 				"verify": false
 			},
 			"tlsCACerts": {
-				"path": "test/fixtures/channel/crypto-config/peerOrganizations/org1.example.com/ca/org1.example.com-cert.pem"
+				"path": "../../network/crypto-config/peerOrganizations/MEDSOS.example.com/ca/ca.MEDSOS.example.com-cert.pem"
 			},
 			"registrar": [
 				{
