@@ -15,5 +15,5 @@ softhsm2-util \
   --slot 0 \
   --label "erc20"
 
-header "RUN test.js"
+header "RUN TESTS"
 node test.js
