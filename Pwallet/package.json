@@ -14,7 +14,9 @@
     "react-native-elements": "0.18.5",
     "react-native-fontawesome": "5.7.0",
     "react-native-qrcode": "0.2.7",
+    "react-native-svg": "^9.2.4",
     "react-native-swiper": "1.5.13",
+    "react-native-switch": "^1.5.0",
     "react-native-textinput-effects": "0.4.2",
     "react-timer-mixin": "0.13.3"
   },

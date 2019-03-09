@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Clipboard,
   Text,
   TextInput,
   Icon,
@@ -11,7 +12,7 @@ import {
   AsyncStorage,
   Picker,
   FlatList,
-  Image,
+  ImageBackground,
 } from 'react-native';
 //import { BarCodeScanner, Permissions } from 'expo';
 //import { Constants } from 'expo';
@@ -20,10 +21,103 @@ import TimerMixin from 'react-timer-mixin';
 import QRCode from 'react-native-qrcode';
 import Camera from 'react-native-camera';
 import Dimensions from 'Dimensions';
+import { Switch } from 'react-native-switch';
+
+
+import Svg, {
+  Defs,
+  LinearGradient,
+  Stop,
+  Mask,
+  Path,
+  G,
+} from 'react-native-svg'
+
+const SvgComponent = props => (
+
+  <Svg width={64} height={64} {...props}>
+    <Defs>
+   </Defs>
+    <Path
+      d="M242.527 253.589c0-30.927 25.072-55.999 56-55.999s56 25.072 56 55.999c0 30.928-25.072 56.001-56 56.001s-56-25.073-56-56.001"
+      fill="#f1de6e"
+      transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
+    />
+    <Path
+      d="M62.6 32c0 16.9-13.7 30.6-30.6 30.6C15.097 62.6 1.397 48.9 1.397 32c0-16.9 13.7-30.6 30.601-30.6 16.9 0 30.6 13.7 30.6 30.6z"
+      fill="none"
+      stroke="#d4b513"
+      strokeWidth={0.54644}
+    />
+    <Path
+      d="M280.893 284.136l17.632 10.182 17.637-10.182v-.154L298.525 273.8l-17.632 10.182v.154z"
+      fill="#109679"
+      transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
+    />
+    <Path
+      d="M280.893 283.982l17.632-10.182v-20.214l-17.632 10.188v20.208z"
+      fill="#6fb04b"
+      transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
+    />
+    <Path
+      d="M298.525 273.8l17.637 10.182v-20.208l-17.637-10.188V273.8z"
+      fill="#ddcc32"
+      transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
+    />
+    <Path
+      d="M280.893 263.774l17.632-10.188-.128-.074-17.504 10.107-17.638-10.181V273.8l17.638 10.182v-20.208z"
+      fill="#ddcc32"
+      transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
+    />
+    <Path
+      d="M316.162 263.774v20.208L333.8 273.8v-20.362l-17.638 10.181-17.509-10.107-.128.074 17.637 10.188z"
+      fill="#6fb04b"
+      transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
+    />
+    <Path
+      d="M263.255 253.438l17.638 10.181 17.504-10.107-17.504-10.106v-.15l-17.638 10.182z"
+      fill="#109679"
+      transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
+    />
+    <Path
+      d="M298.653 253.512l17.509 10.107 17.638-10.181-17.638-10.182v.15l-17.509 10.106z"
+      fill="#109679"
+      transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
+    />
+    <Path
+      d="M263.255 253.438l17.638-10.182v-20.214l.133-.074-.133-.08-17.638 10.187v20.363z"
+      fill="#6fb04b"
+      transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
+    />
+    <Path
+      d="M280.893 243.256l17.632 10.182v-20.363l-17.499-10.107-.133.074v20.214z"
+      fill="#ddcc32"
+      transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
+    />
+    <Path
+      d="M298.525 253.438l17.637-10.182v-20.214l-.133-.074-17.504 10.107v20.363z"
+      fill="#6fb04b"
+      transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
+    />
+    <Path
+      d="M281.026 222.968l17.499 10.107 17.504-10.107-17.504-10.106-17.499 10.106z"
+      fill="#109679"
+      transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
+    />
+    <Path
+      d="M316.162 223.042v20.214l17.638 10.182v-20.363l-17.638-10.187-.133.08.133.074z"
+      fill="#ddcc32"
+      transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
+    />
+ </Svg>
+)
+
+//export default SvgComponent
+
 //import BarcodeScanner from 'react-native-barcodescanner';
 
 //const APIURL = "http://82.255.42.169:8080";
-//const APIURL = "http://10.0.2.2:8080";
+//const APIURL = "http://10.0.2.2";
 //const APIURL = "http://192.168.0.2";
 
 const APIURL = 'http://api.plastictwist.com';
@@ -420,6 +514,7 @@ export default class App extends Component {
     }, 6500);
 
     this.state = {
+      stayLoggedIn : false,
       hasCameraPermission: null,
       data: [],
       ongoinginvoice: [],
@@ -456,6 +551,8 @@ export default class App extends Component {
     };
     this.RefreshContactList();
   }
+
+
 
   notAlreadyIn = (newuser, unparsedlist) => {
     var list = JSON.parse(unparsedlist);
@@ -554,6 +651,14 @@ cancelregister = () => {
     this.setState({ qrcode: e.data });
     this.addContactFromQR(e.data);
   };
+
+  writeToClipboard = async () => {
+  console.log("CLIPBOARRRD");
+  await Clipboard.setString(this.state.pubkey);
+  alert('Copied to Clipboard!');
+  };
+
+
 
   onBillBarCodeRead = e => {
     console.log('READ QRCODE = ' + e.data);
@@ -968,58 +1073,143 @@ cancelregister = () => {
 
 
   login = () => {
+    svg = SvgComponent({
+      width : Dimensions.get('window').width,
+      height : (Dimensions.get('window').height*0.5)*0.75,
+       viewBox: '0 0 64 64'
+      });
     return (
-      <View style={styles.container}>
-        <Text style={styles.headerStyle}>Pcoin Wallet</Text>
-        <View style={[{ flex: 3 }, styles.elementsContainer]}>
-          <View style={{ flex: 1, backgroundColor: '#d9d9d9' }}>
+      <View style={{}}>
+
+<ImageBackground source={require('./plastic_caps3.jpg')} style={ styles.imgBackground }>
+      <View style={{flex : 10}}>
+      <Text style={{
+        textAlignVertical: "center",
+        textAlign: 'center',
+        fontSize : 21,
+        height : (Dimensions.get('window').height*0.5)*0.15,  
+        width : (Dimensions.get('window').width)  
+        }}>
+        Plastic Token Wallet</Text>
+      {svg}
+      </View>
+
+
+        <View style={{flex : 2, margin : 10}}>
             <TextInput
               style={{
-                height: '50%',
-                marginTop: '10%',
-                textAlign: 'center',
-                fontSize: 42,
-                fontWeight: '200',
+                borderRadius : 999,
+                fontSize: 29,
+                color : '#fff',
+                textAlign : "center",
+                //backgroundColor: '#e6e6e6',
+                borderColor : '#fff',
+                borderWidth : 1,
+                height : "100%",
+                fontWeight : '200'
               }}
               placeholder="Username"
+              placeholderTextColor="#fff"
               onChangeText={username => this.setState({ username })}
               autoCorrect={false}
               autoCapitalize={'none'}
               autoComplete={'off'}
             />
-          </View>
-          <View style={{ flex: 1, backgroundColor: '#e6e6e6' }}>
+        </View>
+
+        <View style={{flex : 2, margin : 10}}>
             <TextInput
-              style={styles.textInput}
+              style={{
+                color : 'white',
+                textAlign : "center",
+                borderRadius : 999,
+                fontSize: 29,
+                //backgroundColor: '#e6e6e6',
+                borderColor : '#fff',
+                borderWidth : 1,
+
+                height : "100%",
+                fontWeight : '100'
+              }}
+              placeholderTextColor="#fff"
               placeholder="Password"
               secureTextEntry={true}
               onChangeText={password => this.setState({ password })}
             />
-          </View>
         </View>
 
-        <View style={styles.button}>
-          <View style={{ flex: 1, backgroundColor: '#4CB676' }}>
-            <TouchableOpacity onPress={this.Login}>
+        <View style={[{flex : 6}]}>
+
+
+
+        <View style={[{flexDirection: 'row', flex : 3.5, marginLeft : 10, marginRight : 10}]}>
+        <Switch
+        value={this.state.stayLoggedIn}
+
+    onValueChange={(val) => this.setState({stayLoggedIn: val})}
+    disabled={false}
+    circleSize={30}
+    barHeight={30}
+    borderColor="white"
+    circleBorderWidth={1}
+    backgroundActive='rgba(52, 52, 52, 0.5)'
+    backgroundInactive='rgba(52, 52, 52, 0.5)'
+    circleActiveColor={'#30a566'}
+    circleInActiveColor='rgba(52, 52, 52, 0.8)'
+    changeValueImmediately={true}
+    innerCircleStyle={{ borderColor :'rgba(52, 52, 52, 0.8)' , alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
+    outerCircleStyle={{ borderColor : 'white'}} // style for outer animated circle
+    renderActiveText={false}
+    renderInActiveText={false}
+    switchLeftPx={2} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
+    switchRightPx={2} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
+    switchWidthMultiplier={2} // multipled by the `circleSize` prop to calculate total width of the Switch
+  />
+
+    <Text style={{fontSize: 21, textAlign: 'center', marginLeft : 10, color: 'white'}}>
+              Remember me
+            </Text>
+  </View>
+        <View style={[{flexDirection: 'row', justifyContent: 'center', flex : 2.5}]}>
+            <TouchableOpacity onPress={this.Register}
+            style = {{
+              margin : 10,
+              borderRadius : 999,
+              backgroundColor : "#4CB676",
+
+              width : (Dimensions.get('window').width)*0.4  
+            }}
+            >
+
+            <Text style={{fontSize: 36, textAlign: 'center'}}>
+              Sign Up
+            </Text>
+          </TouchableOpacity>
+
+            <TouchableOpacity onPress={this.Login}
+            style = {{
+              margin : 10,
+              borderRadius : 999,
+              backgroundColor : "#4CB676",
+              width : (Dimensions.get('window').width)*0.4  
+            }}
+            >
               <Text
                 style={{
-                  marginTop: '5%',
                   textAlign: 'center',
-                  fontSize: 42,
+                  fontSize: 36,
                   fontWeight: '100',
                 }}>
                 Login
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={this.Register}>
-            <Text style={{fontSize: 21, marginTop: '5%', textAlign: 'center', fontWeight: '100'}}>
-              Register
-            </Text>
-          </TouchableOpacity>
 
-          </View>
         </View>
+
+        </View>
+
+</ImageBackground>
       </View>
     );
   };
@@ -1039,6 +1229,32 @@ cancelregister = () => {
     return (
       <View style={styles.container}>
         <Text style={styles.headerStyle}>My address :</Text>
+
+          <TextInput
+            style={{
+              borderWidth: 1,
+              borderRadius: 3,
+              borderColor: '#ccc',
+              width: '100%',
+              margin : 5,
+            }}
+            value= {this.state.pubkey}
+          />
+         <TouchableOpacity
+            onPress={this.writeToClipboard}
+         > 
+            <Text
+              style={{
+                marginTop: '5%',
+                textAlign: 'center',
+                fontSize: 12,
+                fontWeight: '100',
+              }}>
+              Copy To Clipboard
+            </Text>
+          </TouchableOpacity>
+
+
 
         <View style={styles.qrcodecontainer}>
           <QRCode
@@ -1996,12 +2212,141 @@ ft_resetfields_transfer = (array) => {
 }
 
   register = () => {
+
+    svg = SvgComponent({
+      width : Dimensions.get('window').width,
+      height : (Dimensions.get('window').height*0.3)*0.75,
+       viewBox: '0 0 64 64'
+      });
     return (
+      <View style={{}}>
+      <View style={{flex : 6}}>
+      <Text style={{
+        textAlignVertical: "center",
+        textAlign: 'center',
+        fontSize : 21,
+        height : (Dimensions.get('window').height*0.3)*0.15,  
+        width : (Dimensions.get('window').width)  
+        }}>
+        Plastic Token Wallet</Text>
+      {svg}
+      </View>
+        <View style={{flex : 2, margin : 10}}>
+            <TextInput
+              style={{
+                borderRadius : 10,
+                fontSize: 29,
+                backgroundColor: '#e6e6e6',
+                height : "100%",
+                fontWeight : '200'
+              }}
+              placeholder="Username"
+              onChangeText={username => this.setState({ username })}
+              autoCorrect={false}
+              autoCapitalize={'none'}
+              autoComplete={'off'}
+            />
+        </View>
+
+        <View style={{flex : 2, margin : 10}}>
+            <TextInput
+              style={{
+                borderRadius : 10,
+                fontSize: 29,
+                backgroundColor: '#e6e6e6',
+                height : "100%",
+                fontWeight : '100'
+              }}
+              placeholder="E-mail"
+              //onChangeText={password => this.setState({ password })}
+            />
+        </View>
+
+        <View style={{flex : 2, margin : 10}}>
+            <TextInput
+              style={{
+                borderRadius : 10,
+                fontSize: 29,
+                backgroundColor: '#e6e6e6',
+                height : "100%",
+                fontWeight : '100'
+              }}
+              placeholder="Password"
+              secureTextEntry={true}
+              onChangeText={password => this.setState({ password })}
+            />
+        </View>
+
+        <View style={{flex : 2, margin : 10}}>
+            <TextInput
+              style={{
+                borderRadius : 10,
+                fontSize: 29,
+                backgroundColor: '#e6e6e6',
+                height : "100%",
+                fontWeight : '100'
+              }}
+              placeholder="Confirm Password"
+              secureTextEntry={true}
+              onChangeText={regpassk => this.setState({ regpassk })}
+            />
+        </View>
+        <View style={[{flex : 6}]}>
+        <View style={[{flexDirection: 'row', flex : 3.5, marginLeft : 10, marginRight : 10}]}>
+    
+        </View>
+        <View style={[{flexDirection: 'row', justifyContent: 'center', flex : 2.5}]}>
+            <TouchableOpacity onPress={this.cancelregister}
+            style = {{
+              margin : 10,
+              borderRadius : 10,
+              backgroundColor : "#4CB676",
+
+              width : (Dimensions.get('window').width)*0.4  
+            }}
+            >
+
+            <Text style={{fontSize: 36, textAlign: 'center'}}>
+              Cancel
+            </Text>
+          </TouchableOpacity>
+
+            <TouchableOpacity onPress = {this.submRegister}
+            style = {{
+              margin : 10,
+              borderRadius : 10,
+              backgroundColor : "#4CB676",
+              width : (Dimensions.get('window').width)*0.4  
+            }}
+            >
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 36,
+                  fontWeight: '100',
+                }}>
+                Sign Up
+              </Text>
+            </TouchableOpacity>
+
+
+        </View>
+
+        </View>
+      </View>
+    )
+ 
+    return (
+
+
       <View style={styles.container}>
-        <Text style={styles.headerStyle}>Pcoin Wallet</Text>
-        <View style={[{flex: 1.8}, styles.elementsContainer]}>
-        <View style={{flex: 0.6, backgroundColor: '#d9d9d9'}}>
-          <TextInput style={{height: '50%', marginTop: '10%', textAlign: 'center', fontSize: 42, fontWeight: '200'}}
+
+        <View style={{flex: 0.08, }}>
+                <Text style={styles.headerStyle}>Plastic Token Wallet</Text>
+        </View>
+        <View style={{flex: 0.24, margin : 10}}>
+          <TextInput 
+          style={{height: '100%', backgroundColor: '#d9d9d9', textAlign: 'center', fontSize: 42, fontWeight: '200'}}
             placeholder="Username "
             onChangeText={(username) => this.setState({ username })}
             autoCorrect={false}
@@ -2010,42 +2355,36 @@ ft_resetfields_transfer = (array) => {
             >
           </TextInput>
         </View>
-        <View style={{flex: 0.6, backgroundColor: '#e6e6e6'}}>
-          <TextInput style={styles.textInput}
+        <View style={{flex: 0.24, margin : 10}}>
+          <TextInput
+          style={{height: '100%', backgroundColor: '#d9d9d9', textAlign: 'center', fontSize: 42, fontWeight: '200'}}
             placeholder="Password "
             secureTextEntry={true}
             onChangeText={(password) => this.setState({ password })}>
           </TextInput>
         </View>
-        <View style={{flex: 0.6, backgroundColor: '#e6e6e6'}}>
-          <TextInput style={styles.textInput}
+        <View style={{flex: 0.24, margin : 10}}>
+          <TextInput
+          style={{height: '100%', backgroundColor: '#d9d9d9', textAlign: 'center', fontSize: 42, fontWeight: '200'}}
             placeholder="Confirm Password "
             secureTextEntry={true}
             onChangeText={(regpassk) => this.setState({ regpassk })}>
           </TextInput>
         </View>
-      </View>
 
-      <View style={styles.button}>
-      <View style={{flex: 1.3, backgroundColor: '#4CB676'}}>
+      <View style={{flex : 0.2, backgroundColor: '#4CB676'}}>
 
           <TouchableOpacity onPress={this.submRegister }>
-            <Text style={{fontSize: 21, marginTop: '5%', textAlign: 'center', fontWeight: '100'}}>
+            <Text style={{fontSize: 33, textAlign: 'center', fontWeight: '200'}}>
               Register
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={this.cancelregister }>
-            <Text style={{fontSize: 21, marginTop: '5%', textAlign: 'center', fontWeight: '100'}}>
+            <Text style={{fontSize: 21, textAlign: 'center', fontWeight: '100'}}>
               Cancel
             </Text>
           </TouchableOpacity>
-
-
-
-
-
-        </View>
       </View>
       </View>
     );
@@ -2317,6 +2656,10 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     margin: 5,
   },
+  imgBackground: {
+    width: '100%',
+    height: '100%',
+},
   preview: {
     flex: 1,
     justifyContent: 'flex-end',
