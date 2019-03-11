@@ -543,6 +543,7 @@ export default class App extends Component {
       billtotal: '',
       billaddress: '',
       scanningContact: false,
+      OngoingRegister : false,
       scanningBill: false,
       ManualContact: false,
       BalanceIsLoading: false, // la requête API est-elle en cours ?
@@ -1081,17 +1082,19 @@ cancelregister = () => {
     return (
       <View style={{}}>
 
-<ImageBackground source={require('./plastic_caps3.jpg')} style={ styles.imgBackground }>
+<ImageBackground source={require('./gradient.jpg')} style={ styles.imgBackground }>
       <View style={{flex : 10}}>
+      {svg}
       <Text style={{
         textAlignVertical: "center",
         textAlign: 'center',
         fontSize : 21,
+      color : 'rgba(52, 52, 52, 0.8)',
         height : (Dimensions.get('window').height*0.5)*0.15,  
         width : (Dimensions.get('window').width)  
         }}>
         Plastic Token Wallet</Text>
-      {svg}
+
       </View>
 
 
@@ -1100,16 +1103,18 @@ cancelregister = () => {
               style={{
                 borderRadius : 999,
                 fontSize: 29,
-                color : '#fff',
+                color : 'rgba(255, 255, 255, 0.8)',
                 textAlign : "center",
+
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
                 //backgroundColor: '#e6e6e6',
-                borderColor : '#fff',
-                borderWidth : 1,
+              //  borderColor : '#fff',
+                //borderWidth : 1,
                 height : "100%",
                 fontWeight : '200'
               }}
               placeholder="Username"
-              placeholderTextColor="#fff"
+              placeholderTextColor='rgba(52, 52, 52, 0.5)'
               onChangeText={username => this.setState({ username })}
               autoCorrect={false}
               autoCapitalize={'none'}
@@ -1120,18 +1125,18 @@ cancelregister = () => {
         <View style={{flex : 2, margin : 10}}>
             <TextInput
               style={{
-                color : 'white',
+                color : 'rgba(255, 255, 255, 0.8)',
                 textAlign : "center",
                 borderRadius : 999,
                 fontSize: 29,
-                //backgroundColor: '#e6e6e6',
-                borderColor : '#fff',
-                borderWidth : 1,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                //borderColor : '#fff',
+                //borderWidth : 1,
 
                 height : "100%",
                 fontWeight : '100'
               }}
-              placeholderTextColor="#fff"
+              placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="Password"
               secureTextEntry={true}
               onChangeText={password => this.setState({ password })}
@@ -1152,12 +1157,12 @@ cancelregister = () => {
     barHeight={30}
     borderColor="white"
     circleBorderWidth={1}
-    backgroundActive='rgba(52, 52, 52, 0.5)'
+    backgroundActive='rgba(255, 255, 255, 0.5)'
     backgroundInactive='rgba(52, 52, 52, 0.5)'
     circleActiveColor={'#30a566'}
     circleInActiveColor='rgba(52, 52, 52, 0.8)'
     changeValueImmediately={true}
-    innerCircleStyle={{ borderColor :'rgba(52, 52, 52, 0.8)' , alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
+    innerCircleStyle={{ borderColor :'rgba(52, 52, 52, 0.0)' , alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
     outerCircleStyle={{ borderColor : 'white'}} // style for outer animated circle
     renderActiveText={false}
     renderInActiveText={false}
@@ -1166,7 +1171,7 @@ cancelregister = () => {
     switchWidthMultiplier={2} // multipled by the `circleSize` prop to calculate total width of the Switch
   />
 
-    <Text style={{fontSize: 21, textAlign: 'center', marginLeft : 10, color: 'white'}}>
+    <Text style={{fontSize: 21, textAlign: 'center', marginLeft : 10, color: 'rgba(52, 52, 52, 0.8)'}}>
               Remember me
             </Text>
   </View>
@@ -1176,13 +1181,20 @@ cancelregister = () => {
               margin : 10,
               borderRadius : 999,
               backgroundColor : "#4CB676",
-
-              width : (Dimensions.get('window').width)*0.4  
+              textAlignVertical: "center",
+              width : (Dimensions.get('window').width)*0.4,  
+              justifyContent: 'center',
+              alignItems: 'center'
             }}
             >
 
-            <Text style={{fontSize: 36, textAlign: 'center'}}>
-              Sign Up
+            <Text style={{
+              fontSize: 21, 
+              textAlign: 'center',
+              color : 'rgba(52, 52, 52, 0.8)',
+              textAlignVertical: "center",
+              }}>
+              Sign up
             </Text>
           </TouchableOpacity>
 
@@ -1191,14 +1203,18 @@ cancelregister = () => {
               margin : 10,
               borderRadius : 999,
               backgroundColor : "#4CB676",
-              width : (Dimensions.get('window').width)*0.4  
+              width : (Dimensions.get('window').width)*0.4,  
+              textAlignVertical: "center",
+              justifyContent: 'center',
+              alignItems: 'center'
             }}
             >
               <Text
                 style={{
                   textAlign: 'center',
-                  fontSize: 36,
+                  fontSize: 21,
                   fontWeight: '100',
+                  color : 'rgba(52, 52, 52, 0.8)',
                 }}>
                 Login
               </Text>
@@ -2164,8 +2180,24 @@ other guy
 
 submRegister = () => {
   console.log("Attempting to register");
+  if (this.state.OngoingRegister)
+  {
+    console.log("Ongoing registration, please wait");
+  }
+  else
+  {
+            this.setState({
+               OngoingRegister : true
+            });
+
+  }
   if (this.state.password != this.state.regpassk) {
         alert('Passwords does not match ❌');
+            this.setState({
+               OngoingRegister : false
+            });
+
+
         
       } else
         CreateAccount(
@@ -2182,24 +2214,41 @@ submRegister = () => {
                   {
                 alert('Registration successfull ! ✅');
                         this.setState({
-            register : false
+            register : false,
+            OngoingRegister : false
         });
                   }
                   else
                   {
                     alert('Registration failed, try a different username ❌');
+           this.setState({
+            OngoingRegister : false
+            });
+
+
                   }
             }
               );
               
             } else {
               alert('Registration failed, try a different username ❌');
+           this.setState({
+            OngoingRegister : false
+            });
+
+
             }
 
             //this.refresh_balance();
             //balance: this.ft_balanceOfSafe(json),
           })
-          .catch(error => console.log(error)); 
+          .catch(error => {
+                        this.setState({
+               OngoingRegister : true
+            });
+
+
+            console.log(error)}); 
 
 }
 
@@ -2211,36 +2260,77 @@ ft_resetfields_transfer = (array) => {
   }
 }
 
+  signupbtn = str => {
+    if (this.state.OngoingRegister) {
+      return (
+        <ActivityIndicator
+          size="large"
+          color= 'rgba(52, 52, 52, 0.8)'
+          style={{ textAlign: 'center', fontWeight: '100' }}
+        />
+      );
+    } else {
+      return (
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 21,
+                  fontWeight: '100',
+                  color : 'rgba(52, 52, 52, 0.8)',
+                }}>
+                Sign Up
+              </Text>
+      );
+    }
+  };
+
+
   register = () => {
+
+    signupbt = this.signupbtn();
 
     svg = SvgComponent({
       width : Dimensions.get('window').width,
-      height : (Dimensions.get('window').height*0.3)*0.75,
+      height : (Dimensions.get('window').height*0.25)*0.75,
        viewBox: '0 0 64 64'
       });
     return (
+
       <View style={{}}>
+
+<ImageBackground source={require('./gradient.jpg')} style={ styles.imgBackground }>
       <View style={{flex : 6}}>
+      {svg}
       <Text style={{
         textAlignVertical: "center",
         textAlign: 'center',
         fontSize : 21,
-        height : (Dimensions.get('window').height*0.3)*0.15,  
+        color : 'rgba(52, 52, 52, 0.8)',
+        height : (Dimensions.get('window').height*0.25)*0.15,  
         width : (Dimensions.get('window').width)  
         }}>
         Plastic Token Wallet</Text>
-      {svg}
+
       </View>
+
+
         <View style={{flex : 2, margin : 10}}>
             <TextInput
               style={{
-                borderRadius : 10,
+                borderRadius : 999,
                 fontSize: 29,
-                backgroundColor: '#e6e6e6',
+                color : 'rgba(255, 255, 255, 0.8)',
+                textAlign : "center",
+
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                //backgroundColor: '#e6e6e6',
+              //  borderColor : '#fff',
+                //borderWidth : 1,
                 height : "100%",
                 fontWeight : '200'
               }}
               placeholder="Username"
+              placeholderTextColor='rgba(52, 52, 52, 0.5)'
               onChangeText={username => this.setState({ username })}
               autoCorrect={false}
               autoCapitalize={'none'}
@@ -2251,13 +2341,20 @@ ft_resetfields_transfer = (array) => {
         <View style={{flex : 2, margin : 10}}>
             <TextInput
               style={{
-                borderRadius : 10,
+                color : 'rgba(255, 255, 255, 0.8)',
+                textAlign : "center",
+                borderRadius : 999,
                 fontSize: 29,
-                backgroundColor: '#e6e6e6',
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                //borderColor : '#fff',
+                //borderWidth : 1,
+
                 height : "100%",
                 fontWeight : '100'
               }}
+              placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="E-mail"
+              secureTextEntry={false}
               //onChangeText={password => this.setState({ password })}
             />
         </View>
@@ -2265,74 +2362,102 @@ ft_resetfields_transfer = (array) => {
         <View style={{flex : 2, margin : 10}}>
             <TextInput
               style={{
-                borderRadius : 10,
+                borderRadius : 999,
                 fontSize: 29,
-                backgroundColor: '#e6e6e6',
+                color : 'rgba(255, 255, 255, 0.8)',
+                textAlign : "center",
+
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                //backgroundColor: '#e6e6e6',
+              //  borderColor : '#fff',
+                //borderWidth : 1,
                 height : "100%",
-                fontWeight : '100'
+                fontWeight : '200'
               }}
               placeholder="Password"
-              secureTextEntry={true}
+              placeholderTextColor='rgba(52, 52, 52, 0.5)'
               onChangeText={password => this.setState({ password })}
+              secureTextEntry={true}
+              autoCorrect={false}
+              autoCapitalize={'none'}
+              autoComplete={'off'}
             />
         </View>
 
         <View style={{flex : 2, margin : 10}}>
             <TextInput
               style={{
-                borderRadius : 10,
+                color : 'rgba(255, 255, 255, 0.8)',
+                textAlign : "center",
+                borderRadius : 999,
                 fontSize: 29,
-                backgroundColor: '#e6e6e6',
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                //borderColor : '#fff',
+                //borderWidth : 1,
+
                 height : "100%",
                 fontWeight : '100'
               }}
-              placeholder="Confirm Password"
+              placeholderTextColor='rgba(52, 52, 52, 0.5)'
+              placeholder="Confirm password"
               secureTextEntry={true}
               onChangeText={regpassk => this.setState({ regpassk })}
             />
         </View>
-        <View style={[{flex : 6}]}>
+
+
+        <View style={[{flex : 7}]}>
+
+
+
         <View style={[{flexDirection: 'row', flex : 3.5, marginLeft : 10, marginRight : 10}]}>
-    
-        </View>
+  </View>
         <View style={[{flexDirection: 'row', justifyContent: 'center', flex : 2.5}]}>
             <TouchableOpacity onPress={this.cancelregister}
+            disabled = {this.state.OngoingRegister}
             style = {{
               margin : 10,
-              borderRadius : 10,
+              borderRadius : 999,
               backgroundColor : "#4CB676",
-
-              width : (Dimensions.get('window').width)*0.4  
+              textAlignVertical: "center",
+              width : (Dimensions.get('window').width)*0.4,  
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
             >
 
-            <Text style={{fontSize: 36, textAlign: 'center'}}>
+            <Text style={{
+              fontSize: 21, 
+              textAlign: 'center',
+              color : 'rgba(52, 52, 52, 0.8)',
+              textAlignVertical: "center",
+              }}>
               Cancel
             </Text>
           </TouchableOpacity>
 
-            <TouchableOpacity onPress = {this.submRegister}
+            <TouchableOpacity onPress={this.submRegister}
+            disabled = {this.state.OngoingRegister}
             style = {{
               margin : 10,
-              borderRadius : 10,
+              borderRadius : 999,
               backgroundColor : "#4CB676",
-              width : (Dimensions.get('window').width)*0.4  
+              width : (Dimensions.get('window').width)*0.4,  
+              textAlignVertical: "center",
+              justifyContent: 'center',
+              alignItems: 'center'
             }}
             >
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: 36,
-                  fontWeight: '100',
-                }}>
-                Sign Up
-              </Text>
+            {signupbt}
+
             </TouchableOpacity>
 
 
         </View>
 
         </View>
+
+</ImageBackground>
       </View>
     )
  
