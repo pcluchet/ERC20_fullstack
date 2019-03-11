@@ -3,7 +3,7 @@ import {
   Clipboard,
   Text,
   TextInput,
-  Icon,
+  //Icon,
   TouchableOpacity,
   ScrollView,
   View,
@@ -22,6 +22,7 @@ import QRCode from 'react-native-qrcode';
 import Camera from 'react-native-camera';
 import Dimensions from 'Dimensions';
 import { Switch } from 'react-native-switch';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 import Svg, {
@@ -517,15 +518,16 @@ export default class App extends Component {
       stayLoggedIn : false,
       hasCameraPermission: null,
       data: [],
+      latestTransfers: [],
       ongoinginvoice: [],
       ongoingbillid: 'none',
       ongoingbilltotal: 0,
       invoiceEdit: true,
       qrcode: '',
-      password: '',
+      password: 'cbpassword',
       pubkey:
-        'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEteL3xbiv2NCEn8G7uyzYtOb6ozyeSCKsUPL6MlDs3fnyyUpqzzzudhz7hJLnTLvt35o2OSLhT+k7Y5AcYzG/3g==',
-      logged: false,
+        'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEFRxpNFcwqRQcHZGAYq7YBcMEtybxJ368XMHibfDpTl7tZFjX62ChFLTaTkoLYPwDdkSGMEgZDP3MqPNtn4hhFw==',
+      logged: true,
       name: '',
       username: 'centralbank',
       register : false,
@@ -869,9 +871,173 @@ cancelregister = () => {
     return null;
   };
 
+_renderTransferItem = ({ item, index }) => {
+    var margin = 10;
+    var subViewWidth = Dimensions.get('window').width - margin * 9;
+    return (
+      <View
+        key={index}
+        style={{ marginBottom: margin, marginTop: index == 0 ? margin : 0 }}>
+        <View style={{ flexDirection: 'row', flex: 1 }}>
+          <View
+            style={{
+              justifyContent: 'space-between',
+              width: subViewWidth + 10,
+              borderBottomWidth: 1,
+              borderBottomColor: '#ccc',
+            }}>
+            <View>
+              <TouchableOpacity
+                style={{ position: 'absolute', right: 0 }}
+                onPress={() => {
+                  this._rmItm(index);
+                }}>
+                <View>
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      borderRadius: 500,
+                      borderWidth: 1,
+                      borderColor: '#f1948a',
+                      color: '#f1948a',
+                    }}>
+                    &nbsp; X{' '}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              <Text
+                style={[
+                  styles.txtProductName,
+                  { width: subViewWidth, fontWeight: 'bold' },
+                ]}>
+                {item.txid}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginTop: 5,
+              }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    this._rmQty(index);
+                  }}>
+                  <View>
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        borderRadius: 500,
+                        borderWidth: 1,
+                        borderColor: '#ccc',
+                      }}>
+                      &nbsp;&nbsp;-&nbsp;&nbsp;
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <Text style={{ marginHorizontal: 5, fontSize: 18 }}>
+                  0
+                </Text>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    this._addQty(index);
+                  }}>
+                  <View>
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        borderRadius: 500,
+                        borderWidth: 1,
+                        borderColor: '#ccc',
+                      }}>
+                      &nbsp;&nbsp;+&nbsp;&nbsp;
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <Text style={{ marginHorizontal: 5, fontSize: 18 }}>
+                0
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+
+
+
+  BalanceIface = () => {
+    var margin = 10;
+    var subViewWiddth = Dimensions.get('window').width - margin * 9;
+    var subViewWidth = Dimensions.get('window').width;
+
+    return (
+      <View>
+      <View style={[styles.container, { 
+        alignItems: 'center',
+         flex : 4, 
+            backgroundColor : '#0f0',
+         }]}></View>
+      <View style={[styles.container, { 
+        alignItems: 'center',
+         flex : 12, 
+            backgroundColor : '#0f0',
+         }]}>
+        <FlatList
+          renderItem={this._renderTransferItem}
+          keyExtractor={(item, index) => index.toString()}
+          data={this.state.latestTransfers}
+          extraData={this.state}
+          style = {{
+            backgroundColor : '#f00',
+          }}
+        />
+        </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', flex : 2}}>
+          <TouchableOpacity
+            onPress={() => {
+              this._createInvoice();
+            }}>
+            <View>
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  borderRadius: 3,
+                  borderWidth: 1,
+                  borderColor: '#ccc',
+                  margin: 10,
+                  fontSize: 37,
+                }}>
+                &nbsp;&nbsp;Create Invoice&nbsp;&nbsp;
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
+
+
   balance = () => {
-    var allowancesFrom = this.getText('From', this.state.allowancesFrom);
-    var allowancesTo = this.getText('To', this.state.allowancesTo);
+  iface = this.BalanceIface();
+  logoutButton = this.logoutButton();
+    return (
+      <ImageBackground source={require('./gradient.jpg')} style={ styles.imgBackground }>
+      <View style={[styles.container, { alignItems: 'center', flex : 20 }]}>
+
+        {logoutButton}
+        {iface}
+      </View>
+      </ImageBackground>
+    );
+
 
     return (
       <View style={[{ flex: 0.5 }, styles.container]}>
@@ -897,6 +1063,8 @@ cancelregister = () => {
             Allowances From
           </Text>
         */}
+
+
           <ScrollView
             style={[
               { flex: 6 },
@@ -1042,6 +1210,9 @@ cancelregister = () => {
            // let obj = JSON.parse(json._bodyText);
            // obj = obj.response;
            let obj = json.response;
+           this.setState({
+              latestTransfers : obj
+           });
            console.log(json.response);
 
             var arrayLength = obj.length;
@@ -2610,17 +2781,39 @@ ft_resetfields_transfer = (array) => {
 
   logoutButton = st => {
     return (
-      <TouchableOpacity onPress={this.LogOut}>
-        <Text
+      <View style={[{
+        flexDirection: 'row',
+         flex : 2,
+         }]}>
+      <TouchableOpacity 
+      onPress={this.LogOut}
+      style={{
+                color : 'rgba(255, 255, 255, 0.8)',
+                textAlign : "center",
+                borderRadius : 999,
+                justifyContent : 'center',
+                alignItems: 'center',
+                fontSize: 29,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                width : Dimensions.get('window').width * 0.1,
+                height : Dimensions.get('window').width * 0.1,
+      }}
+      >
+      <Icon name="chevron-left" size={29} color='rgba(255, 255, 255, 0.8)' />
+
+      </TouchableOpacity>
+      <Text
           style={{
-            marginTop: 20,
+            height : Dimensions.get('window').width * 0.1,
+            marginLeft : 10,
             textAlign: 'center',
             fontSize: 21,
+            color : 'rgba(52, 52, 52, 0.75)',
             fontWeight: '100',
           }}>
           Logged in as : {this.state.username}
-        </Text>
-      </TouchableOpacity>
+      </Text>
+      </View>
     );
   };
 
@@ -2673,7 +2866,6 @@ ft_resetfields_transfer = (array) => {
           showsButtons={true}
           showsPagination={false}>
           <View style={styles.slide}>
-            {logoutButton}
             {balance}
           </View>
 
