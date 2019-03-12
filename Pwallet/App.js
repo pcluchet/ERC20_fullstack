@@ -38,7 +38,7 @@ const SvgComponent = props => (
 
   <Svg width={64} height={64} {...props}>
     <Defs>
-   </Defs>
+    </Defs>
     <Path
       d="M242.527 253.589c0-30.927 25.072-55.999 56-55.999s56 25.072 56 55.999c0 30.928-25.072 56.001-56 56.001s-56-25.073-56-56.001"
       fill="#f1de6e"
@@ -110,7 +110,7 @@ const SvgComponent = props => (
       fill="#ddcc32"
       transform="matrix(.54644 0 0 -.54644 -131.128 170.572)"
     />
- </Svg>
+  </Svg>
 )
 
 //export default SvgComponent
@@ -508,14 +508,14 @@ export default class App extends Component {
 
     this.interval = setInterval(() => {
       if (this.state.logged) {
-       this.ft_getbalance();
+        this.ft_getbalance();
         //this.ft_getAllowancesFrom();
         this.ft_getlatest();
       }
     }, 6500);
 
     this.state = {
-      stayLoggedIn : false,
+      stayLoggedIn: false,
       hasCameraPermission: null,
       data: [],
       latestTransfers: [],
@@ -530,7 +530,7 @@ export default class App extends Component {
       logged: true,
       name: '',
       username: 'centralbank',
-      register : false,
+      register: false,
       balance: '0',
       transferamount: '', // nom de la bière
       transferfrom: '', // nom de la bière
@@ -545,7 +545,7 @@ export default class App extends Component {
       billtotal: '',
       billaddress: '',
       scanningContact: false,
-      OngoingRegister : false,
+      OngoingRegister: false,
       scanningBill: false,
       ManualContact: false,
       BalanceIsLoading: false, // la requête API est-elle en cours ?
@@ -568,13 +568,13 @@ export default class App extends Component {
     return true;
   };
 
-cancelregister = () => {
-        this.setState({
-            register : false
-        })
+  cancelregister = () => {
+    this.setState({
+      register: false
+    })
 
 
-}
+  }
 
   addContactManual = () => {
     var raw = this.state.contactlist;
@@ -656,9 +656,9 @@ cancelregister = () => {
   };
 
   writeToClipboard = async () => {
-  console.log("CLIPBOARRRD");
-  await Clipboard.setString(this.state.pubkey);
-  alert('Copied to Clipboard!');
+    console.log("CLIPBOARRRD");
+    await Clipboard.setString(this.state.pubkey);
+    alert('Copied to Clipboard!');
   };
 
 
@@ -768,8 +768,8 @@ cancelregister = () => {
     }
   };
 
-  transfer = () => {
-    return (
+transfer = () => {
+  return (
       <View style={styles.container}>
         <Text style={styles.headerStyle}>Transfer</Text>
         <View
@@ -871,101 +871,67 @@ cancelregister = () => {
     return null;
   };
 
-_renderTransferItem = ({ item, index }) => {
+  _renderTransferItem = ({ item, index }) => {
     var margin = 10;
     var subViewWidth = Dimensions.get('window').width - margin * 9;
-    return (
+
+    /*
+       textlatest +=
+                this.getsymbol(obj[i]) +
+                '  \n' +
+                this.timeConverter(obj[i].timestamp) +
+                '\n';
+              textlatest += this.getfromorto(obj[i]) + '\n';
+              textlatest += 'Amount : ' + obj[i].value.Value + '\n';
+              textlatest += 'Reason : ' + obj[i].value.Details + '\n';
+              textlatest += '\n\n';
+
+
+
       <View
         key={index}
         style={{ marginBottom: margin, marginTop: index == 0 ? margin : 0 }}>
-        <View style={{ flexDirection: 'row', flex: 1 }}>
-          <View
-            style={{
-              justifyContent: 'space-between',
-              width: subViewWidth + 10,
-              borderBottomWidth: 1,
-              borderBottomColor: '#ccc',
-            }}>
-            <View>
-              <TouchableOpacity
-                style={{ position: 'absolute', right: 0 }}
-                onPress={() => {
-                  this._rmItm(index);
-                }}>
-                <View>
-                  <Text
-                    style={{
-                      fontWeight: 'bold',
-                      borderRadius: 500,
-                      borderWidth: 1,
-                      borderColor: '#f1948a',
-                      color: '#f1948a',
-                    }}>
-                    &nbsp; X{' '}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-
-              <Text
-                style={[
-                  styles.txtProductName,
-                  { width: subViewWidth, fontWeight: 'bold' },
-                ]}>
-                {item.txid}
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginTop: 5,
-              }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <TouchableOpacity
-                  onPress={() => {
-                    this._rmQty(index);
-                  }}>
-                  <View>
-                    <Text
-                      style={{
-                        fontWeight: 'bold',
-                        borderRadius: 500,
-                        borderWidth: 1,
-                        borderColor: '#ccc',
-                      }}>
-                      &nbsp;&nbsp;-&nbsp;&nbsp;
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-                <Text style={{ marginHorizontal: 5, fontSize: 18 }}>
-                  0
+        <View style={{ flexDirection: 'row'}}>
+             <View style={{ flexDirection: 'row', flex: 2 }}>
+                <Text>
+                  {item.value.Value}  
+                </Text> 
+                 <Text>
+                   POPMLKJL
                 </Text>
-
-                <TouchableOpacity
-                  onPress={() => {
-                    this._addQty(index);
-                  }}>
-                  <View>
-                    <Text
-                      style={{
-                        fontWeight: 'bold',
-                        borderRadius: 500,
-                        borderWidth: 1,
-                        borderColor: '#ccc',
-                      }}>
-                      &nbsp;&nbsp;+&nbsp;&nbsp;
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-              <Text style={{ marginHorizontal: 5, fontSize: 18 }}>
-                0
-              </Text>
-            </View>
-          </View>
+             </View>
+             <View style={{ flexDirection: 'row', flex: 8 }}>
+                <Text>
+                  {item.value.Details}  
+                </Text> 
+             </View>
         </View>
       </View>
+              */
+
+    return (
+
+
+      <View
+        key={index}
+        style={{ width : '100%'}}>
+
+        <View style={{ flexDirection: 'row', width : '100%' }}>
+          <View style={{ flexDirection: 'row', flex: 2 }}>
+            <Text>
+              {item.value.Details}
+            </Text>
+          </View>
+
+        </View>
+        <View style={{ flexDirection: 'row', flex: 8 }}>
+          <Text>
+            {item.value.Value}
+          </Text>
+        </View>
+
+      </View >
+
     );
   };
 
@@ -973,126 +939,120 @@ _renderTransferItem = ({ item, index }) => {
 
 
   BalanceIface = () => {
-    var margin = 10;
-    var subViewWiddth = Dimensions.get('window').width - margin * 9;
-    var subViewWidth = Dimensions.get('window').width;
-
     return (
-      <View>
-      <View style={[styles.container, { 
-        alignItems: 'center',
-         flex : 4, 
-            backgroundColor : '#0f0',
-         }]}></View>
-      <View style={[styles.container, { 
-        alignItems: 'center',
-         flex : 12, 
-            backgroundColor : '#0f0',
-         }]}>
-        <FlatList
-          renderItem={this._renderTransferItem}
-          keyExtractor={(item, index) => index.toString()}
-          data={this.state.latestTransfers}
-          extraData={this.state}
-          style = {{
-            backgroundColor : '#f00',
-          }}
-        />
+      <View style ={{
+        backgroundColor : 'red',
+        }}>
+        <View style={[ {
+          alignItems: 'center',
+          flex: 4,
+          backgroundColor: '#0f0',
+        }]}>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'center', flex : 2}}>
+        <View style={[ {
+          alignItems: 'center',
+          flex: 12,
+        }]}>
+          <FlatList
+            renderItem={this._renderTransferItem}
+            keyExtractor={(item, index) => index.toString()}
+            data={this.state.latestTransfers}
+            extraData={this.state}
+            style={{
+              backgroundColor: '#f00',
+            }}
+          />
+        </View>
+        <View style={{ flexDirection: 'row', 
+                       justifyContent: 'space-between',
+                       flex: 2,
+                       backgroundColor : 'yellow',
+                     }}>
           <TouchableOpacity
             onPress={() => {
               this._createInvoice();
-            }}>
-            <View>
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  borderRadius: 3,
-                  borderWidth: 1,
-                  borderColor: '#ccc',
-                  margin: 10,
-                  fontSize: 37,
-                }}>
-                &nbsp;&nbsp;Create Invoice&nbsp;&nbsp;
-              </Text>
-            </View>
-          </TouchableOpacity>
+          }}>
+          <Icon name="home" size={50} color='rgba(52, 52, 52, 0.8)' />
+         </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              this._createInvoice();
+          }}>
+          <Icon name="qrcode" size={50} color='rgba(52, 52, 52, 0.8)' />
+         </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              this._createInvoice();
+          }}>
+          <Icon name="exchange" size={50} color='rgba(52, 52, 52, 0.8)' />
+         </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              this._createInvoice();
+          }}>
+          <Icon name="address-book" size={44} color='rgba(52, 52, 52, 0.8)' />
+         </TouchableOpacity>
         </View>
-      </View>
+        </View>
     );
   };
 
 
 
   balance = () => {
-  iface = this.BalanceIface();
-  logoutButton = this.logoutButton();
-    return (
-      <ImageBackground source={require('./gradient.jpg')} style={ styles.imgBackground }>
-      <View style={[styles.container, { alignItems: 'center', flex : 20 }]}>
 
-        {logoutButton}
-        {iface}
-      </View>
+    logoutButton = this.logoutButton();
+    iface = this.BalanceIface();
+    return (
+      <ImageBackground source={require('./gradient.jpg')} style={styles.imgBackground}>
+        <View style={{ alignItems: 'center' }}>
+          {logoutButton}
+          {iface}
+        </View>
       </ImageBackground>
     );
+  };
 
-
+  logoutButton = st => {
     return (
-      <View style={[{ flex: 0.5 }, styles.container]}>
-        <Text style={styles.headerSty}>Balance</Text>
-        <View
+      <View 
+        style={[{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        flex: 2,
+      }]}>
+        <TouchableOpacity
+          onPress={this.LogOut}
           style={{
-            position: 'absolute',
-            top: 10,
-            right: 20,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
+            color: 'rgba(255, 255, 255, 0.8)',
+            textAlign: "center",
+            borderRadius: 999,
+            justifyContent: 'center',
+            alignItems: 'center',
+            fontSize: 29,
+            backgroundColor: 'rgba(52, 52, 52, 0.5)',
+            width: Dimensions.get('window').width * 0.1,
+            height: Dimensions.get('window').width * 0.1,
           }}
-        />
+        >
+          <Icon name="chevron-left" size={29} color='rgba(255, 255, 255, 0.8)' />
 
-        <View style={[{ flex: 1 }, styles.elementsContainer]}>
-          <View style={{ flex: 0.2, backgroundColor: '#FFFFFF' }}>
-            <Text style={styles.balancevalue}> {this.state.balance} </Text>
-          </View>
-
-          {/*
-        <View style={{flex: 1, backgroundColor: '#d9d9d9'}}>
-          <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold', marginTop: '2%'}}>
-            Allowances From
-          </Text>
-        */}
-
-
-          <ScrollView
-            style={[
-              { flex: 6 },
-              styles.scrollview,
-              { backgroundColor: '#FFFFFF' },
-            ]}>
-            <Text
-              style={{ fontSize: 20, textAlign: 'left', fontWeight: '100' }}>
-              {this.state.latesttransfers}
-            </Text>
-          </ScrollView>
-          {/*
-        </View>
-        <View style={{flex: 1, backgroundColor: '#e6e6e6'}}>
-          <Text style={{fontSize: 20, textAlign: 'center', fontWeight: 'bold', marginTop: '2%'}}>
-            Allowances To
-          </Text>
-          <ScrollView  style={styles.scrollview}>
-            <Text style={{fontSize: 20, textAlign: 'left', fontWeight: '100'}}>
-              {allowancesTo}
-            </Text>
-          </ScrollView>
-        </View>
-        */}
-        </View>
+        </TouchableOpacity>
+        <Text
+          style={{
+            height: Dimensions.get('window').width * 0.1,
+            marginLeft: 10,
+            fontSize: 21,
+            color: 'rgba(52, 52, 52, 0.75)',
+            fontWeight: '100',
+          }}>
+          Logged in as : {this.state.username}
+        </Text>
       </View>
     );
   };
+
+
 
   allowance = () => {
     return (
@@ -1207,13 +1167,13 @@ _renderTransferItem = ({ item, index }) => {
             // console.log("TRANSFERS :");
             // console.log(json._bodyText);
             let textlatest = '';
-           // let obj = JSON.parse(json._bodyText);
-           // obj = obj.response;
-           let obj = json.response;
-           this.setState({
-              latestTransfers : obj
-           });
-           console.log(json.response);
+            // let obj = JSON.parse(json._bodyText);
+            // obj = obj.response;
+            let obj = json.response;
+            this.setState({
+              latestTransfers: obj
+            });
+            console.log(json.response);
 
             var arrayLength = obj.length;
             for (var i = arrayLength - 1; i >= 0; i--) {
@@ -1239,50 +1199,50 @@ _renderTransferItem = ({ item, index }) => {
   };
 
   Register = () => {
-  console.log("register trigger");
-  this.setState({register : true});
-}
+    console.log("register trigger");
+    this.setState({ register: true });
+  }
 
 
   login = () => {
     svg = SvgComponent({
-      width : Dimensions.get('window').width,
-      height : (Dimensions.get('window').height*0.5)*0.75,
-       viewBox: '0 0 64 64'
-      });
+      width: Dimensions.get('window').width,
+      height: (Dimensions.get('window').height * 0.5) * 0.75,
+      viewBox: '0 0 64 64'
+    });
     return (
       <View style={{}}>
 
-<ImageBackground source={require('./gradient.jpg')} style={ styles.imgBackground }>
-      <View style={{flex : 10}}>
-      {svg}
-      <Text style={{
-        textAlignVertical: "center",
-        textAlign: 'center',
-        fontSize : 21,
-      color : 'rgba(52, 52, 52, 0.8)',
-        height : (Dimensions.get('window').height*0.5)*0.15,  
-        width : (Dimensions.get('window').width)  
-        }}>
-        Plastic Token Wallet</Text>
+        <ImageBackground source={require('./gradient.jpg')} style={styles.imgBackground}>
+          <View style={{ flex: 10 }}>
+            {svg}
+            <Text style={{
+              textAlignVertical: "center",
+              textAlign: 'center',
+              fontSize: 21,
+              color: 'rgba(52, 52, 52, 0.8)',
+              height: (Dimensions.get('window').height * 0.5) * 0.15,
+              width: (Dimensions.get('window').width)
+            }}>
+              Plastic Token Wallet</Text>
 
-      </View>
+          </View>
 
 
-        <View style={{flex : 2, margin : 10}}>
+          <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               style={{
-                borderRadius : 999,
+                borderRadius: 999,
                 fontSize: 29,
-                color : 'rgba(255, 255, 255, 0.8)',
-                textAlign : "center",
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
 
                 backgroundColor: 'rgba(52, 52, 52, 0.5)',
                 //backgroundColor: '#e6e6e6',
-              //  borderColor : '#fff',
+                //  borderColor : '#fff',
                 //borderWidth : 1,
-                height : "100%",
-                fontWeight : '200'
+                height: "100%",
+                fontWeight: '200'
               }}
               placeholder="Username"
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
@@ -1291,112 +1251,112 @@ _renderTransferItem = ({ item, index }) => {
               autoCapitalize={'none'}
               autoComplete={'off'}
             />
-        </View>
+          </View>
 
-        <View style={{flex : 2, margin : 10}}>
+          <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               style={{
-                color : 'rgba(255, 255, 255, 0.8)',
-                textAlign : "center",
-                borderRadius : 999,
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                borderRadius: 999,
                 fontSize: 29,
                 backgroundColor: 'rgba(52, 52, 52, 0.5)',
                 //borderColor : '#fff',
                 //borderWidth : 1,
 
-                height : "100%",
-                fontWeight : '100'
+                height: "100%",
+                fontWeight: '100'
               }}
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="Password"
               secureTextEntry={true}
               onChangeText={password => this.setState({ password })}
             />
-        </View>
+          </View>
 
-        <View style={[{flex : 6}]}>
+          <View style={[{ flex: 6 }]}>
 
 
 
-        <View style={[{flexDirection: 'row', flex : 3.5, marginLeft : 10, marginRight : 10}]}>
-        <Switch
-        value={this.state.stayLoggedIn}
+            <View style={[{ flexDirection: 'row', flex: 3.5, marginLeft: 10, marginRight: 10 }]}>
+              <Switch
+                value={this.state.stayLoggedIn}
 
-    onValueChange={(val) => this.setState({stayLoggedIn: val})}
-    disabled={false}
-    circleSize={30}
-    barHeight={30}
-    borderColor="white"
-    circleBorderWidth={1}
-    backgroundActive='rgba(255, 255, 255, 0.5)'
-    backgroundInactive='rgba(52, 52, 52, 0.5)'
-    circleActiveColor={'#30a566'}
-    circleInActiveColor='rgba(52, 52, 52, 0.8)'
-    changeValueImmediately={true}
-    innerCircleStyle={{ borderColor :'rgba(52, 52, 52, 0.0)' , alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
-    outerCircleStyle={{ borderColor : 'white'}} // style for outer animated circle
-    renderActiveText={false}
-    renderInActiveText={false}
-    switchLeftPx={2} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
-    switchRightPx={2} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
-    switchWidthMultiplier={2} // multipled by the `circleSize` prop to calculate total width of the Switch
-  />
+                onValueChange={(val) => this.setState({ stayLoggedIn: val })}
+                disabled={false}
+                circleSize={30}
+                barHeight={30}
+                borderColor="white"
+                circleBorderWidth={1}
+                backgroundActive='rgba(255, 255, 255, 0.5)'
+                backgroundInactive='rgba(52, 52, 52, 0.5)'
+                circleActiveColor={'#30a566'}
+                circleInActiveColor='rgba(52, 52, 52, 0.8)'
+                changeValueImmediately={true}
+                innerCircleStyle={{ borderColor: 'rgba(52, 52, 52, 0.0)', alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
+                outerCircleStyle={{ borderColor: 'white' }} // style for outer animated circle
+                renderActiveText={false}
+                renderInActiveText={false}
+                switchLeftPx={2} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
+                switchRightPx={2} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
+                switchWidthMultiplier={2} // multipled by the `circleSize` prop to calculate total width of the Switch
+              />
 
-    <Text style={{fontSize: 21, textAlign: 'center', marginLeft : 10, color: 'rgba(52, 52, 52, 0.8)'}}>
-              Remember me
+              <Text style={{ fontSize: 21, textAlign: 'center', marginLeft: 10, color: 'rgba(52, 52, 52, 0.8)' }}>
+                Remember me
             </Text>
-  </View>
-        <View style={[{flexDirection: 'row', justifyContent: 'center', flex : 2.5}]}>
-            <TouchableOpacity onPress={this.Register}
-            style = {{
-              margin : 10,
-              borderRadius : 999,
-              backgroundColor : "#4CB676",
-              textAlignVertical: "center",
-              width : (Dimensions.get('window').width)*0.4,  
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-            >
-
-            <Text style={{
-              fontSize: 21, 
-              textAlign: 'center',
-              color : 'rgba(52, 52, 52, 0.8)',
-              textAlignVertical: "center",
-              }}>
-              Sign up
-            </Text>
-          </TouchableOpacity>
-
-            <TouchableOpacity onPress={this.Login}
-            style = {{
-              margin : 10,
-              borderRadius : 999,
-              backgroundColor : "#4CB676",
-              width : (Dimensions.get('window').width)*0.4,  
-              textAlignVertical: "center",
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-            >
-              <Text
+            </View>
+            <View style={[{ flexDirection: 'row', justifyContent: 'center', flex: 2.5 }]}>
+              <TouchableOpacity onPress={this.Register}
                 style={{
-                  textAlign: 'center',
+                  margin: 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  width: (Dimensions.get('window').width) * 0.4,
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+
+                <Text style={{
                   fontSize: 21,
-                  fontWeight: '100',
-                  color : 'rgba(52, 52, 52, 0.8)',
+                  textAlign: 'center',
+                  color: 'rgba(52, 52, 52, 0.8)',
+                  textAlignVertical: "center",
                 }}>
-                Login
+                  Sign up
+            </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={this.Login}
+                style={{
+                  margin: 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  width: (Dimensions.get('window').width) * 0.4,
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    fontSize: 21,
+                    fontWeight: '100',
+                    color: 'rgba(52, 52, 52, 0.8)',
+                  }}>
+                  Login
               </Text>
-            </TouchableOpacity>
+              </TouchableOpacity>
 
 
-        </View>
+            </View>
 
-        </View>
+          </View>
 
-</ImageBackground>
+        </ImageBackground>
       </View>
     );
   };
@@ -1417,29 +1377,29 @@ _renderTransferItem = ({ item, index }) => {
       <View style={styles.container}>
         <Text style={styles.headerStyle}>My address :</Text>
 
-          <TextInput
+        <TextInput
+          style={{
+            borderWidth: 1,
+            borderRadius: 3,
+            borderColor: '#ccc',
+            width: '100%',
+            margin: 5,
+          }}
+          value={this.state.pubkey}
+        />
+        <TouchableOpacity
+          onPress={this.writeToClipboard}
+        >
+          <Text
             style={{
-              borderWidth: 1,
-              borderRadius: 3,
-              borderColor: '#ccc',
-              width: '100%',
-              margin : 5,
-            }}
-            value= {this.state.pubkey}
-          />
-         <TouchableOpacity
-            onPress={this.writeToClipboard}
-         > 
-            <Text
-              style={{
-                marginTop: '5%',
-                textAlign: 'center',
-                fontSize: 12,
-                fontWeight: '100',
-              }}>
-              Copy To Clipboard
+              marginTop: '5%',
+              textAlign: 'center',
+              fontSize: 12,
+              fontWeight: '100',
+            }}>
+            Copy To Clipboard
             </Text>
-          </TouchableOpacity>
+        </TouchableOpacity>
 
 
 
@@ -2246,10 +2206,10 @@ other guy
         <Camera
           style={styles.preview}
           onBarCodeRead={this.onBillBarCodeRead}
- 
-                aspect={Camera.constants.Aspect.fill}
-                orientation={Camera.constants.Orientation.landscapeLeft}
-      
+
+          aspect={Camera.constants.Aspect.fill}
+          orientation={Camera.constants.Orientation.landscapeLeft}
+
         />
 
         {/*
@@ -2284,7 +2244,7 @@ other guy
       //console.log("RESPONSE LOGddIN2 = " + JSON.stringify(response.json()));
 
 
-      
+
       if (response != "Unauthorized") {
         var respjson = JSON.parse(response);
         console.log('JSON rr = ' + JSON.stringify(respjson));
@@ -2349,107 +2309,104 @@ other guy
       .catch(error => console.log(error));
   };
 
-submRegister = () => {
-  console.log("Attempting to register");
-  if (this.state.OngoingRegister)
-  {
-    console.log("Ongoing registration, please wait");
-  }
-  else
-  {
+  submRegister = () => {
+    console.log("Attempting to register");
+    if (this.state.OngoingRegister) {
+      console.log("Ongoing registration, please wait");
+    }
+    else {
+      this.setState({
+        OngoingRegister: true
+      });
+
+    }
+    if (this.state.password != this.state.regpassk) {
+      alert('Passwords does not match ❌');
+      this.setState({
+        OngoingRegister: false
+      });
+
+
+
+    } else
+      CreateAccount(
+        this.state.username,
+        this.state.password,
+      )
+        .then(json => {
+          console.log('DEBUG: register :' + JSON.stringify(json));
+          var jsonresp = (json);
+          if (jsonresp.status == '200') {
+            RegInERC20(this.state.username, this.state.password).then(
+              resm => {
+                if (resm.status == 200) {
+                  alert('Registration successfull ! ✅');
+                  this.setState({
+                    register: false,
+                    OngoingRegister: false
+                  });
+                }
+                else {
+                  alert('Registration failed, try a different username ❌');
+                  this.setState({
+                    OngoingRegister: false
+                  });
+
+
+                }
+              }
+            );
+
+          } else {
+            alert('Registration failed, try a different username ❌');
             this.setState({
-               OngoingRegister : true
+              OngoingRegister: false
             });
 
-  }
-  if (this.state.password != this.state.regpassk) {
-        alert('Passwords does not match ❌');
-            this.setState({
-               OngoingRegister : false
-            });
+
+          }
+
+          //this.refresh_balance();
+          //balance: this.ft_balanceOfSafe(json),
+        })
+        .catch(error => {
+          this.setState({
+            OngoingRegister: true
+          });
 
 
-        
-      } else
-        CreateAccount(
-          this.state.username,
-          this.state.password,
-        )
-          .then(json => {
-            console.log('DEBUG: register :' + JSON.stringify(json));
-            var jsonresp = (json);
-            if (jsonresp.status == '200') {
-              RegInERC20(this.state.username,this.state.password).then( 
-                resm => {
-                  if (resm.status == 200)
-                  {
-                alert('Registration successfull ! ✅');
-                        this.setState({
-            register : false,
-            OngoingRegister : false
+          console.log(error)
         });
-                  }
-                  else
-                  {
-                    alert('Registration failed, try a different username ❌');
-           this.setState({
-            OngoingRegister : false
-            });
 
-
-                  }
-            }
-              );
-              
-            } else {
-              alert('Registration failed, try a different username ❌');
-           this.setState({
-            OngoingRegister : false
-            });
-
-
-            }
-
-            //this.refresh_balance();
-            //balance: this.ft_balanceOfSafe(json),
-          })
-          .catch(error => {
-                        this.setState({
-               OngoingRegister : true
-            });
-
-
-            console.log(error)}); 
-
-}
-
-ft_resetfields_transfer = (array) => {
-  var length = array.length
-
-  for (var index = 0; index < length; index++) {
-    this.setState({ [array[index]]: "" })
   }
-}
+
+  ft_resetfields_transfer = (array) => {
+    var length = array.length
+
+    for (var index = 0; index < length; index++) {
+      this.setState({ [array[index]]: "" })
+    }
+  }
 
   signupbtn = str => {
     if (this.state.OngoingRegister) {
       return (
         <ActivityIndicator
           size="large"
-          color= 'rgba(52, 52, 52, 0.8)'
+          color='rgba(52, 52, 52, 0.8)'
           style={{ textAlign: 'center', fontWeight: '100' }}
         />
       );
     } else {
       return (
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: 21,
-                  fontWeight: '100',
-                  color : 'rgba(52, 52, 52, 0.8)',
-                }}>
-                Sign Up
+        <Text
+          style={{
+            textAlign: 'center',
+            fontSize: 21,
+            fontWeight: '100',
+            color: 'rgba(52, 52, 52, 0.8)',
+          }}>
+          Sign Up
               </Text>
       );
     }
@@ -2461,44 +2418,44 @@ ft_resetfields_transfer = (array) => {
     signupbt = this.signupbtn();
 
     svg = SvgComponent({
-      width : Dimensions.get('window').width,
-      height : (Dimensions.get('window').height*0.25)*0.75,
-       viewBox: '0 0 64 64'
-      });
+      width: Dimensions.get('window').width,
+      height: (Dimensions.get('window').height * 0.25) * 0.75,
+      viewBox: '0 0 64 64'
+    });
     return (
 
       <View style={{}}>
 
-<ImageBackground source={require('./gradient.jpg')} style={ styles.imgBackground }>
-      <View style={{flex : 6}}>
-      {svg}
-      <Text style={{
-        textAlignVertical: "center",
-        textAlign: 'center',
-        fontSize : 21,
-        color : 'rgba(52, 52, 52, 0.8)',
-        height : (Dimensions.get('window').height*0.25)*0.15,  
-        width : (Dimensions.get('window').width)  
-        }}>
-        Plastic Token Wallet</Text>
+        <ImageBackground source={require('./gradient.jpg')} style={styles.imgBackground}>
+          <View style={{ flex: 6 }}>
+            {svg}
+            <Text style={{
+              textAlignVertical: "center",
+              textAlign: 'center',
+              fontSize: 21,
+              color: 'rgba(52, 52, 52, 0.8)',
+              height: (Dimensions.get('window').height * 0.25) * 0.15,
+              width: (Dimensions.get('window').width)
+            }}>
+              Plastic Token Wallet</Text>
 
-      </View>
+          </View>
 
 
-        <View style={{flex : 2, margin : 10}}>
+          <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               style={{
-                borderRadius : 999,
+                borderRadius: 999,
                 fontSize: 29,
-                color : 'rgba(255, 255, 255, 0.8)',
-                textAlign : "center",
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
 
                 backgroundColor: 'rgba(52, 52, 52, 0.5)',
                 //backgroundColor: '#e6e6e6',
-              //  borderColor : '#fff',
+                //  borderColor : '#fff',
                 //borderWidth : 1,
-                height : "100%",
-                fontWeight : '200'
+                height: "100%",
+                fontWeight: '200'
               }}
               placeholder="Username"
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
@@ -2507,43 +2464,43 @@ ft_resetfields_transfer = (array) => {
               autoCapitalize={'none'}
               autoComplete={'off'}
             />
-        </View>
+          </View>
 
-        <View style={{flex : 2, margin : 10}}>
+          <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               style={{
-                color : 'rgba(255, 255, 255, 0.8)',
-                textAlign : "center",
-                borderRadius : 999,
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                borderRadius: 999,
                 fontSize: 29,
                 backgroundColor: 'rgba(52, 52, 52, 0.5)',
                 //borderColor : '#fff',
                 //borderWidth : 1,
 
-                height : "100%",
-                fontWeight : '100'
+                height: "100%",
+                fontWeight: '100'
               }}
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="E-mail"
               secureTextEntry={false}
-              //onChangeText={password => this.setState({ password })}
+            //onChangeText={password => this.setState({ password })}
             />
-        </View>
+          </View>
 
-        <View style={{flex : 2, margin : 10}}>
+          <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               style={{
-                borderRadius : 999,
+                borderRadius: 999,
                 fontSize: 29,
-                color : 'rgba(255, 255, 255, 0.8)',
-                textAlign : "center",
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
 
                 backgroundColor: 'rgba(52, 52, 52, 0.5)',
                 //backgroundColor: '#e6e6e6',
-              //  borderColor : '#fff',
+                //  borderColor : '#fff',
                 //borderWidth : 1,
-                height : "100%",
-                fontWeight : '200'
+                height: "100%",
+                fontWeight: '200'
               }}
               placeholder="Password"
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
@@ -2553,138 +2510,138 @@ ft_resetfields_transfer = (array) => {
               autoCapitalize={'none'}
               autoComplete={'off'}
             />
-        </View>
+          </View>
 
-        <View style={{flex : 2, margin : 10}}>
+          <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               style={{
-                color : 'rgba(255, 255, 255, 0.8)',
-                textAlign : "center",
-                borderRadius : 999,
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                borderRadius: 999,
                 fontSize: 29,
                 backgroundColor: 'rgba(52, 52, 52, 0.5)',
                 //borderColor : '#fff',
                 //borderWidth : 1,
 
-                height : "100%",
-                fontWeight : '100'
+                height: "100%",
+                fontWeight: '100'
               }}
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="Confirm password"
               secureTextEntry={true}
               onChangeText={regpassk => this.setState({ regpassk })}
             />
-        </View>
+          </View>
 
 
-        <View style={[{flex : 7}]}>
+          <View style={[{ flex: 7 }]}>
 
 
 
-        <View style={[{flexDirection: 'row', flex : 3.5, marginLeft : 10, marginRight : 10}]}>
-  </View>
-        <View style={[{flexDirection: 'row', justifyContent: 'center', flex : 2.5}]}>
-            <TouchableOpacity onPress={this.cancelregister}
-            disabled = {this.state.OngoingRegister}
-            style = {{
-              margin : 10,
-              borderRadius : 999,
-              backgroundColor : "#4CB676",
-              textAlignVertical: "center",
-              width : (Dimensions.get('window').width)*0.4,  
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            >
+            <View style={[{ flexDirection: 'row', flex: 3.5, marginLeft: 10, marginRight: 10 }]}>
+            </View>
+            <View style={[{ flexDirection: 'row', justifyContent: 'center', flex: 2.5 }]}>
+              <TouchableOpacity onPress={this.cancelregister}
+                disabled={this.state.OngoingRegister}
+                style={{
+                  margin: 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  width: (Dimensions.get('window').width) * 0.4,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
 
-            <Text style={{
-              fontSize: 21, 
-              textAlign: 'center',
-              color : 'rgba(52, 52, 52, 0.8)',
-              textAlignVertical: "center",
-              }}>
-              Cancel
+                <Text style={{
+                  fontSize: 21,
+                  textAlign: 'center',
+                  color: 'rgba(52, 52, 52, 0.8)',
+                  textAlignVertical: "center",
+                }}>
+                  Cancel
             </Text>
-          </TouchableOpacity>
+              </TouchableOpacity>
 
-            <TouchableOpacity onPress={this.submRegister}
-            disabled = {this.state.OngoingRegister}
-            style = {{
-              margin : 10,
-              borderRadius : 999,
-              backgroundColor : "#4CB676",
-              width : (Dimensions.get('window').width)*0.4,  
-              textAlignVertical: "center",
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-            >
-            {signupbt}
+              <TouchableOpacity onPress={this.submRegister}
+                disabled={this.state.OngoingRegister}
+                style={{
+                  margin: 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  width: (Dimensions.get('window').width) * 0.4,
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                {signupbt}
 
-            </TouchableOpacity>
+              </TouchableOpacity>
 
 
-        </View>
+            </View>
 
-        </View>
+          </View>
 
-</ImageBackground>
+        </ImageBackground>
       </View>
     )
- 
+
     return (
 
 
       <View style={styles.container}>
 
-        <View style={{flex: 0.08, }}>
-                <Text style={styles.headerStyle}>Plastic Token Wallet</Text>
+        <View style={{ flex: 0.08, }}>
+          <Text style={styles.headerStyle}>Plastic Token Wallet</Text>
         </View>
-        <View style={{flex: 0.24, margin : 10}}>
-          <TextInput 
-          style={{height: '100%', backgroundColor: '#d9d9d9', textAlign: 'center', fontSize: 42, fontWeight: '200'}}
+        <View style={{ flex: 0.24, margin: 10 }}>
+          <TextInput
+            style={{ height: '100%', backgroundColor: '#d9d9d9', textAlign: 'center', fontSize: 42, fontWeight: '200' }}
             placeholder="Username "
             onChangeText={(username) => this.setState({ username })}
             autoCorrect={false}
             autoCapitalize={"none"}
             autoComplete={"off"}
-            >
+          >
           </TextInput>
         </View>
-        <View style={{flex: 0.24, margin : 10}}>
+        <View style={{ flex: 0.24, margin: 10 }}>
           <TextInput
-          style={{height: '100%', backgroundColor: '#d9d9d9', textAlign: 'center', fontSize: 42, fontWeight: '200'}}
+            style={{ height: '100%', backgroundColor: '#d9d9d9', textAlign: 'center', fontSize: 42, fontWeight: '200' }}
             placeholder="Password "
             secureTextEntry={true}
             onChangeText={(password) => this.setState({ password })}>
           </TextInput>
         </View>
-        <View style={{flex: 0.24, margin : 10}}>
+        <View style={{ flex: 0.24, margin: 10 }}>
           <TextInput
-          style={{height: '100%', backgroundColor: '#d9d9d9', textAlign: 'center', fontSize: 42, fontWeight: '200'}}
+            style={{ height: '100%', backgroundColor: '#d9d9d9', textAlign: 'center', fontSize: 42, fontWeight: '200' }}
             placeholder="Confirm Password "
             secureTextEntry={true}
             onChangeText={(regpassk) => this.setState({ regpassk })}>
           </TextInput>
         </View>
 
-      <View style={{flex : 0.2, backgroundColor: '#4CB676'}}>
+        <View style={{ flex: 0.2, backgroundColor: '#4CB676' }}>
 
-          <TouchableOpacity onPress={this.submRegister }>
-            <Text style={{fontSize: 33, textAlign: 'center', fontWeight: '200'}}>
+          <TouchableOpacity onPress={this.submRegister}>
+            <Text style={{ fontSize: 33, textAlign: 'center', fontWeight: '200' }}>
               Register
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={this.cancelregister }>
-            <Text style={{fontSize: 21, textAlign: 'center', fontWeight: '100'}}>
+          <TouchableOpacity onPress={this.cancelregister}>
+            <Text style={{ fontSize: 21, textAlign: 'center', fontWeight: '100' }}>
               Cancel
             </Text>
           </TouchableOpacity>
-      </View>
+        </View>
       </View>
     );
-}
+  }
 
 
   ft_transfer = () => {
@@ -2779,44 +2736,6 @@ ft_resetfields_transfer = (array) => {
     console.log('END');
   };
 
-  logoutButton = st => {
-    return (
-      <View style={[{
-        flexDirection: 'row',
-         flex : 2,
-         }]}>
-      <TouchableOpacity 
-      onPress={this.LogOut}
-      style={{
-                color : 'rgba(255, 255, 255, 0.8)',
-                textAlign : "center",
-                borderRadius : 999,
-                justifyContent : 'center',
-                alignItems: 'center',
-                fontSize: 29,
-                backgroundColor: 'rgba(52, 52, 52, 0.5)',
-                width : Dimensions.get('window').width * 0.1,
-                height : Dimensions.get('window').width * 0.1,
-      }}
-      >
-      <Icon name="chevron-left" size={29} color='rgba(255, 255, 255, 0.8)' />
-
-      </TouchableOpacity>
-      <Text
-          style={{
-            height : Dimensions.get('window').width * 0.1,
-            marginLeft : 10,
-            textAlign: 'center',
-            fontSize: 21,
-            color : 'rgba(52, 52, 52, 0.75)',
-            fontWeight: '100',
-          }}>
-          Logged in as : {this.state.username}
-      </Text>
-      </View>
-    );
-  };
-
   render() {
     const { hasCameraPermission } = this.state;
 
@@ -2843,14 +2762,13 @@ ft_resetfields_transfer = (array) => {
     var manualcontact = this.manualcontact();
     var register = this.register()
 
-    if (this.state.register == true)
-     {
-       return (
+    if (this.state.register == true) {
+      return (
         <View style={styles.slide}>
           {register}
         </View>
-         );
-     }
+      );
+    }
     if (this.state.logged != true) {
       return <View style={styles.slide}>{login}</View>;
     } else if (this.state.scanningContact == true) {
@@ -2861,46 +2779,9 @@ ft_resetfields_transfer = (array) => {
       return <View style={styles.slide}>{scanbill}</View>;
     } else {
       return (
-        <Swiper
-          style={styles.wrapper}
-          showsButtons={true}
-          showsPagination={false}>
-          <View style={styles.slide}>
+          <View>
             {balance}
           </View>
-
-          <View style={styles.slide}>
-            {logoutButton}
-            {transfer}
-          </View>
-
-          <View style={styles.slide}>
-            {logoutButton}
-            {contacts}
-          </View>
-
-          <View style={styles.slide}>
-            {logoutButton}
-            {qrcode}
-          </View>
-
-          <View style={styles.slide}>
-            {logoutButton}
-            {paybill}
-          </View>
-
-          <View style={styles.slide}>
-            {logoutButton}
-            {createbill}
-          </View>
-
-          {/*
-       <View style={styles.slide}>
-          {logoutButton}
-          {allowance}
-        </View>
-*/}
-        </Swiper>
       );
     }
   }
@@ -2976,7 +2857,7 @@ const styles = StyleSheet.create({
   imgBackground: {
     width: '100%',
     height: '100%',
-},
+  },
   preview: {
     flex: 1,
     justifyContent: 'flex-end',
