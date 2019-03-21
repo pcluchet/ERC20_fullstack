@@ -1432,55 +1432,64 @@ transfer = () => {
 
 
   ContactOthersIface = () => {
+
+    var myContacts = this.ParseContactList(this.state.contactlist);
     return(
   <View style={{ 
                        flex: 15,
                        padding : 10,
                        backgroundColor : 'rgba(255, 255, 255, 0.5)',
                      }}>
-                      <View style={{ 
-                       flex: 12,
+
+  <View style={{ 
+                       flex: 13,
                        padding : 10,
-                       alignItems : "center",
-                       justifyContent : "center"
                      }}>
-        <QRCode
-            value={"hello"}
-            size={ 250}
-            style={styles.qrcode}
-            bgColor="black"
-            fgColor="white"
-          />
+         <ScrollView style=
+         {{
+         }}>
+          <Text style={{ fontSize: 20, textAlign: 'left', fontWeight: '100' }}>
+            {myContacts}
+          </Text>
+        </ScrollView>
         </View>
-        <Text style={{ flex: 1, fontSize : 18}}> Ask For</Text>
-        <View style={{ flex: 2, margin: 10 }}>
-            <TextInput
-              keyboardType='numeric'
+  <View style={{ 
+                       flex: 2,
+                       padding : 10,
+                       justifyContent : "center",
+                       alignItems : "center"
+                     }}>
+          <TouchableOpacity
+            onPress={() =>
+              this.setState({ scanningContact: false, ManualContact: true })
+            }
+          style = {{
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width : '80%',
+                flex : 2,
+          }}
+            >
+            <Text
               style={{
-                color: 'rgba(255, 255, 255, 0.8)',
-                textAlign: "center",
-                borderRadius: 999,
-                fontSize: 29,
-                backgroundColor: 'rgba(52, 52, 52, 0.5)',
-                //borderColor : '#fff',
-                //borderWidth : 1,
-                height: "100%",
-                fontWeight: '100'
-              }}
-              placeholderTextColor='rgba(52, 52, 52, 0.5)'
-              placeholder="Amount"
-              secureTextEntry={false}
-              onChangeText={transferAskamount => this.setState({ transferAskamount })}
-            />
-          </View>
-
-  </View>
+                textAlign: 'center',
+                fontSize: 21,
+                fontWeight: '100',
+              }}>
+              Add a contact manually
+            </Text>
+          </TouchableOpacity>
+</View>
+      </View>
   );
-
-
   }
 
   GetContactIface = () => {
+  if (this.state.ManualContact)
+    return (this.manualcontact());
     if (this.state.contactMe)
     return (this.ContactMeIface());
     else
@@ -1495,6 +1504,7 @@ transfer = () => {
            onPress={ () => {
             this.setState({ contactMe : true});
             this.setState({ contactOthers : false});
+            this.setState({ ManualContact : false});
            }
           }
           style={{
@@ -2669,26 +2679,33 @@ other guy
 
     //myContacts = "";
     return (
-      <View style={styles.container}>
-        <Text
-          style={{
-            fontSize: 20,
-            textAlign: 'center',
-            fontWeight: 'bold',
-            marginTop: '2%',
-          }}>
+      <View style={{flex : 16,
+        backgroundColor: 'rgba(255, 255, 255, 0.5)', 
+      }}>
+
+      <View style={{flex : 1, alignItems : "center", justifyContent : "center"}}>
+        <Text style ={{
+          fontSize : 18,
+        }}>
           Add a contact manually :
         </Text>
+      </View>
+
+      <View style={{flex : 2}}>
         <TextInput
           style={{
-            margin: '10%',
-            textAlign: 'center',
-            fontSize: 19,
-            fontWeight: '200',
-            borderWidth: 1,
-            borderColor: 'gray',
+
+                flex : 2,
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                margin : 10,
+                borderRadius: 999,
+                fontSize: 21,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                fontWeight: '100'
           }}
-          placeholder="Username"
+
+         placeholder="Username"
           onChangeText={username =>
             this.setState({ ContactToAdd_usr: username })
           }
@@ -2696,15 +2713,23 @@ other guy
           autoCapitalize={'none'}
           autoComplete={'off'}
         />
+        </View>
 
+
+
+      <View style={{flex : 2}}>
         <TextInput
+
+
           style={{
-            margin: '10%',
-            textAlign: 'center',
-            fontSize: 19,
-            fontWeight: '200',
-            borderWidth: 1,
-            borderColor: 'gray',
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                margin : 10,
+                borderRadius: 999,
+                fontSize: 15,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                flex : 2,
+                fontWeight: '100'
           }}
           placeholder="Address"
           onChangeText={addr => this.setState({ ContactToAdd_addr: addr })}
@@ -2712,29 +2737,58 @@ other guy
           autoCapitalize={'none'}
           autoComplete={'off'}
         />
+      </View>
 
-        <View style={{ flex: 0.25, backgroundColor: '#4CB676' }}>
-          <TouchableOpacity onPress={this.addContactManual}>
-            <Text
-              style={{
-                marginTop: '5%',
-                textAlign: 'center',
-                fontSize: 21,
-                fontWeight: '100',
-              }}>
-              Add
-            </Text>
-          </TouchableOpacity>
+        <View style={{ flex: 3 }}>
+        </View>
+
+        <View style={{ flex: 2, flexDirection : "row", justifyContent : "center", alignItems : "center" }}>
+
           <TouchableOpacity
-            onPress={() => this.setState({ ManualContact: false })}>
+            onPress={() => this.setState({ ManualContact: false })}
+            style = {{
+
+                  height : '65%',
+                  margin : 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width : '80%',
+                flex : 2,
+          }}
+ 
+            >
             <Text
               style={{
-                marginTop: '5%',
                 textAlign: 'center',
                 fontSize: 21,
                 fontWeight: '100',
               }}>
               Cancel
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.addContactManual}
+                    style = {{
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width : '80%',
+                  height : '65%',
+                margin : 10,
+                flex : 2,
+          }}
+ >
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 21,
+                fontWeight: '100',
+              }}>
+              Add
             </Text>
           </TouchableOpacity>
         </View>
@@ -3313,7 +3367,6 @@ other guy
     var createbill = this.createbill();
     var scancontact = this.scancontact();
     var scanbill = this.scanbill();
-    var manualcontact = this.manualcontact();
     var register = this.register()
 
     if (this.state.register == true) {
@@ -3327,8 +3380,6 @@ other guy
       return <View style={styles.slide}>{login}</View>;
     } else if (this.state.scanningContact == true) {
       return <View style={styles.slide}>{scancontact}</View>;
-    } else if (this.state.ManualContact == true) {
-      return <View style={styles.slide}>{manualcontact}</View>;
     } else if (this.state.scanningBill == true) {
       return <View style={styles.slide}>{scanbill}</View>;
     } else {
