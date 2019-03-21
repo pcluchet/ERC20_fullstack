@@ -526,7 +526,7 @@ export default class App extends Component {
       qrcode: '',
       password: 'cbpassword',
       pubkey:
-        'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEFRxpNFcwqRQcHZGAYq7YBcMEtybxJ368XMHibfDpTl7tZFjX62ChFLTaTkoLYPwDdkSGMEgZDP3MqPNtn4hhFw==',
+        'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE9jIOB0TL1GFwlYc4Fdxsue8FYW7ir0JFBvtWUC5QCraRrZHXbiZ54URFrJz1m1C4N17syx4PTKJmXai9fznQLA==',
       logged: true,
       name: '',
       username: 'centralbank',
@@ -551,6 +551,12 @@ export default class App extends Component {
       BalanceIsLoading: false, // la requête API est-elle en cours ?
       UserListIsLoading: false, // la requête API est-elle en cours ?
       contactlist: '[{"username" : "john", "pubkey" : "abc" }]',
+      home : true,
+      scan : false,
+      transfer : false,
+      contacts : false,
+      transferAsk : false,
+      transferSend : true,
     };
     this.RefreshContactList();
   }
@@ -871,143 +877,492 @@ transfer = () => {
     return null;
   };
 
-  _renderTransferItem = ({ item, index }) => {
-    var margin = 10;
-    var subViewWidth = Dimensions.get('window').width - margin * 9;
-
-    /*
-       textlatest +=
-                this.getsymbol(obj[i]) +
-                '  \n' +
-                this.timeConverter(obj[i].timestamp) +
-                '\n';
-              textlatest += this.getfromorto(obj[i]) + '\n';
-              textlatest += 'Amount : ' + obj[i].value.Value + '\n';
-              textlatest += 'Reason : ' + obj[i].value.Details + '\n';
-              textlatest += '\n\n';
 
 
-
-      <View
-        key={index}
-        style={{ marginBottom: margin, marginTop: index == 0 ? margin : 0 }}>
-        <View style={{ flexDirection: 'row'}}>
-             <View style={{ flexDirection: 'row', flex: 2 }}>
-                <Text>
-                  {item.value.Value}  
-                </Text> 
-                 <Text>
-                   POPMLKJL
-                </Text>
-             </View>
-             <View style={{ flexDirection: 'row', flex: 8 }}>
-                <Text>
-                  {item.value.Details}  
-                </Text> 
-             </View>
+  getsymbolTr = currtx => {
+    if (currtx.value.From == this.state.pubkey) 
+      return(
+        <View style ={{flexDirection : 'row', alignItems : 'center'}}>
+          <Icon  name="arrow-left" size={30} color='#5dade2' />
+          <Text style ={{marginLeft : 10, fontSize : 10}}>
+            Debit
+          </Text>
         </View>
-      </View>
-              */
+      );
+    else 
+      return (
+        <View style ={{flexDirection : 'row', alignItems : 'center'}}>
+          <Icon  name="arrow-right" size={30} color='#58d68d' />
+          <Text style ={{marginLeft : 10, fontSize : 10}}>
+            Credit
+          </Text>
+        </View>
+      );
+  };
+
+  getfromortoTr = currtx => {
+    if (currtx.value.From == this.state.pubkey)
+      return 'To : ' + this.trimAddr(currtx.value.To);
+    else return 'From : ' + this.trimAddr(currtx.value.From);
+  };
+
+  timeConverterTr = UNIX_timestamp => {
+    var a = new Date(UNIX_timestamp * 1000);
+    var months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    var min = a.getMinutes();
+    var sec = a.getSeconds();
+    var time =
+      date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
+    return time;
+  };
+
+
+
+  _renderTransferItem = ({ item, index }) => {
+    var icon = this.getsymbolTr(item);
+    var ft = this.getfromortoTr(item);
 
     return (
 
 
       <View
         key={index}
-        style={{ width : '100%'}}>
+        style={{
+          flexDirection: 'row',
+          margin : 10,
+          padding : 5,
+                      }}
+          >
 
-        <View style={{ flexDirection: 'row', width : '100%' }}>
-          <View style={{ flexDirection: 'row', flex: 2 }}>
-            <Text>
-              {item.value.Details}
+      <View
+        key={index}
+        style={{flex: 7}}>
+          {icon}
+          <Text>{ft}</Text>
+          <Text>Reason : {item.value.Details}</Text>
+          <Text>Date : {this.timeConverterTr(item.timestamp)}</Text>
+
+      </View>
+      <View
+        key={index}
+        style={{flex: 3}}>
+            <Text
+            style = {{ 
+              fontSize : 36,
+              textAlign : 'right'}}
+            >
+              {item.value.Value}
             </Text>
-          </View>
-
-        </View>
-        <View style={{ flexDirection: 'row', flex: 8 }}>
-          <Text>
-            {item.value.Value}
-          </Text>
-        </View>
-
+      </View>
       </View >
 
     );
   };
 
 
+  getNavBarIconColor = (name) => {
+    if (name == "home" && this.state.home)
+    {
+      return 'rgba(255, 255, 255, 0.8)';
+    }
+    if (name == "scan" && this.state.scan)
+    {
+      return 'rgba(255, 255, 255, 0.8)';
+    }
+    if (name == "transfer" && this.state.transfer)
+    {
+      return 'rgba(255, 255, 255, 0.8)';
+    }
+    if (name == "contacts" && this.state.contacts)
+    {
+      return 'rgba(255, 255, 255, 0.8)';
+    }
+    return 'rgba(52, 52, 52, 0.8)';
+  }
+
+
+
+  NavBar = () => {
+    return (
+      <View style={{ flexDirection: 'row', 
+                       justifyContent: 'space-between',
+                       alignItems : "center",
+                       flex: 2,
+                       marginRight : 10,
+                       marginLeft : 10
+                     }}>
+          <TouchableOpacity
+            onPress={() => {
+              this.setState({ home : true });
+              this.setState({ scan : false });
+              this.setState({ transfer : false });
+              this.setState({ contacts : false });
+          }}>
+          <Icon name="home" size={50} color={this.getNavBarIconColor("home")} />
+         </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              this.setState({ home : false });
+              this.setState({ scan : true });
+              this.setState({ transfer : false });
+              this.setState({ contacts : false });
+          }}>
+          <Icon name="qrcode" size={50} color={this.getNavBarIconColor("scan")} />
+         </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              this.setState({ home : false });
+              this.setState({ scan : false });
+              this.setState({ transfer : true });
+              this.setState({ contacts : false });
+          }}>
+          <Icon name="exchange" size={50} color={this.getNavBarIconColor("transfer")} />
+         </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              this.setState({ home : false });
+              this.setState({ scan : false });
+              this.setState({ transfer : false });
+              this.setState({ contacts : true });
+          }}>
+          <Icon name="address-book" size={44} color={this.getNavBarIconColor("contacts")} />
+         </TouchableOpacity>
+        </View>
+      
+    );
+  };
+
 
 
   BalanceIface = () => {
     return (
-      <View style ={{
-        backgroundColor : 'red',
-        }}>
-        <View style={[ {
-          alignItems: 'center',
-          flex: 4,
-          backgroundColor: '#0f0',
-        }]}>
-        </View>
-        <View style={[ {
-          alignItems: 'center',
-          flex: 12,
-        }]}>
-          <FlatList
+      <View style={{ 
+                       flex: 16,
+                       padding : 10,
+                       backgroundColor : 'rgba(255, 255, 255, 0.5)',
+
+                     }}>
+      <Text style ={{ 
+        flex : 1,
+        color: 'rgba(52, 52, 52, 0.75)',
+        fontSize: 23
+        }}>Balance</Text>
+      <Text style ={{ 
+        flex : 2,
+        color: 'rgba(52, 52, 52, 0.75)',
+        fontSize: 52
+        }}>{this.state.balance}</Text>
+      <Text style ={{ 
+      flex : 1,
+      color: 'rgba(52, 52, 52, 0.75)',
+      fontSize: 23
+      }}>Recent transfers</Text>
+      <View style = {{ flex : 12}}>
+      <FlatList
             renderItem={this._renderTransferItem}
             keyExtractor={(item, index) => index.toString()}
             data={this.state.latestTransfers}
             extraData={this.state}
             style={{
-              backgroundColor: '#f00',
             }}
-          />
-        </View>
-        <View style={{ flexDirection: 'row', 
-                       justifyContent: 'space-between',
-                       flex: 2,
-                       backgroundColor : 'yellow',
-                     }}>
-          <TouchableOpacity
-            onPress={() => {
-              this._createInvoice();
-          }}>
-          <Icon name="home" size={50} color='rgba(52, 52, 52, 0.8)' />
-         </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              this._createInvoice();
-          }}>
-          <Icon name="qrcode" size={50} color='rgba(52, 52, 52, 0.8)' />
-         </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              this._createInvoice();
-          }}>
-          <Icon name="exchange" size={50} color='rgba(52, 52, 52, 0.8)' />
-         </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              this._createInvoice();
-          }}>
-          <Icon name="address-book" size={44} color='rgba(52, 52, 52, 0.8)' />
-         </TouchableOpacity>
-        </View>
-        </View>
+      />
+      </View>
+      
+      </View>
+      
     );
   };
+
+  TabBorderColorTransfer = (TabName) => {
+    if (TabName == "transferSend" && this.state.transferSend)
+    {
+        return 'rgba(255, 255, 255, 0.75)';
+    }
+    if (TabName == "transferAsk" && this.state.transferAsk)
+    {
+        return 'rgba(255, 255, 255, 0.75)';
+    }
+
+        return 'rgba(255, 255, 255, 0.0)';
+  }
+
+  TransferSendIface = () => {
+    return(
+  <View style={{ 
+                       flex: 15,
+                       padding : 10,
+                       backgroundColor : 'rgba(255, 255, 255, 0.5)',
+                     }}>
+
+
+        <Text style={{ flex: 1, fontSize : 18}}> Send</Text>
+        <View style={{ flex: 2, margin: 10 }}>
+            <TextInput
+              keyboardType='numeric'
+              style={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                borderRadius: 999,
+                fontSize: 29,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                //borderColor : '#fff',
+                //borderWidth : 1,
+
+                height: "100%",
+                fontWeight: '100'
+              }}
+              placeholderTextColor='rgba(52, 52, 52, 0.5)'
+              placeholder="Amount"
+              secureTextEntry={false}
+              onChangeText={transferamount => this.setState({ transferamount })}
+            />
+          </View>
+
+          <Text style={{ flex: 1, fontSize : 18}}> To</Text>
+          <View style={{ flex: 2, margin: 10, flexDirection : 'row'}}>
+
+
+          <View style={{ flex: 7,
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                borderRadius: 999,
+                fontSize: 29,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                //borderColor : '#fff',
+                //borderWidth : 1,
+
+                height: "100%",
+                fontWeight: '100'
+          }}>
+              {this.gencontactpicker()}
+          </View>
+              <TouchableOpacity onPress={this.Register}
+                style={{
+                  marginRight : 10,
+                  marginLeft : 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                height: "100%",
+                  flex : 3,
+                }}
+              >
+                <Icon name="qrcode" size={50} color={'rgba(52, 52, 52, 0.75)'} />
+              </TouchableOpacity>
+
+          </View>
+
+          <View style={[{ flex: 6 }]}>
+
+
+
+            <View style={[{ flexDirection: 'row', flex: 3.5, marginLeft: 10, marginRight: 10 }]}>
+              <Switch
+                value={this.state.stayLoggedIn}
+
+                onValueChange={(val) => this.setState({ ResetTransferFields: val })}
+                disabled={false}
+                circleSize={30}
+                barHeight={30}
+                borderColor="white"
+                circleBorderWidth={1}
+                backgroundActive='rgba(255, 255, 255, 0.5)'
+                backgroundInactive='rgba(52, 52, 52, 0.5)'
+                circleActiveColor={'#30a566'}
+                circleInActiveColor='rgba(52, 52, 52, 0.8)'
+                changeValueImmediately={true}
+                innerCircleStyle={{ borderColor: 'rgba(52, 52, 52, 0.0)', alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
+                outerCircleStyle={{ borderColor: 'white' }} // style for outer animated circle
+                renderActiveText={false}
+                renderInActiveText={false}
+                switchLeftPx={2} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
+                switchRightPx={2} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
+                switchWidthMultiplier={2} // multipled by the `circleSize` prop to calculate total width of the Switch
+              />
+              <Text style={{ fontSize: 16, textAlign: 'center', marginLeft: 10, color: 'rgba(52, 52, 52, 0.8)' }}>
+                Reset fields after transfer
+            </Text>
+            </View>
+            <View style={[{ flexDirection: 'row', justifyContent: 'center', flex: 2.5 }]}>
+              <TouchableOpacity onPress={this.Register}
+                style={{
+                  margin: 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  width: (Dimensions.get('window').width) * 0.8,
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+
+                <Text style={{
+                  fontSize: 21,
+                  textAlign: 'center',
+                  color: 'rgba(52, 52, 52, 0.8)',
+                  textAlignVertical: "center",
+                }}>
+                  Send
+            </Text>
+              </TouchableOpacity>
+          </View>
+          </View>
+          </View>
+  );
+
+
+  }
+
+
+  TransferAskIface = () => {
+    return(
+  <View style={{ 
+                       flex: 15,
+                       padding : 10,
+                       backgroundColor : 'rgba(255, 255, 255, 0.5)',
+                     }}>
+                      <View style={{ 
+                       flex: 12,
+                       padding : 10,
+                       alignItems : "center",
+                       justifyContent : "center"
+                     }}>
+        <QRCode
+            value={"hello"}
+            size={ 250}
+            style={styles.qrcode}
+            bgColor="black"
+            fgColor="white"
+          />
+        </View>
+        <Text style={{ flex: 1, fontSize : 18}}> Ask For</Text>
+        <View style={{ flex: 2, margin: 10 }}>
+            <TextInput
+              keyboardType='numeric'
+              style={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                borderRadius: 999,
+                fontSize: 29,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                //borderColor : '#fff',
+                //borderWidth : 1,
+                height: "100%",
+                fontWeight: '100'
+              }}
+              placeholderTextColor='rgba(52, 52, 52, 0.5)'
+              placeholder="Amount"
+              secureTextEntry={false}
+              onChangeText={transferAskamount => this.setState({ transferAskamount })}
+            />
+          </View>
+
+  </View>
+  );
+
+
+  }
+
+
+  GetTransferIface = () => {
+    if (this.state.transferSend)
+    return (this.TransferSendIface());
+    else
+    return (this.TransferAskIface());
+  }
+
+
+  TransferIface = () => {
+    return (
+      <View style ={{flex : 16}}>
+      <View style = {{ flex : 1, flexDirection : 'row'}}>
+        <TouchableOpacity
+           onPress={ () => {
+            this.setState({ transferSend : true});
+            this.setState({ transferAsk : false});
+           }
+          }
+          style={{
+            flex: 1,
+          }}
+        >
+
+      <Text style ={{ 
+        flex : 1,
+        textAlign : 'center',
+        color: 'rgba(255, 255, 255, 0.75)',
+        borderBottomColor : this.TabBorderColorTransfer("transferSend"), 
+        borderBottomWidth : 5,
+        fontSize: 18
+        }}>
+        Send Tokens
+        </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+           onPress={ () => {
+            this.setState({ transferSend : false});
+            this.setState({ transferAsk : true});
+           }
+          }
+          style={{
+            flex: 1,
+          }}
+        >
+
+      <Text style ={{ 
+        flex : 1,
+        textAlign: 'center',
+        color: 'rgba(255, 255, 255, 0.75)',
+        borderBottomColor : this.TabBorderColorTransfer("transferAsk"), 
+        borderBottomWidth : 5,
+        fontSize: 18
+        }}>
+        Ask Tokens
+        </Text>
+        </TouchableOpacity>
+      </View>
+      {this.GetTransferIface()}
+      </View>
+    );
+  };
+
 
 
 
   balance = () => {
 
     logoutButton = this.logoutButton();
-    iface = this.BalanceIface();
+    navbar = this.NavBar();
+    if (this.state.home)
+      iface = this.BalanceIface();
+      else if (this.state.transfer)
+      iface = this.TransferIface();
     return (
       <ImageBackground source={require('./gradient.jpg')} style={styles.imgBackground}>
-        <View style={{ alignItems: 'center' }}>
+        <View style={{ width : '100%', height : '100%', flex : 20 }}>
           {logoutButton}
           {iface}
+          {navbar}
         </View>
       </ImageBackground>
     );
@@ -1019,6 +1374,8 @@ transfer = () => {
         style={[{
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems : 'center',
+        margin : 10,
         flex: 2,
       }]}>
         <TouchableOpacity
@@ -1026,28 +1383,30 @@ transfer = () => {
           style={{
             color: 'rgba(255, 255, 255, 0.8)',
             textAlign: "center",
-            borderRadius: 999,
+            //borderRadius: 999,
             justifyContent: 'center',
             alignItems: 'center',
             fontSize: 29,
-            backgroundColor: 'rgba(52, 52, 52, 0.5)',
-            width: Dimensions.get('window').width * 0.1,
-            height: Dimensions.get('window').width * 0.1,
+            //backgroundColor: 'rgba(52, 52, 52, 0.5)',
+            flex : 1
           }}
         >
-          <Icon name="chevron-left" size={29} color='rgba(255, 255, 255, 0.8)' />
+          <Icon name="arrow-left" size={29} color='rgba(255, 255, 255, 0.8)' />
 
         </TouchableOpacity>
         <Text
           style={{
-            height: Dimensions.get('window').width * 0.1,
-            marginLeft: 10,
+            color: 'rgba(255, 255, 255, 0.8)',
+            textAlign : 'center',
             fontSize: 21,
-            color: 'rgba(52, 52, 52, 0.75)',
             fontWeight: '100',
+            flex : 8
           }}>
-          Logged in as : {this.state.username}
+           {this.state.username}
         </Text>
+        <View style ={{flex : 1}}>
+
+        </View>
       </View>
     );
   };
