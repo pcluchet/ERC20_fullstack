@@ -121,7 +121,7 @@ const SvgComponent = props => (
 //const APIURL = "http://10.0.2.2";
 //const APIURL = "http://192.168.0.2";
 
-const APIURL = 'http://api.plastictwist.com';
+const APIURL = 'https://api.plastictwist.com';
 const CHANNEL = 'ptwist';
 const CHAINCODE = 'ERC20';
 const INVOICINGCHAINCODE = 'invoicing';
@@ -557,6 +557,8 @@ export default class App extends Component {
       contacts : false,
       transferAsk : false,
       transferSend : true,
+      contactMe : true,
+      contactOthers : false,
     };
     this.RefreshContactList();
   }
@@ -1348,6 +1350,197 @@ transfer = () => {
 
 
 
+  TabBorderColorContacts = (TabName) => {
+    if (TabName == "contactMe" && this.state.contactMe)
+    {
+        return 'rgba(255, 255, 255, 0.75)';
+    }
+    if (TabName == "contactOthers" && this.state.contactOthers)
+    {
+        return 'rgba(255, 255, 255, 0.75)';
+    }
+
+        return 'rgba(255, 255, 255, 0.0)';
+  }
+
+  ContactMeIface = () => {
+    return(
+  <View style={{ 
+                       flex: 15,
+                       padding : 10,
+                       backgroundColor : 'rgba(255, 255, 255, 0.5)',
+                       justifyContent : "center",
+                       alignItems : "center",
+                     }}>
+
+
+        <Text style={{ flex: 1, fontSize : 18}}> My address</Text>
+          <QRCode
+            style={[styles.qrcode,
+            {
+              flex : 12
+            }]}
+            value={this.qrdata()}
+            size={250}
+            bgColor="black"
+            fgColor="white"
+          />
+        <TextInput
+          style={{
+    color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                margin : 10,
+                borderRadius: 999,
+                fontSize: 15,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                flex : 2,
+                fontWeight: '100'
+          }}
+          value={this.state.pubkey}
+        />
+        <TouchableOpacity
+          onPress={this.writeToClipboard}
+          style = {{
+            margin : 10,
+               marginRight : 10,
+                  marginLeft : 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width : '80%',
+                flex : 2,
+          }}
+        >
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 18,
+              fontWeight: '100',
+            }}>
+            Copy To Clipboard
+            </Text>
+        </TouchableOpacity>
+
+
+          </View>
+  );
+
+
+  }
+
+
+  ContactOthersIface = () => {
+    return(
+  <View style={{ 
+                       flex: 15,
+                       padding : 10,
+                       backgroundColor : 'rgba(255, 255, 255, 0.5)',
+                     }}>
+                      <View style={{ 
+                       flex: 12,
+                       padding : 10,
+                       alignItems : "center",
+                       justifyContent : "center"
+                     }}>
+        <QRCode
+            value={"hello"}
+            size={ 250}
+            style={styles.qrcode}
+            bgColor="black"
+            fgColor="white"
+          />
+        </View>
+        <Text style={{ flex: 1, fontSize : 18}}> Ask For</Text>
+        <View style={{ flex: 2, margin: 10 }}>
+            <TextInput
+              keyboardType='numeric'
+              style={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                borderRadius: 999,
+                fontSize: 29,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                //borderColor : '#fff',
+                //borderWidth : 1,
+                height: "100%",
+                fontWeight: '100'
+              }}
+              placeholderTextColor='rgba(52, 52, 52, 0.5)'
+              placeholder="Amount"
+              secureTextEntry={false}
+              onChangeText={transferAskamount => this.setState({ transferAskamount })}
+            />
+          </View>
+
+  </View>
+  );
+
+
+  }
+
+  GetContactIface = () => {
+    if (this.state.contactMe)
+    return (this.ContactMeIface());
+    else
+    return (this.ContactOthersIface());
+  }
+
+  ContactIface = () => {
+    return (
+      <View style ={{flex : 16}}>
+      <View style = {{ flex : 1, flexDirection : 'row'}}>
+        <TouchableOpacity
+           onPress={ () => {
+            this.setState({ contactMe : true});
+            this.setState({ contactOthers : false});
+           }
+          }
+          style={{
+            flex: 1,
+          }}
+        >
+
+      <Text style ={{ 
+        flex : 1,
+        textAlign : 'center',
+        color: 'rgba(255, 255, 255, 0.75)',
+        borderBottomColor : this.TabBorderColorContacts("contactMe"), 
+        borderBottomWidth : 5,
+        fontSize: 18
+        }}>
+        My address
+        </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+           onPress={ () => {
+            this.setState({ contactMe : false});
+            this.setState({ contactOthers : true});
+           }
+          }
+          style={{
+            flex: 1,
+          }}
+        >
+
+      <Text style ={{ 
+        flex : 1,
+        textAlign: 'center',
+        color: 'rgba(255, 255, 255, 0.75)',
+        borderBottomColor : this.TabBorderColorContacts("contactOthers"), 
+        borderBottomWidth : 5,
+        fontSize: 18
+        }}>
+        My contacts
+        </Text>
+        </TouchableOpacity>
+      </View>
+      {this.GetContactIface()}
+      </View>
+    );
+  };
 
   balance = () => {
 
@@ -1357,6 +1550,8 @@ transfer = () => {
       iface = this.BalanceIface();
       else if (this.state.transfer)
       iface = this.TransferIface();
+      else if (this.state.contacts)
+      iface = this.ContactIface();
     return (
       <ImageBackground source={require('./gradient.jpg')} style={styles.imgBackground}>
         <View style={{ width : '100%', height : '100%', flex : 20 }}>
