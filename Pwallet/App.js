@@ -506,13 +506,12 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
+   
     this.interval = setInterval(() => {
       if (this.state.logged) {
-        this.ft_getbalance();
-        //this.ft_getAllowancesFrom();
-        this.ft_getlatest();
+        this.ManualRefresh();
       }
-    }, 6500);
+    }, 60 * 1000);
 
     this.state = {
       stayLoggedIn: false,
@@ -559,7 +558,18 @@ export default class App extends Component {
       transferSend : true,
       contactMe : true,
       contactOthers : false,
+      HowMuchIsAsked : 0,
+      ResetTransferFields : true,
+      ScannedTokenDemand: false,
+      ScannedContact: false,
+      scanToInputAddress : true,
+      email : "",
     };
+    this.componentDidMount = () => {
+      if (this.state.logged) {
+        this.ManualRefresh();
+      }
+    }
     this.RefreshContactList();
   }
 
@@ -592,6 +602,12 @@ export default class App extends Component {
     } catch (e) {
       console.log('shit happens');
     }
+    if (this.state.ContactToAdd_addr == "" || this.state.ContactToAdd_usr == "" ||
+    this.state.ContactToAdd_addr == null || this.state.ContactToAdd_usr == null)
+    {
+      alert(' Both fields have to be filled ');
+      return;
+    }
     var newusr = {
       username: this.state.ContactToAdd_usr,
       pubkey: this.state.ContactToAdd_addr,
@@ -613,8 +629,8 @@ export default class App extends Component {
     this.RefreshContactList();
   };
 
-  addContactFromQR = data => {
-    var scandata = JSON.parse(data);
+  addContactFromQR = () => {
+    var scandata = JSON.parse(this.state.qrcode);
     var raw = this.state.contactlist;
     console.log('contactlist = ' + raw);
     try {
@@ -660,7 +676,95 @@ export default class App extends Component {
   onBarCodeRead = e => {
     console.log('READ QRCODE = ' + e.data);
     this.setState({ qrcode: e.data });
-    this.addContactFromQR(e.data);
+    if(e.data) {
+      try {
+          a = JSON.parse(e.data);
+          if (typeof a.a === 'undefined') {
+              alert("This QR Code is not ok");
+              if (this.state.scanToInputAddress)
+              {
+                  alert("You should scan a contact address");
+              this.setState({ home : false });
+              this.setState({ scan : false });
+              this.setState({ transfer : true });
+              this.setState({ contacts : false });
+              this.setState({ scanToInputAddress : false });
+            return;
+              }
+              return;
+          }
+          else
+          {
+          if (typeof a.ask === 'undefined' && typeof a.u === 'undefined') {
+              alert("This QR Code is not ok");
+              if (this.state.scanToInputAddress)
+              {
+                  alert("You should scan a contact address");
+              this.setState({ home : false });
+              this.setState({ scan : false });
+              this.setState({ transfer : true });
+              this.setState({ contacts : false });
+              this.setState({ scanToInputAddress : false });
+            return;
+              }
+              return;
+          }
+          //token ask
+          if (typeof a.ask !== 'undefined')
+          {
+              if (this.state.scanToInputAddress)
+              {
+                  alert("You should scan a contact address");
+              this.setState({ home : false });
+              this.setState({ scan : false });
+              this.setState({ transfer : true });
+              this.setState({ contacts : false });
+              this.setState({ scanToInputAddress : false });
+            return;
+              }
+
+            this.setState({ ScannedTokenDemand: true });
+            this.setState({ TokenDemandAddr: a.a });
+            this.setState({ TokenDemandAmount: a.ask });
+
+          }
+          //contact
+          if (typeof a.u !== 'undefined')
+          {
+              if (this.state.scanToInputAddress)
+              {
+                alert("Scanned contact succesfully added as recipient");
+              this.setState({ home : false });
+              this.setState({ scan : false });
+              this.setState({ transfer : true });
+              this.setState({ contacts : false });
+              this.setState({ transferto : a.a });
+              this.setState({ ManualTransfer : true });
+              this.setState({ scanToInputAddress : false });
+              }
+
+            this.setState({ ScannedContact: true });
+            this.setState({ ScannedContactAddr: a.a });
+            this.setState({ ScannedContactUname: a.u });
+          }
+          }
+          
+      } catch(e) {
+              if (this.state.scanToInputAddress)
+              {
+                  alert("You should scan a contact address");
+              this.setState({ home : false });
+              this.setState({ scan : false });
+              this.setState({ transfer : true });
+              this.setState({ contacts : false });
+              this.setState({ scanToInputAddress : false });
+            return;
+              }
+          alert("This QR Code is not ok");
+          return;
+      }
+  }
+    //this.addContactFromQR(e.data);
   };
 
   writeToClipboard = async () => {
@@ -668,6 +772,20 @@ export default class App extends Component {
     await Clipboard.setString(this.state.pubkey);
     alert('Copied to Clipboard!');
   };
+
+writeAddressDemandToClipboard = async () => {
+    console.log("CLIPBOARRRD");
+    await Clipboard.setString(this.state.TokenDemandAddr);
+    alert('Copied to Clipboard!');
+  };
+
+ writeScannedContactToClipboard= async () => {
+    console.log("CLIPBOARRRD");
+    await Clipboard.setString(this.state.ScannedContactAddr);
+    alert('Copied to Clipboard!');
+  };
+
+
 
 
 
@@ -753,6 +871,8 @@ export default class App extends Component {
     if (k) {
       return (
         <Picker
+          style={{ width : "100%", height: "100%"}}
+          itemStyle={{height: "100%"}}
           selectedValue={this.state.selectedUserType}
           onValueChange={(itemValue, itemIndex) => {
             this.setState({ selectedUserType: itemValue });
@@ -954,7 +1074,6 @@ transfer = () => {
           >
 
       <View
-        key={index}
         style={{flex: 7}}>
           {icon}
           <Text>{ft}</Text>
@@ -963,7 +1082,6 @@ transfer = () => {
 
       </View>
       <View
-        key={index}
         style={{flex: 3}}>
             <Text
             style = {{ 
@@ -1002,6 +1120,9 @@ transfer = () => {
 
 
   NavBar = () => {
+
+    //this.setState({ ScannedContact : false });
+   // this.setState({ ScannedTokenDemand : false });
     return (
       <View style={{ flexDirection: 'row', 
                        justifyContent: 'space-between',
@@ -1052,6 +1173,86 @@ transfer = () => {
   };
 
 
+  getRefreshIcon = () => {
+
+    if (this.state.OngoingManualRefresh)
+    {
+      return (
+        <ActivityIndicator
+          size="large"
+          color='rgba(52, 52, 52, 0.8)'
+          style={{ textAlign: 'center', fontWeight: '100' }}
+        />
+      );
+    }
+    else
+    {
+     return (           
+     <Icon name="refresh" size={30} color={'rgba(52, 52, 52, 0.75)'} />
+     );
+    }
+
+  }
+
+  ManualRefresh = () => {
+
+    this.setState({OngoingManualRefresh : true});
+      getUserBalance(
+        this.state.username,
+        this.state.password,
+        this.state.pubkey
+      ).then(json => {
+          this.setState({
+            balance: this.ft_balanceOfSafe(json),
+          });
+      getLatestTransfers(
+        this.state.username,
+        this.state.password,
+        this.state.pubkey
+      )
+        .then(json => {
+          {
+            let textlatest = '';
+            let obj = json.response;
+            this.setState({
+              latestTransfers: obj.reverse(),
+            });
+            console.log(json.response);
+
+            var arrayLength = obj.length;
+            for (var i = arrayLength - 1; i >= 0; i--) {
+              //alert(myStringArray[i]);
+              //textlatest += "Transaction id : " + this.trimAddr(obj[i].txid) + "\n"
+              textlatest +=
+                this.getsymbol(obj[i]) +
+                '  \n' +
+                this.timeConverter(obj[i].timestamp) +
+                '\n';
+              textlatest += this.getfromorto(obj[i]) + '\n';
+              textlatest += 'Amount : ' + obj[i].value.Value + '\n';
+              textlatest += 'Reason : ' + obj[i].value.Details + '\n';
+              textlatest += '\n\n';
+            }
+            this.setState({
+              latesttransfers: textlatest,
+            });
+
+            this.setState({OngoingManualRefresh : false});
+          }
+        })
+        .catch(error => {
+          console.log(error)
+          this.setState({OngoingManualRefresh : false});
+        });
+        
+        
+        }
+
+        )
+        .catch(error => {console.log(error)
+          this.setState({OngoingManualRefresh : false});
+        });
+  }
 
   BalanceIface = () => {
     return (
@@ -1066,11 +1267,30 @@ transfer = () => {
         color: 'rgba(52, 52, 52, 0.75)',
         fontSize: 23
         }}>Balance</Text>
+       <View style = {{flex : 2, flexDirection : "row", justifyContent : "space-between"}}>
       <Text style ={{ 
-        flex : 2,
+        flex : 8,
         color: 'rgba(52, 52, 52, 0.75)',
         fontSize: 52
         }}>{this.state.balance}</Text>
+              <TouchableOpacity onPress={this.ManualRefresh}
+              disabled = {this.state.OngoingManualRefresh}
+                style={{
+                  marginRight : 10,
+                  marginLeft : 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                height: "100%",
+                  flex : 2,
+                }}
+              >
+              {this.getRefreshIcon()}
+              </TouchableOpacity>
+        </View>
+
       <Text style ={{ 
       flex : 1,
       color: 'rgba(52, 52, 52, 0.75)',
@@ -1105,7 +1325,89 @@ transfer = () => {
         return 'rgba(255, 255, 255, 0.0)';
   }
 
+  TransferSendButtonContent = () => {
+    if (this.state.transferPending)
+    {
+      return (
+        <ActivityIndicator
+          size="large"
+          color='rgba(52, 52, 52, 0.8)'
+          style={{ textAlign: 'center', fontWeight: '100' }}
+        />
+      )
+    }
+    else
+    {
+     return (
+            <Text style={{
+                  fontSize: 21,
+                  textAlign: 'center',
+                  color: 'rgba(52, 52, 52, 0.8)',
+                  textAlignVertical: "center",
+            }}>
+                  Send
+            </Text>
+      );
+    }
+  }
+
+  TransferToContactField = () => {
+    return (
+          <View style={{ flex: 7,
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                borderRadius: 999,
+                fontSize: 29,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                //borderColor : '#fff',
+                //borderWidth : 1,
+
+                height: "100%",
+                fontWeight: '100'
+          }}>
+              {this.gencontactpicker()}
+          </View>);
+  }
+
+  TransferManualField = () => {
+    return (
+        <View style={{ flex: 7, margin: 10 }}>
+            <TextInput
+              value={this.state.transferto}
+              style={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                borderRadius: 999,
+                fontSize: 15,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                //borderColor : '#fff',
+                //borderWidth : 1,
+
+                height: "100%",
+                fontWeight: '100'
+              }}
+              placeholderTextColor='rgba(52, 52, 52, 0.5)'
+              placeholder="Address"
+              secureTextEntry={false}
+              onChangeText={transferto => this.setState({ transferto })}
+            />
+          </View>);
+  }
+
+  ScanInTransfer = () => {
+    this.setState ({scanToInputAddress : true});
+              this.setState({ home : false });
+              this.setState({ scan : true });
+              this.setState({ transfer : false });
+              this.setState({ contacts : false });
+  }
+
   TransferSendIface = () => {
+    var TransferToField = this.TransferToContactField();
+    if (this.state.ManualTransfer)
+    {
+      TransferToField = this.TransferManualField()
+    }
     return(
   <View style={{ 
                        flex: 15,
@@ -1117,6 +1419,7 @@ transfer = () => {
         <Text style={{ flex: 1, fontSize : 18}}> Send</Text>
         <View style={{ flex: 2, margin: 10 }}>
             <TextInput
+              value={this.state.transferamount}
               keyboardType='numeric'
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
@@ -1141,21 +1444,8 @@ transfer = () => {
           <View style={{ flex: 2, margin: 10, flexDirection : 'row'}}>
 
 
-          <View style={{ flex: 7,
-                color: 'rgba(255, 255, 255, 0.8)',
-                textAlign: "center",
-                borderRadius: 999,
-                fontSize: 29,
-                backgroundColor: 'rgba(52, 52, 52, 0.5)',
-                //borderColor : '#fff',
-                //borderWidth : 1,
-
-                height: "100%",
-                fontWeight: '100'
-          }}>
-              {this.gencontactpicker()}
-          </View>
-              <TouchableOpacity onPress={this.Register}
+              {TransferToField}
+              <TouchableOpacity onPress={this.ScanInTransfer}
                 style={{
                   marginRight : 10,
                   marginLeft : 10,
@@ -1177,10 +1467,35 @@ transfer = () => {
 
 
 
-            <View style={[{ flexDirection: 'row', flex: 3.5, marginLeft: 10, marginRight: 10 }]}>
+            <View style={[{ flexDirection: 'row', flex: 1, marginLeft: 10, marginRight: 10 }]}>
               <Switch
-                value={this.state.stayLoggedIn}
-
+                value={this.state.ManualTransfer}
+                onValueChange={(val) => this.setState({ ManualTransfer: val })}
+                disabled={false}
+                circleSize={30}
+                barHeight={30}
+                borderColor="white"
+                circleBorderWidth={1}
+                backgroundActive='rgba(255, 255, 255, 0.5)'
+                backgroundInactive='rgba(52, 52, 52, 0.5)'
+                circleActiveColor={'#30a566'}
+                circleInActiveColor='rgba(52, 52, 52, 0.8)'
+                changeValueImmediately={true}
+                innerCircleStyle={{ borderColor: 'rgba(52, 52, 52, 0.0)', alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
+                outerCircleStyle={{ borderColor: 'white' }} // style for outer animated circle
+                renderActiveText={false}
+                renderInActiveText={false}
+                switchLeftPx={2} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
+                switchRightPx={2} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
+                switchWidthMultiplier={2} // multipled by the `circleSize` prop to calculate total width of the Switch
+              />
+              <Text style={{ fontSize: 16, textAlign: 'center', marginLeft: 10, color: 'rgba(52, 52, 52, 0.8)' }}>
+                Manually input the address
+            </Text>
+            </View>
+            <View style={[{ flexDirection: 'row', flex: 2.5, marginLeft: 10, marginRight: 10 }]}>
+              <Switch
+                value={this.state.ResetTransferFields}
                 onValueChange={(val) => this.setState({ ResetTransferFields: val })}
                 disabled={false}
                 circleSize={30}
@@ -1205,8 +1520,10 @@ transfer = () => {
             </Text>
             </View>
             <View style={[{ flexDirection: 'row', justifyContent: 'center', flex: 2.5 }]}>
-              <TouchableOpacity onPress={this.Register}
+              <TouchableOpacity onPress={this.ft_transfer}
+                disabled = {this.state.transferPending}
                 style={{
+                  ButtonStateHolder : false,
                   margin: 10,
                   borderRadius: 999,
                   backgroundColor: "#4CB676",
@@ -1216,16 +1533,8 @@ transfer = () => {
                   alignItems: 'center'
                 }}
               >
-
-                <Text style={{
-                  fontSize: 21,
-                  textAlign: 'center',
-                  color: 'rgba(52, 52, 52, 0.8)',
-                  textAlignVertical: "center",
-                }}>
-                  Send
-            </Text>
-              </TouchableOpacity>
+              {this.TransferSendButtonContent()}
+             </TouchableOpacity>
           </View>
           </View>
           </View>
@@ -1234,6 +1543,17 @@ transfer = () => {
 
   }
 
+
+qrdata_ask = () => {
+    var ret = '';
+    ret += '{';
+    ret += '"a" : "';
+    ret += this.state.pubkey;
+    ret += '", "ask" : "';
+    ret += this.state.HowMuchIsAsked;
+    ret += '"}';
+    return ret;
+  };
 
   TransferAskIface = () => {
     return(
@@ -1249,7 +1569,7 @@ transfer = () => {
                        justifyContent : "center"
                      }}>
         <QRCode
-            value={"hello"}
+            value={this.qrdata_ask()}
             size={ 250}
             style={styles.qrcode}
             bgColor="black"
@@ -1274,7 +1594,7 @@ transfer = () => {
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="Amount"
               secureTextEntry={false}
-              onChangeText={transferAskamount => this.setState({ transferAskamount })}
+              onChangeText={HowMuchIsAsked => this.setState({ HowMuchIsAsked })}
             />
           </View>
 
@@ -1305,6 +1625,9 @@ transfer = () => {
           }
           style={{
             flex: 1,
+        borderBottomColor : this.TabBorderColorTransfer("transferSend"), 
+        borderBottomWidth : 5,
+ 
           }}
         >
 
@@ -1312,9 +1635,7 @@ transfer = () => {
         flex : 1,
         textAlign : 'center',
         color: 'rgba(255, 255, 255, 0.75)',
-        borderBottomColor : this.TabBorderColorTransfer("transferSend"), 
-        borderBottomWidth : 5,
-        fontSize: 18
+       fontSize: 18
         }}>
         Send Tokens
         </Text>
@@ -1328,15 +1649,17 @@ transfer = () => {
           }
           style={{
             flex: 1,
+        borderBottomColor : this.TabBorderColorTransfer("transferAsk"), 
+        borderBottomWidth : 5,
           }}
+
         >
 
       <Text style ={{ 
         flex : 1,
         textAlign: 'center',
         color: 'rgba(255, 255, 255, 0.75)',
-        borderBottomColor : this.TabBorderColorTransfer("transferAsk"), 
-        borderBottomWidth : 5,
+
         fontSize: 18
         }}>
         Ask Tokens
@@ -1509,6 +1832,9 @@ transfer = () => {
           }
           style={{
             flex: 1,
+   borderBottomColor : this.TabBorderColorContacts("contactMe"), 
+        borderBottomWidth : 5,
+      
           }}
         >
 
@@ -1516,9 +1842,7 @@ transfer = () => {
         flex : 1,
         textAlign : 'center',
         color: 'rgba(255, 255, 255, 0.75)',
-        borderBottomColor : this.TabBorderColorContacts("contactMe"), 
-        borderBottomWidth : 5,
-        fontSize: 18
+       fontSize: 18
         }}>
         My address
         </Text>
@@ -1532,6 +1856,9 @@ transfer = () => {
           }
           style={{
             flex: 1,
+        borderBottomColor : this.TabBorderColorContacts("contactOthers"), 
+        borderBottomWidth : 5,
+ 
           }}
         >
 
@@ -1539,9 +1866,7 @@ transfer = () => {
         flex : 1,
         textAlign: 'center',
         color: 'rgba(255, 255, 255, 0.75)',
-        borderBottomColor : this.TabBorderColorContacts("contactOthers"), 
-        borderBottomWidth : 5,
-        fontSize: 18
+       fontSize: 18
         }}>
         My contacts
         </Text>
@@ -1551,6 +1876,333 @@ transfer = () => {
       </View>
     );
   };
+
+  BasicScanIface = () => {
+  return (
+      <View style={{ flex : 16, backgroundColor :'rgba(255, 255, 255, 0.5)'}}>
+
+        <View style={{ flex: 14 }}>
+        <Camera
+          style={{ flex : 14}}
+          onBarCodeRead={this.onBarCodeRead}
+          aspect={Camera.constants.Aspect.fill}
+          orientation={Camera.constants.Orientation.landscapeLeft}
+        />
+        </View>
+        {/*
+       aspect={Camera.constants.Aspect.fill}
+                orientation={Camera.constants.Orientation.landscapeLeft}
+      */}
+        <View style={{ flex: 2, flexDirection : 'row', alignItems : "center", justifyContent : "center" }}>
+        <TouchableOpacity
+            onPress={() => alert("Beta version : This feature is not yet available")}
+            style = {{
+
+                  height : '65%',
+                  margin : 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width : '80%',
+                flex : 2,
+          }}>
+          <View style = {{flexDirection : "row", alignItems : "center", justifyContent : "space-evenly"}}>
+            <Icon name="history" size={29} color='rgba(52, 52, 52, 0.75)' />
+            <Text> Recently scanned</Text>
+          </View>
+         </TouchableOpacity>
+     </View>
+      </View>
+    );
+  }
+
+
+  setTransferFromDemand = () => {
+      this.setState({
+            ManualTransfer: true,
+            transferto : this.state.TokenDemandAddr,
+            transferamount : this.state.TokenDemandAmount, 
+          })
+       this.setState({ home : false });
+              this.setState({ scan : false });
+              this.setState({ transfer : true });
+              this.setState({ transferAsk : false });
+              this.setState({ transferSend : true });
+              this.setState({ contacts : false });
+
+  }
+
+  ScannedTokenDemandIface = () => {
+
+    return (
+        <View style={{ 
+                       flex: 16,
+                       padding : 10,
+                       backgroundColor : 'rgba(255, 255, 255, 0.5)',
+                       justifyContent : "center",
+                       alignItems : "center",
+                     }}>
+
+
+        <Text style={{ flex: 1, fontSize : 18}}> You have scanned a token demand</Text>
+        <Text style={{ flex: 1, fontSize : 18}}> This Address  </Text>
+       <TextInput
+          style={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                margin : 10,
+                borderRadius: 999,
+                fontSize: 15,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                flex : 2,
+                fontWeight: '100',
+                width : "80%",
+          }}
+          value={this.state.TokenDemandAddr}
+        />
+        <Text style={{ flex: 1, fontSize : 18}}> would like to receive </Text>
+        <Text style={{ flex: 2, fontSize : 30}}> {this.state.TokenDemandAmount} </Text>
+        <Text style={{ flex: 1, fontSize : 18}}> Tokens </Text>
+        <View style ={{flex : 2, flexDirection : "row", alignItems : "center", justifyContent : "center"}}>
+        <TouchableOpacity
+          onPress={this.writeAddressDemandToClipboard}
+          style = {{
+            margin : 10,
+               marginRight : 10,
+                  marginLeft : 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height : "80%",
+                flex : 2,
+          }}
+        >
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 18,
+              fontWeight: '100',
+            }}>
+            Copy address to clipboard
+            </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={this.setTransferFromDemand}
+          style = {{
+            margin : 10,
+               marginRight : 10,
+                  marginLeft : 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height : "80%",
+                flex : 2,
+          }}
+        >
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 18,
+              fontWeight: '100',
+            }}>
+            Go to transfer page
+            </Text>
+        </TouchableOpacity>
+        </View>
+
+        <View style ={{flex : 3, flexDirection : "row", alignItems : "center", justifyContent : "center"}}>
+        </View>
+        <View style ={{flex : 2, flexDirection : "row", alignItems : "center", justifyContent : "center"}}>
+        <TouchableOpacity
+          onPress={ () => {
+            this.setState({
+            ScannedTokenDemand: false,
+          })
+          }}
+          style = {{
+            margin : 10,
+               marginRight : 10,
+                  marginLeft : 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width : "80%",
+                  height : "80%",
+                flex : 2,
+          }}
+        >
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 18,
+              fontWeight: '100',
+            }}>
+            Back To Scan
+            </Text>
+        </TouchableOpacity>
+        </View>
+          </View>);
+  }
+
+
+
+  ScannedContactIface = () => {
+
+    return (
+        <View style={{ 
+                       flex: 16,
+                       padding : 10,
+                       backgroundColor : 'rgba(255, 255, 255, 0.5)',
+                       justifyContent : "center",
+                       alignItems : "center",
+                     }}>
+
+
+        <Text style={{ flex: 1, fontSize : 18}}> You have scanned a contact</Text>
+        <Text style={{ flex: 1, fontSize : 18}}> Contact name </Text>
+       <TextInput
+          style={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                margin : 10,
+                borderRadius: 999,
+                fontSize: 15,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                flex : 2,
+                fontWeight: '100',
+                width : "80%",
+          }}
+          value={this.state.ScannedContactUname}
+        />
+        <Text style={{ flex: 1, fontSize : 18}}> Contact Address </Text>
+       <TextInput
+          style={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                margin : 10,
+                borderRadius: 999,
+                fontSize: 15,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                flex : 2,
+                fontWeight: '100',
+                  width : "80%",
+          }}
+          value={this.state.ScannedContactAddr}
+        />
+        <View style ={{flex : 2, flexDirection : "row", alignItems : "center", justifyContent : "center"}}>
+        <TouchableOpacity
+          onPress={this.writeScannedContactToClipboard}
+          style = {{
+            margin : 10,
+               marginRight : 10,
+                  marginLeft : 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height : "80%",
+                flex : 2,
+          }}
+        >
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 18,
+              fontWeight: '100',
+            }}>
+            Copy Address Clipboard
+            </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={this.addContactFromQR}
+          style = {{
+            margin : 10,
+               marginRight : 10,
+                  marginLeft : 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height : "80%",
+                flex : 2,
+          }}
+        >
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 18,
+              fontWeight: '100',
+            }}>
+            Add as contact
+            </Text>
+        </TouchableOpacity>
+        </View>
+
+        <View style ={{flex : 3, flexDirection : "row", alignItems : "center", justifyContent : "center"}}>
+        </View>
+        <View style ={{flex : 2, flexDirection : "row", alignItems : "center", justifyContent : "center"}}>
+        <TouchableOpacity
+          onPress={ () => {
+            this.setState({
+            ScannedContact: false,
+          })
+          }}
+          style = {{
+            margin : 10,
+               marginRight : 10,
+                  marginLeft : 10,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width : "80%",
+                  height : "80%",
+                flex : 2,
+          }}
+        >
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 18,
+              fontWeight: '100',
+            }}>
+            Back To Scan
+            </Text>
+        </TouchableOpacity>
+        </View>
+
+
+          </View>);
+  }
+
+  ScannerIface = () => {
+    var iface = this.BasicScanIface();
+    if (this.state.ScannedContact)
+    {
+    iface = this.ScannedContactIface();
+    }
+    if (this.state.ScannedTokenDemand)
+    {
+    iface = this.ScannedTokenDemandIface();
+    }
+    return (
+      <View style={{ flex : 16}}>
+      {iface}
+      </View>
+      );
+  };
+
 
   balance = () => {
 
@@ -1562,6 +2214,9 @@ transfer = () => {
       iface = this.TransferIface();
       else if (this.state.contacts)
       iface = this.ContactIface();
+      else if (this.state.scan)
+        iface = this.ScannerIface();
+
     return (
       <ImageBackground source={require('./gradient.jpg')} style={styles.imgBackground}>
         <View style={{ width : '100%', height : '100%', flex : 20 }}>
@@ -1675,6 +2330,7 @@ transfer = () => {
         .then(json =>
           this.setState({
             balance: this.ft_balanceOfSafe(json),
+
           })
         )
         .catch(error => console.log(error));
@@ -1735,7 +2391,7 @@ transfer = () => {
             // obj = obj.response;
             let obj = json.response;
             this.setState({
-              latestTransfers: obj
+              latestTransfers: obj.reverse(),
             });
             console.log(json.response);
 
@@ -1839,10 +2495,8 @@ transfer = () => {
           </View>
 
           <View style={[{ flex: 6 }]}>
-
-
-
             <View style={[{ flexDirection: 'row', flex: 3.5, marginLeft: 10, marginRight: 10 }]}>
+            {/*
               <Switch
                 value={this.state.stayLoggedIn}
 
@@ -1865,10 +2519,10 @@ transfer = () => {
                 switchRightPx={2} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
                 switchWidthMultiplier={2} // multipled by the `circleSize` prop to calculate total width of the Switch
               />
-
               <Text style={{ fontSize: 21, textAlign: 'center', marginLeft: 10, color: 'rgba(52, 52, 52, 0.8)' }}>
                 Remember me
             </Text>
+            */}
             </View>
             <View style={[{ flexDirection: 'row', justifyContent: 'center', flex: 2.5 }]}>
               <TouchableOpacity onPress={this.Register}
@@ -1953,6 +2607,7 @@ transfer = () => {
         />
         <TouchableOpacity
           onPress={this.writeToClipboard}
+          style ={{ flexDirection : "row", alignItems : "center", justifyContent : "center"}}
         >
           <Text
             style={{
@@ -2867,16 +3522,25 @@ other guy
 
     console.log('logged :' + this.state.logged);
     this.RefreshContactList();
+    this.ManualRefresh();
   };
 
   LogOut = () => {
     console.log('logout trigger');
-    console.log('lop before:' + this.state.logged);
+         this.setState({ home : true });
+              this.setState({ scan : false });
+              this.setState({ transfer : false });
+              this.setState({ contacts : false });
+              this.setState({ ScannedContact : false });
+              this.setState({ ScannedTokenDemand : false });
+              this.setState({ password : "" });
     this.setState({ logged: false });
     this.setState({ balance: 0 });
     this.setState({ username: '' });
     this.setState({ contactlist: '[]' });
     this.setState({ latesttransfers: ' ' });
+
+    this.setState({ latestTransfers: null });
     console.log('logged :' + this.state.logged);
   };
 
@@ -3024,16 +3688,13 @@ other guy
   register = () => {
 
     signupbt = this.signupbtn();
-
     svg = SvgComponent({
       width: Dimensions.get('window').width,
       height: (Dimensions.get('window').height * 0.25) * 0.75,
       viewBox: '0 0 64 64'
     });
     return (
-
       <View style={{}}>
-
         <ImageBackground source={require('./gradient.jpg')} style={styles.imgBackground}>
           <View style={{ flex: 6 }}>
             {svg}
@@ -3048,8 +3709,6 @@ other guy
               Plastic Token Wallet</Text>
 
           </View>
-
-
           <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               style={{
@@ -3088,6 +3747,8 @@ other guy
                 height: "100%",
                 fontWeight: '100'
               }}
+              onChangeText={email => this.setState({ email })}
+              value={this.state.email}
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="E-mail"
               secureTextEntry={false}
@@ -3113,6 +3774,7 @@ other guy
               placeholder="Password"
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               onChangeText={password => this.setState({ password })}
+              value= {this.state.password}
               secureTextEntry={true}
               autoCorrect={false}
               autoCapitalize={'none'}
@@ -3198,8 +3860,6 @@ other guy
     )
 
     return (
-
-
       <View style={styles.container}>
 
         <View style={{ flex: 0.08, }}>
@@ -3268,23 +3928,21 @@ other guy
           this.state.transferamount
         )
           .then(json => {
-            console.log('DEBUG: ransfer :' + JSON.stringify(json));
+            console.log('DEBUG: transfer :' + JSON.stringify(json));
             var jsonresp = (json);
             if (jsonresp.status == '200') {
               alert('Transfer successfull ! ✅');
             } else {
               alert('Transfer failed! ❌');
             }
+            if (this.state.ResetTransferFields)
+            {
+              this.ft_resetfields_transfer(['transferto', 'transferamount']);
+            }
 
-            this.ft_resetfields_transfer(['transferfrom', 'transferamount']);
             this.setState({ transferPending: false });
-            //this.refresh_balance();
-            //balance: this.ft_balanceOfSafe(json),
           })
           .catch(error => console.log(error));
-
-      //this.setState({ isLoading: false })
-      //this.setState({ name: k })
     } else {
       console.log('transfer from');
       TransferTokensFrom(
@@ -3308,13 +3966,8 @@ other guy
             'transferamount',
           ]);
           this.setState({ transferPending: false });
-          //this.refresh_balance();
-          //balance: this.ft_balanceOfSafe(json),
         })
         .catch(error => console.log(error));
-
-      //this.setState({ isLoading: false })
-      //this.setState({ name: k })
     }
   };
 
