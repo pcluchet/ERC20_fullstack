@@ -523,12 +523,11 @@ export default class App extends Component {
       ongoingbilltotal: 0,
       invoiceEdit: true,
       qrcode: '',
-      password: 'cbpassword',
-      pubkey:
-        'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE9jIOB0TL1GFwlYc4Fdxsue8FYW7ir0JFBvtWUC5QCraRrZHXbiZ54URFrJz1m1C4N17syx4PTKJmXai9fznQLA==',
-      logged: true,
+      password: '',
+      pubkey: '',
+      logged: false,
       name: '',
-      username: 'centralbank',
+      username: '',
       register: false,
       balance: '0',
       transferamount: '', // nom de la bière
@@ -565,11 +564,6 @@ export default class App extends Component {
       scanToInputAddress : true,
       email : "",
     };
-    this.componentDidMount = () => {
-      if (this.state.logged) {
-        this.ManualRefresh();
-      }
-    }
     this.RefreshContactList();
   }
 
@@ -885,6 +879,8 @@ writeAddressDemandToClipboard = async () => {
     } else {
       return (
         <Picker
+          style={{ width : "100%", height: "100%"}}
+          itemStyle={{height: "100%"}}
           selectedValue={this.state.selectedUserType}
           onValueChange={(itemValue, itemIndex) => {
             this.setState({ selectedUserType: itemValue });
@@ -1419,8 +1415,9 @@ transfer = () => {
         <Text style={{ flex: 1, fontSize : 18}}> Send</Text>
         <View style={{ flex: 2, margin: 10 }}>
             <TextInput
+              
               value={this.state.transferamount}
-              keyboardType='numeric'
+              keyboardType='phone-pad'
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
                 textAlign: "center",
@@ -1493,7 +1490,7 @@ transfer = () => {
                 Manually input the address
             </Text>
             </View>
-            <View style={[{ flexDirection: 'row', flex: 2.5, marginLeft: 10, marginRight: 10 }]}>
+            <View style={[{ flexDirection: 'row', flex: 2.5, marginLeft: 10, marginRight: 10, paddingTop : 10 }]}>
               <Switch
                 value={this.state.ResetTransferFields}
                 onValueChange={(val) => this.setState({ ResetTransferFields: val })}
@@ -1886,7 +1883,7 @@ qrdata_ask = () => {
           style={{ flex : 14}}
           onBarCodeRead={this.onBarCodeRead}
           aspect={Camera.constants.Aspect.fill}
-          orientation={Camera.constants.Orientation.landscapeLeft}
+          orientation='auto'
         />
         </View>
         {/*
@@ -3513,6 +3510,7 @@ other guy
         console.log('JSON rr = ' + JSON.stringify(respjson));
         this.setState({ pubkey: respjson.pubkey });
         this.setState({ logged: true });
+        this.ManualRefresh();
         console.log('Login success, pubkey = ' + this.state.pubkey);
       } else {
         alert('Login failed for some reason ❌');
@@ -3522,7 +3520,6 @@ other guy
 
     console.log('logged :' + this.state.logged);
     this.RefreshContactList();
-    this.ManualRefresh();
   };
 
   LogOut = () => {
@@ -3534,6 +3531,7 @@ other guy
               this.setState({ ScannedContact : false });
               this.setState({ ScannedTokenDemand : false });
               this.setState({ password : "" });
+              this.setState({ pubkey : "" });
     this.setState({ logged: false });
     this.setState({ balance: 0 });
     this.setState({ username: '' });
