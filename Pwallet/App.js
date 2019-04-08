@@ -12,7 +12,6 @@ import {
   AsyncStorage,
   Picker,
   FlatList,
-  ImageBackground,
 } from 'react-native';
 //import { BarCodeScanner, Permissions } from 'expo';
 //import { Constants } from 'expo';
@@ -23,11 +22,11 @@ import Camera from 'react-native-camera';
 import Dimensions from 'Dimensions';
 import { Switch } from 'react-native-switch';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import LinearGradient from 'react-native-linear-gradient';
 
 
 import Svg, {
   Defs,
-  LinearGradient,
   Stop,
   Mask,
   Path,
@@ -1573,7 +1572,7 @@ qrdata_ask = () => {
             fgColor="white"
           />
         </View>
-        <Text style={{ flex: 1, fontSize : 18}}> Ask For</Text>
+        <Text style={{ flex: 1, fontSize : 18}}> Amount to request</Text>
         <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               keyboardType='numeric'
@@ -1659,7 +1658,7 @@ qrdata_ask = () => {
 
         fontSize: 18
         }}>
-        Ask Tokens
+        Receive Tokens
         </Text>
         </TouchableOpacity>
       </View>
@@ -2215,13 +2214,17 @@ qrdata_ask = () => {
         iface = this.ScannerIface();
 
     return (
-      <ImageBackground source={require('./gradient.jpg')} style={styles.imgBackground}>
+<LinearGradient
+  start={{x: 0.0, y: 0.25}} end={{x: 0.5, y: 1.0}}
+  locations={[0,1]}
+  colors={['#82B95E', '#12947A']}
+  style={styles.imgBackground}>
         <View style={{ width : '100%', height : '100%', flex : 20 }}>
           {logoutButton}
           {iface}
           {navbar}
         </View>
-      </ImageBackground>
+</LinearGradient>
     );
   };
 
@@ -2430,7 +2433,11 @@ qrdata_ask = () => {
     return (
       <View style={{}}>
 
-        <ImageBackground source={require('./gradient.jpg')} style={styles.imgBackground}>
+<LinearGradient
+  start={{x: 0.0, y: 0.25}} end={{x: 0.5, y: 1.0}}
+  locations={[0,1]}
+  colors={['#82B95E', '#12947A']}
+  style={styles.imgBackground}>
           <View style={{ flex: 10 }}>
             {svg}
             <Text style={{
@@ -2571,7 +2578,7 @@ qrdata_ask = () => {
 
           </View>
 
-        </ImageBackground>
+</LinearGradient>
       </View>
     );
   };
@@ -3693,7 +3700,11 @@ other guy
     });
     return (
       <View style={{}}>
-        <ImageBackground source={require('./gradient.jpg')} style={styles.imgBackground}>
+<LinearGradient
+  start={{x: 0.0, y: 0.25}} end={{x: 0.5, y: 1.0}}
+  locations={[0,1]}
+  colors={['#82B95E', '#12947A']}
+  style={styles.imgBackground}>
           <View style={{ flex: 6 }}>
             {svg}
             <Text style={{
@@ -3852,8 +3863,7 @@ other guy
             </View>
 
           </View>
-
-        </ImageBackground>
+        </LinearGradient>
       </View>
     )
 

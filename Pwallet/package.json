@@ -1,5 +1,5 @@
 {
-  "name": "Pwallet",
+  "name": "PlasticTwistWallet",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -13,6 +13,7 @@
     "react-native-camera": "^1.1.4",
     "react-native-elements": "0.18.5",
     "react-native-fontawesome": "5.7.0",
+    "react-native-linear-gradient": "^2.5.4",
     "react-native-qrcode": "0.2.7",
     "react-native-svg": "^9.2.4",
     "react-native-swiper": "1.5.13",
