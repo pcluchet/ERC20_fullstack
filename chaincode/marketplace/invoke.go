@@ -62,6 +62,8 @@ func (t *SimpleAsset) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 		ret, err = _set(argv)
 	case "query_data":
 		ret, err = queryData(argv)
+	case "shop_delete_item":
+		ret, err = shopDeleteItem(argv)
 	default:
 		err = fmt.Errorf("Illegal function called \n")
 	}
