@@ -16,6 +16,10 @@ services:
       - FABRIC_CA_SERVER_CA_NAME=ca.example.com
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.MEDSOS.example.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/f7bbeb20ee3010110a3a7e8ccc133c16ad69296932ed8847f0491192a14dda44_sk
+      - FABRIC_CA_SERVER_BCCSP_DEFAULT=PKCS11
+      - FABRIC_CA_SERVER_BCCSP_PKCS11_LIBRARY=/usr/lib/softhsm/libsofthsm2.so
+      - FABRIC_CA_SERVER_BCCSP_PKCS11_PIN=98765432
+      - FABRIC_CA_SERVER_BCCSP_PKCS11_LABEL=ForFabric
     ports:
       - "7054:7054"
     command: bash -c '. /etc/hyperledger/fabric-ca-server/volume/ca-env.sh && fabric-ca-server start -b admin:adminpw'
