@@ -13,7 +13,7 @@ module.exports.register = function register (req, res, next) {
   if (username.charAt(0) == "_")
   {
      res.writeHead(400, { "Content-Type": "text/plain" });
-      return res.end("Usernames cannot start with underscores");
+     return res.end("Usernames cannot start with underscores");
   }
   
   var misc_private = req.swagger.params['X-request-misc-private'].value;
