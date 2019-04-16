@@ -1,0 +1,35 @@
+network/init.sh:
+	->	Les versions des binaires/images fabric sont en 1.2.0 alors que le
+		wallet commence avec la version 1.4.0.
+
+network/bin/:
+	[1] https://openblockchain.readthedocs.io/en/latest/Setup/ca-setup/
+	[2] https://hyperledger-fabric-ca.readthedocs.io/en/release-1.4/users-guide.html#configuring-fabric-ca-server-to-use-softhsm2
+	->	[1] explique qu'avec le binaire du CA, on peut trouver un fichier
+		"membersrvc.yaml".  C'est le fichier de configuration du CA. Je crois
+		que c'est ici que l'on specifie l'utilisation du PKCS11 avec le HSM.
+		Le binaire CA cherche le fichier de config ici:
+			$GOPATH/src/github.com/hyperledger/fabric/membersrvc
+	->	Dans le fichier de config du CA, il faut poser ceci a la section
+		"bccsp":
+			bccsp:
+				default: PKCS11
+				pkcs11:
+				Library: /usr/local/Cellar/softhsm/2.1.0/lib/softhsm/libsofthsm2.so
+				Pin: 98765432
+				Label: ForFabric
+				hash: SHA2
+				security: 256
+				filekeystore:
+					keystore: msp/keystore
+		Avec "Pin" et "Label" que tu vois en initialisant SOFTHSM2.
+		Mais tu peux aussi modifier certaines de ces info directement avec l'env
+		du dockercompose: (plus d'info dans le [2])
+			FABRIC_CA_SERVER_BCCSP_DEFAULT=PKCS11
+			FABRIC_CA_SERVER_BCCSP_PKCS11_LIBRARY=/usr/local/Cellar/softhsm/2.1.0/lib/softhsm/libsofthsm2.so
+			FABRIC_CA_SERVER_BCCSP_PKCS11_PIN=98765432
+			FABRIC_CA_SERVER_BCCSP_PKCS11_LABEL=ForFabric
+		C'est peut etre plus pratique.
+	->	Il y a egalement un truc avec un fichier de config CA en client ET en
+		server. Les deux ont le champs "bccsp", j'imagine qu'il faut faire
+		gaffe.
