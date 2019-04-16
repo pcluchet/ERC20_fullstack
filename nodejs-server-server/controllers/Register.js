@@ -8,9 +8,15 @@ var users = require('../db/users');
 module.exports.register = function register (req, res, next) {
   var username = req.swagger.params['username'].value;
   var xRequestPassword = req.swagger.params['X-request-password'].value;
+
+  //Hotfix
+  if (username.charAt(0) == "_")
+  {
+     res.writeHead(400, { "Content-Type": "text/plain" });
+      return res.end("Usernames cannot start with underscores");
+  }
   
   var misc_private = req.swagger.params['X-request-misc-private'].value;
-
   if (typeof misc_private !== 'undefined')
   {
     try {
@@ -81,7 +87,10 @@ query.ca_register(username, caAddr).then(
   console.log(gen_hash);
   user.password = gen_hash;
   
-  users.create(user, function(err) {  
+
+
+  try {
+ users.create(user, function(err) {  
       if (err) {
             throw err;
               }
@@ -89,6 +98,11 @@ query.ca_register(username, caAddr).then(
               console.log('user inserted');
           }
   });
+    }
+   catch (e) {
+ 
+    } 
+ 
 
 console.log(result);
 
