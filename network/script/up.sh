@@ -18,7 +18,7 @@ set -e
 
 function up {
 	docker-compose -f ./docker-compose.yml down
-	docker-compose -f ./docker-compose.yml up -d ca.example.com orderer.example.com peer0.MEDSOS.example.com couchdb api.MEDSOS.example.com cli webservices
+	docker-compose -f ./docker-compose.yml up -d ca.example.com orderer.example.com peer0.MEDSOS.example.com couchdb peer1.MEDSOS.example.com api.MEDSOS.example.com cli webservices
 	
 	export FABRIC_START_TIMEOUT=10
 	sleep ${FABRIC_START_TIMEOUT}
@@ -31,13 +31,21 @@ function createChannel {
 		-o orderer.example.com:7050 \
 		-c ptwist \
 		-f /etc/hyperledger/configtx/channel.tx
+
 }
 
 function addPeers {
+	
 	docker exec \
 		-e "CORE_PEER_LOCALMSPID=MEDSOSMSP" \
 		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@MEDSOS.example.com/msp" peer0.MEDSOS.example.com peer channel join \
 		-b ptwist.block
+
+	docker exec \
+		-e "CORE_PEER_LOCALMSPID=MEDSOSMSP" \
+		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@MEDSOS.example.com/msp" peer1.MEDSOS.example.com peer channel join \
+		-b ptwist.block
+
 }
 
 ################################################################################
