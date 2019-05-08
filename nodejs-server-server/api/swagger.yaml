@@ -174,6 +174,105 @@ paths:
           schema:
             type: "string"
       x-swagger-router-controller: "GetMisc"
+
+  /users/getusername:
+    get:
+      tags:
+      - "Identity management"
+      summary: "get a user name given his public key"
+      description: ""
+      operationId: "GetUsername"
+      produces:
+      - "application/json"
+      - "text/plain"
+      parameters:
+      - name: "X-request-use-token"
+        in: "header"
+        description: "boolean, true if a session token is used"
+        required: false
+        type: "boolean"
+      - name: "X-request-token"
+        in: "header"
+        description: "session token"
+        required: false
+        type: "string"
+      - name: "X-request-username"
+        in: "header"
+        description: "username"
+        required: false
+        type: "string"
+        format: "string"
+      - name: "X-request-password"
+        in: "header"
+        description: "Password of the user"
+        required: false
+        type: "string"
+        format: "string"
+      - name: "pubkey"
+        in: "header"
+        description: "public key of the user"
+        required: false
+        type: "string"
+        format: "string"
+      responses:
+        200:
+          description: "query worked"
+        401:
+          description: "username/pw missing or incorrect"
+          schema:
+            type: "string"
+        404:
+          description: "public key not found"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "GetUsername"
+  /users/search:
+    get:
+      tags:
+      - "Identity management"
+      summary: "search users whose name match given regex"
+      description: ""
+      operationId: "SearchUser"
+      produces:
+      - "application/json"
+      - "text/plain"
+      parameters:
+      - name: "X-request-use-token"
+        in: "header"
+        description: "boolean, true if a session token is used"
+        required: false
+        type: "boolean"
+      - name: "X-request-token"
+        in: "header"
+        description: "session token"
+        required: false
+        type: "string"
+      - name: "X-request-username"
+        in: "header"
+        description: "username"
+        required: false
+        type: "string"
+        format: "string"
+      - name: "X-request-password"
+        in: "header"
+        description: "Password of the user"
+        required: false
+        type: "string"
+        format: "string"
+      - name: "search"
+        in: "header"
+        description: "search string"
+        required: false
+        type: "string"
+        format: "string"
+      responses:
+        200:
+          description: "search worked"
+        401:
+          description: "username/pw missing or incorrect"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "SearchUser"
   /users/{username}/auth:
     get:
       tags:

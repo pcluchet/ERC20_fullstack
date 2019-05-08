@@ -4,6 +4,42 @@ exports.create = function create(user, cb) {
 	users.insert(user, user.email, cb);
 };
 
+exports.search = function search(regex, cb) {
+	//console.log(users.find({zip:{'$regex' : regex, '$options' : 'i'}});
+	//users.find({"_id" : new RegExp(regex, 'i') }, cb);
+	if (!regex)
+		regex = "";
+	users.find({
+		"selector": {
+		   "_id": {
+			  "$regex": "^" + regex + ".*$"
+		   }
+ 
+		},
+		"fields": [
+			"_id",
+			"pubkey"
+		  ]
+	 }, cb);
+};
+
+exports.searchpubkey = function searchpubkey(regex, cb) {
+	//console.log(users.find({zip:{'$regex' : regex, '$options' : 'i'}});
+	//users.find({"_id" : new RegExp(regex, 'i') }, cb);
+	if (!regex)
+		regex = "";
+	users.find({
+		"selector": {
+		   "pubkey": regex 
+ 
+		},
+		"fields": [
+			"_id",
+			"pubkey"
+		  ]
+	 }, cb);
+};
+
 function updtoken(user, ip, expire, renewduration, linkip, forever, autorenew, cb) {
 	users.get(user, function (err, result) {
 		console.log("IN HERE");
