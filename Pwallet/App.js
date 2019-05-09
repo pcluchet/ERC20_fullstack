@@ -339,7 +339,7 @@ export const TransferTokens = (username, password, to, amount) => {
         */
 };
 
-export const CreateAccount = (username, password) => {
+export const CreateAccount = (username, password, email) => {
   return fetch(`${APIURL}/users/${username}/auth`, {
     method: 'POST',
     headers: {
@@ -347,6 +347,23 @@ export const CreateAccount = (username, password) => {
       'Content-Type': 'application/json',
       'X-request-username': username,
       'X-request-password': password,
+      'X-request-misc-private': JSON.stringify({
+        "nuro": {
+          "web": {
+            "firstname": "",
+            "lastname": "",
+            "email": email
+          }
+        }
+      }),
+      'X-request-misc-public': JSON.stringify({
+        "nuro": {
+          "web": {
+            "picture": null,
+            "username": username
+          }
+      }
+    }),
     },
 
     /*
@@ -522,14 +539,15 @@ export default class App extends Component {
       ongoingbilltotal: 0,
       invoiceEdit: true,
       qrcode: '',
-      password: '',
-      pubkey: '',
-      logged: false,
+      password: 'cbpassword',
+      pubkey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE9jIOB0TL1GFwlYc4Fdxsue8FYW7ir0JFBvtWUC5QCraRrZHXbiZ54URFrJz1m1C4N17syx4PTKJmXai9fznQLA==',
+      logged: true,
       name: '',
-      username: '',
+      username: 'centralbank',
       register: false,
-      balance: '0',
+      balance: '0.00',
       transferamount: '', // nom de la bière
+      transferamount_display: '', // nom de la bière
       transferfrom: '', // nom de la bière
       transferto: '', // nom de la bière
       description: '', // sa description
@@ -557,10 +575,12 @@ export default class App extends Component {
       contactMe : true,
       contactOthers : false,
       HowMuchIsAsked : 0,
+      HowMuchIsAsked_display : '',
       ResetTransferFields : true,
       ScannedTokenDemand: false,
       ScannedContact: false,
-      scanToInputAddress : true,
+      scanToInputAddress : false,
+      divideby : 100,
       email : "",
     };
     this.RefreshContactList();
@@ -718,7 +738,7 @@ export default class App extends Component {
 
             this.setState({ ScannedTokenDemand: true });
             this.setState({ TokenDemandAddr: a.a });
-            this.setState({ TokenDemandAmount: a.ask });
+            this.setState({ TokenDemandAmount: this.getdecimal(a.ask) });
 
           }
           //contact
@@ -1083,7 +1103,7 @@ transfer = () => {
               fontSize : 36,
               textAlign : 'right'}}
             >
-              {item.value.Value}
+              {this.getdecimal(item.value.Value)}
             </Text>
       </View>
       </View >
@@ -1189,6 +1209,18 @@ transfer = () => {
 
   }
 
+  forcetwodecimals = (number) => {
+
+    return number.toFixed(2);
+    //return (parseFloat(Math.round((number * 100) / 100).toFixed(2)));
+  }
+
+  getdecimal = (number) => {
+
+            return this.forcetwodecimals (number / this.state.divideby)
+
+  }
+
   ManualRefresh = () => {
 
     this.setState({OngoingManualRefresh : true});
@@ -1198,7 +1230,7 @@ transfer = () => {
         this.state.pubkey
       ).then(json => {
           this.setState({
-            balance: this.ft_balanceOfSafe(json),
+            balance: this.getdecimal(this.ft_balanceOfSafe(json)),
           });
       getLatestTransfers(
         this.state.username,
@@ -1397,6 +1429,27 @@ transfer = () => {
               this.setState({ contacts : false });
   }
 
+   decimalPlaces = (num) => {
+    var match = (''+num).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+    if (!match) { return 0; }
+    return Math.max(
+         0,
+         // Number of digits right of decimal point.
+         (match[1] ? match[1].length : 0)
+         // Adjust for scientific notation.
+         - (match[2] ? +match[2] : 0));
+  }
+
+   pad = (pad, str, padLeft) => {
+    if (typeof str === 'undefined') 
+      return pad;
+    if (padLeft) {
+      return (pad + str).slice(-pad.length);
+    } else {
+      return (str + pad).substring(0, pad.length);
+    }
+  }
+
   TransferSendIface = () => {
     var TransferToField = this.TransferToContactField();
     if (this.state.ManualTransfer)
@@ -1415,8 +1468,8 @@ transfer = () => {
         <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               
-              value={this.state.transferamount}
-              keyboardType='phone-pad'
+              value={`${this.state.transferamount_display}`}
+              keyboardType='numeric'
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
                 textAlign: "center",
@@ -1425,14 +1478,51 @@ transfer = () => {
                 backgroundColor: 'rgba(52, 52, 52, 0.5)',
                 //borderColor : '#fff',
                 //borderWidth : 1,
-
                 height: "100%",
                 fontWeight: '100'
               }}
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="Amount"
               secureTextEntry={false}
-              onChangeText={transferamount => this.setState({ transferamount })}
+              onChangeText={
+                (transferamount_display) => {
+                  let amount= 0;
+                  console.log("received : " + transferamount_display);
+                  transferamount_display = transferamount_display.replace(",", ".");
+
+                  console.log("onlypoint : " + transferamount_display);
+
+                  if (transferamount_display.includes("."))
+                  {
+
+
+                      var pieces = transferamount_display.split(".");
+                      pieces[1] = pieces[1].substring(0,2);
+                    if (this.decimalPlaces(transferamount_display) >= 2)
+                    {
+                    this.setState({ transferamount_display : pieces[0] + "." + pieces[1]});
+                    }
+                    else
+                    {
+                    this.setState({ transferamount_display : transferamount_display});
+                    }    
+                    amount = pieces[0] + this.pad ("00",pieces[1], false);
+                  }
+                  else
+                  {
+                  this.setState({ transferamount_display : transferamount_display});
+                    amount = transferamount_display * this.state.divideby;
+                  }
+
+
+                  console.log("AMOUNTTRS :" + amount);
+
+                  this.setState({ transferamount : amount});
+
+                
+                }
+              
+              }
             />
           </View>
 
@@ -1575,6 +1665,7 @@ qrdata_ask = () => {
         <Text style={{ flex: 1, fontSize : 18}}> Amount to request</Text>
         <View style={{ flex: 2, margin: 10 }}>
             <TextInput
+              value={`${this.state.HowMuchIsAsked_display}`}
               keyboardType='numeric'
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
@@ -1590,7 +1681,46 @@ qrdata_ask = () => {
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="Amount"
               secureTextEntry={false}
-              onChangeText={HowMuchIsAsked => this.setState({ HowMuchIsAsked })}
+//              onChangeText={HowMuchIsAsked => this.setState({ HowMuchIsAsked })}
+              onChangeText={
+                (HowMuchIsAsked_display) => {
+                  let amount= 0;
+                  console.log("received : " + HowMuchIsAsked_display);
+                  HowMuchIsAsked_display = HowMuchIsAsked_display.replace(",", ".");
+
+                  console.log("onlypoint : " + HowMuchIsAsked_display);
+
+                  if (HowMuchIsAsked_display.includes("."))
+                  {
+
+
+                      var pieces = HowMuchIsAsked_display.split(".");
+                      pieces[1] = pieces[1].substring(0,2);
+                    if (this.decimalPlaces(HowMuchIsAsked_display) >= 2)
+                    {
+                    this.setState({ HowMuchIsAsked_display : pieces[0] + "." + pieces[1]});
+                    }
+                    else
+                    {
+                    this.setState({ HowMuchIsAsked_display : HowMuchIsAsked_display});
+                    }    
+                    amount = pieces[0] + this.pad ("00",pieces[1], false);
+                  }
+                  else
+                  {
+                  this.setState({ HowMuchIsAsked_display : HowMuchIsAsked_display});
+                    amount = HowMuchIsAsked_display * this.state.divideby;
+                  }
+
+
+                  console.log("AMOUNTTRS :" + amount);
+
+                  this.setState({ HowMuchIsAsked : amount});
+                
+                }
+              
+              }
+
             />
           </View>
 
@@ -1919,7 +2049,8 @@ qrdata_ask = () => {
       this.setState({
             ManualTransfer: true,
             transferto : this.state.TokenDemandAddr,
-            transferamount : this.state.TokenDemandAmount, 
+            transferamount_display : this.state.TokenDemandAmount, 
+            transferamount : this.state.TokenDemandAmount * this.state.divideby, 
           })
        this.setState({ home : false });
               this.setState({ scan : false });
@@ -2238,7 +2369,21 @@ qrdata_ask = () => {
         margin : 10,
         flex: 2,
       }]}>
-        <TouchableOpacity
+        <View style ={{flex : 1}}>
+
+        </View>
+ 
+       <Text
+          style={{
+            color: 'rgba(255, 255, 255, 0.8)',
+            textAlign : 'center',
+            fontSize: 21,
+            fontWeight: '100',
+            flex : 8
+          }}>
+           {this.state.username}
+        </Text>
+       <TouchableOpacity
           onPress={this.LogOut}
           style={{
             color: 'rgba(255, 255, 255, 0.8)',
@@ -2251,22 +2396,8 @@ qrdata_ask = () => {
             flex : 1
           }}
         >
-          <Icon name="arrow-left" size={29} color='rgba(255, 255, 255, 0.8)' />
-
+          <Icon name="sign-out" size={29} color='rgba(255, 255, 255, 0.8)' />
         </TouchableOpacity>
-        <Text
-          style={{
-            color: 'rgba(255, 255, 255, 0.8)',
-            textAlign : 'center',
-            fontSize: 21,
-            fontWeight: '100',
-            flex : 8
-          }}>
-           {this.state.username}
-        </Text>
-        <View style ={{flex : 1}}>
-
-        </View>
       </View>
     );
   };
@@ -3609,6 +3740,7 @@ other guy
       CreateAccount(
         this.state.username,
         this.state.password,
+        this.state.email,
       )
         .then(json => {
           console.log('DEBUG: register :' + JSON.stringify(json));
@@ -3663,6 +3795,7 @@ other guy
     for (var index = 0; index < length; index++) {
       this.setState({ [array[index]]: "" })
     }
+
   }
 
   signupbtn = str => {
@@ -3945,7 +4078,7 @@ other guy
             }
             if (this.state.ResetTransferFields)
             {
-              this.ft_resetfields_transfer(['transferto', 'transferamount']);
+              this.ft_resetfields_transfer(['transferamount']);
             }
 
             this.setState({ transferPending: false });
