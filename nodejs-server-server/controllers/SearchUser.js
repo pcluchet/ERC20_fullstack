@@ -39,7 +39,7 @@ module.exports.SearchUser = function SearchUser (req, res, next) {
                        console.log('search worked');
 
         res.writeHead(200, { "Content-Type": "application/json" });
-        return res.end(JSON.stringify(result.docs));
+        return res.end(JSON.stringify(result));
 
 
                    }
@@ -75,7 +75,7 @@ module.exports.SearchUser = function SearchUser (req, res, next) {
                        console.log('search worked');
 
         res.writeHead(200, { "Content-Type": "application/json" });
-        return res.end(JSON.stringify(result.docs));
+        return res.end(JSON.stringify(result));
 
 
                    }

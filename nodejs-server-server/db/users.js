@@ -4,6 +4,8 @@ exports.create = function create(user, cb) {
 	users.insert(user, user.email, cb);
 };
 
+
+/*
 exports.search = function search(regex, cb) {
 	//console.log(users.find({zip:{'$regex' : regex, '$options' : 'i'}});
 	//users.find({"_id" : new RegExp(regex, 'i') }, cb);
@@ -22,6 +24,69 @@ exports.search = function search(regex, cb) {
 		  ]
 	 }, cb);
 };
+*/
+
+exports.search = function search(regex, cb) {
+	//console.log(users.find({zip:{'$regex' : regex, '$options' : 'i'}});
+	//users.find({"_id" : new RegExp(regex, 'i') }, cb);
+	if (!regex)
+		regex = "";
+
+		const batchSize = 25;
+		let batchCount = 0;
+		let searchResults = [];
+		
+		// the recursive function
+		let search = function (count, limit){
+ 	return users.find({
+		"selector": {
+		   "_id": {
+			  "$regex": "^" + regex + ".*$"
+		   }
+ 
+		},
+		"fields": [
+			"_id",
+			"pubkey"
+		  ],
+		  "limit": batchSize,
+        "skip": batchCount*batchSize
+			}).then(function(batch){
+				if (batch.docs.length === 0){
+					// there are no (more) search results, so we can return what we have
+		
+
+					console.log(JSON.stringify(searchResults));
+					return searchResults
+		
+				} else {
+					// there may be more search results, so we add this batch to the result and call the function again to ask more. We increase the counter so that the first batch(es) are skipped
+		
+					for (var i = 0; i < batch.docs.length; i++) {
+						searchResults.push(batch.docs[i])
+					}
+					batchCount ++
+					return search(batchCount, batchSize) 
+				}
+			})
+		}
+
+		search(batchCount, batchSize).then(function(result){
+			console.log("haha");
+			cb(null,result);
+		})
+};
+
+/*
+
+		search(batchCount, batchSize).then(function(result){
+			// you can handle the searchresults
+		
+		})
+
+*/
+
+
 
 exports.searchpubkey = function searchpubkey(regex, cb) {
 	//console.log(users.find({zip:{'$regex' : regex, '$options' : 'i'}});
