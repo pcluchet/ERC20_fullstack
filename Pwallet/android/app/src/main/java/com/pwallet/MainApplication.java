@@ -1,4 +1,4 @@
-package com.plastictwistwallet;
+package com.pwallet;
 
 import android.app.Application;
 

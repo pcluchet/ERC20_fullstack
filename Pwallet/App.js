@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   //Icon,
+  Keyboard,
   TouchableOpacity,
   ScrollView,
   View,
@@ -12,6 +13,7 @@ import {
   AsyncStorage,
   Picker,
   FlatList,
+  Alert,
 } from 'react-native';
 //import { BarCodeScanner, Permissions } from 'expo';
 //import { Constants } from 'expo';
@@ -1379,6 +1381,7 @@ transfer = () => {
   }
 
   TransferToContactField = () => {
+    //console.log("TRSTO:" + this.state.transferto);
     return (
           <View style={{ flex: 7,
                 color: 'rgba(255, 255, 255, 0.8)',
@@ -1468,7 +1471,7 @@ transfer = () => {
         <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               
-              value={`${this.state.transferamount_display}`}
+              value={String(this.state.transferamount_display)}
               keyboardType='numeric'
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
@@ -1484,6 +1487,7 @@ transfer = () => {
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="Amount"
               secureTextEntry={false}
+              onSubmitEditing={Keyboard.dismiss}
               onChangeText={
                 (transferamount_display) => {
                   let amount= 0;
@@ -1841,7 +1845,7 @@ qrdata_ask = () => {
                 margin : 10,
                 borderRadius: 999,
                 fontSize: 15,
-                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+//                backgroundColor: 'rgba(52, 52, 52, 0.5)',
                 flex : 2,
                 fontWeight: '100'
           }}
@@ -1879,10 +1883,121 @@ qrdata_ask = () => {
 
   }
 
+  _deleteContact = (index) => {
+    let ar  = JSON.parse(this.state.contactlist);
+    ar.splice(index,1);
+    this.setState({ contactlist : JSON.stringify(ar)})
+  }
+
+  setTransferFromClist = (item) => {
+      this.setState({
+            ManualTransfer: false,
+            transferto : item.pubkey,
+            selectedUserType : item.pubkey,
+          })
+       this.setState({ home : false });
+              this.setState({ scan : false });
+              this.setState({ transfer : true });
+              this.setState({ transferAsk : false });
+              this.setState({ transferSend : true });
+              this.setState({ contacts : false });
+  }
+
+
+  _renderContactItem = ({ item, index }) => {
+    console.log(JSON.stringify(item));
+    return (
+
+
+      <View
+      
+        key={index}
+        style={{
+          flexDirection: 'row',
+          margin : 10,
+          padding : 5,
+//                       backgroundColor : 'rgba(255, 0, 255, 0.5)',
+                      }}
+          >
+
+      <View
+        style={{flex: 7}}>
+          <Text>{}</Text>
+          <Text>Username : {item.username}</Text>
+          <Text>Pubkey : {this.trimAddr(item.pubkey)}</Text>
+
+      </View>
+      <View
+        style={{flex: 3, flexDirection : 'row', justifyContent : 'space-between'}}>
+
+        <TouchableOpacity
+            onPress={() => {
+                this.setTransferFromClist(item);
+            }}
+            style = {{
+
+                  margin : 3,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width : '80%',
+                flex : 1.4,
+          }}>
+          <View style = {{flexDirection : "row", alignItems : "center", justifyContent : "space-evenly"}}>
+            <Icon name="exchange" size={29} color='rgba(52, 52, 52, 0.75)' />
+          </View>
+         </TouchableOpacity>
+ 
+        <TouchableOpacity
+            onPress={() => {
+              Alert.alert(
+                'Contact deletion',
+                'Are you sure you want to remove ' + item.username + 'from your contacts ?',
+                [
+                  {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                  },
+                  {text: 'Remove', onPress: () => {
+                    this._deleteContact(index);
+                  }},
+                ],
+                {cancelable: false},
+              );
+            }}
+            style = {{
+
+                  margin : 3,
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width : '80%',
+                flex : 1.4,
+          }}>
+          <View style = {{flexDirection : "row", alignItems : "center", justifyContent : "space-evenly"}}>
+            <Icon name="trash" size={29} color='rgba(52, 52, 52, 0.75)' />
+          </View>
+         </TouchableOpacity>
+
+ 
+      </View>
+      </View >
+
+    );
+  };
+
+
+
 
   ContactOthersIface = () => {
 
-    var myContacts = this.ParseContactList(this.state.contactlist);
+    //var myContacts = this.ParseContactList(this.state.contactlist);
+    console.log(JSON.stringify(this.state.contactlist));
     return(
   <View style={{ 
                        flex: 15,
@@ -1893,7 +2008,21 @@ qrdata_ask = () => {
   <View style={{ 
                        flex: 13,
                        padding : 10,
+
+//                       backgroundColor : 'rgba(0, 255, 255, 0.5)',
                      }}>
+         <FlatList
+            renderItem={this._renderContactItem}
+            keyExtractor={(item, index) => index.toString()}
+            data={JSON.parse(this.state.contactlist)}
+            extraData={this.state}
+            style={{
+
+//                       backgroundColor : 'rgba(0, 0, 255, 0.5)',
+            }}
+      />
+
+         {/*
          <ScrollView style=
          {{
          }}>
@@ -1901,6 +2030,7 @@ qrdata_ask = () => {
             {myContacts}
           </Text>
         </ScrollView>
+        */}
         </View>
   <View style={{ 
                        flex: 2,
@@ -2605,11 +2735,15 @@ qrdata_ask = () => {
               autoCorrect={false}
               autoCapitalize={'none'}
               autoComplete={'off'}
+              onSubmitEditing={ () => {
+                this.refs.input_pw.focus();
+              }}
             />
           </View>
 
           <View style={{ flex: 2, margin: 10 }}>
             <TextInput
+              ref="input_pw"
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
                 textAlign: "center",
@@ -2624,6 +2758,7 @@ qrdata_ask = () => {
               }}
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="Password"
+              onSubmitEditing={Keyboard.dismiss}
               secureTextEntry={true}
               onChangeText={password => this.setState({ password })}
             />
@@ -2807,7 +2942,7 @@ qrdata_ask = () => {
       ret += 'Username : ' + localcontacts[i].username;
 
       ret = ret.concat('\n');
-      ret += 'Adress : ' + this.trimAddr(localcontacts[i].pubkey);
+      ret += 'Address : ' + this.trimAddr(localcontacts[i].pubkey);
       ret = ret.concat('\n\n');
       //ret += '/n';
     }
@@ -3872,11 +4007,15 @@ other guy
               autoCorrect={false}
               autoCapitalize={'none'}
               autoComplete={'off'}
+             onSubmitEditing={ () => {
+                this.refs.input_2.focus();
+              }}
             />
           </View>
 
           <View style={{ flex: 2, margin: 10 }}>
             <TextInput
+              ref ="input_2"
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
                 textAlign: "center",
@@ -3894,12 +4033,16 @@ other guy
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="E-mail"
               secureTextEntry={false}
+             onSubmitEditing={ () => {
+                this.refs.input_3.focus();
+              }}
             //onChangeText={password => this.setState({ password })}
             />
           </View>
 
           <View style={{ flex: 2, margin: 10 }}>
             <TextInput
+            ref = "input_3"
               style={{
                 borderRadius: 999,
                 fontSize: 29,
@@ -3921,11 +4064,15 @@ other guy
               autoCorrect={false}
               autoCapitalize={'none'}
               autoComplete={'off'}
+             onSubmitEditing={ () => {
+                this.refs.input_4.focus();
+              }}
             />
           </View>
 
           <View style={{ flex: 2, margin: 10 }}>
             <TextInput
+            ref ="input_4"
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
                 textAlign: "center",
@@ -3942,6 +4089,9 @@ other guy
               placeholder="Confirm password"
               secureTextEntry={true}
               onChangeText={regpassk => this.setState({ regpassk })}
+               onSubmitEditing={ () => {
+                Keyboard.dismiss;
+              }}
             />
           </View>
 
