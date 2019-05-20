@@ -15,6 +15,14 @@ Organizations:
             - Host: peer0.MEDSOS.example.com
               Port: 7051
 
+    - &HSLU
+        Name: HSLUMSP
+        ID: HSLUMSP
+        MSPDir: crypto-config/peerOrganizations/HSLU.example.com/msp
+        AnchorPeers:
+            - Host: peer0.HSLU.example.com
+              Port: 7051
+
 Application: &ApplicationDefaults
 
     Organizations:
@@ -45,10 +53,12 @@ Profiles:
             SampleConsortium:
                 Organizations:
                     - *MEDSOS
+                    - *HSLU
     OneOrgChannel:
         Consortium: SampleConsortium
         Application:
             <<: *ApplicationDefaults
             Organizations:
                 - *MEDSOS
+                - *HSLU
 

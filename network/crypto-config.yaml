@@ -13,3 +13,9 @@ PeerOrgs:
       Count: 2
     Users:
       Count: 0
+  - Name: HSLU
+    Domain: HSLU.example.com
+    Template:
+      Count: 4
+    Users:
+      Count: 0

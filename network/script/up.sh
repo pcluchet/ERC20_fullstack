@@ -18,13 +18,15 @@ set -e
 
 function up {
 	docker-compose -f ./docker-compose.yml down
-	docker-compose -f ./docker-compose.yml up -d ca.example.com orderer.example.com peer0.MEDSOS.example.com couchdb peer1.MEDSOS.example.com api.MEDSOS.example.com cli webservices
+	docker-compose -f ./docker-compose.yml up -d ca.example.com orderer.example.com peer0.MEDSOS.example.com  peer0.HSLU.example.com couchdb peer1.MEDSOS.example.com api.MEDSOS.example.com cli webservices
 	
 	export FABRIC_START_TIMEOUT=10
 	sleep ${FABRIC_START_TIMEOUT}
 }
 
 function createChannel {
+
+	echo "0";
 	docker exec \
 		-e "CORE_PEER_LOCALMSPID=MEDSOSMSP" \
 		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@MEDSOS.example.com/msp" peer0.MEDSOS.example.com peer channel create \
@@ -36,15 +38,45 @@ function createChannel {
 
 function addPeers {
 	
+	echo "1";
 	docker exec \
 		-e "CORE_PEER_LOCALMSPID=MEDSOSMSP" \
 		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@MEDSOS.example.com/msp" peer0.MEDSOS.example.com peer channel join \
 		-b ptwist.block
 
+
+	echo "2";
 	docker exec \
 		-e "CORE_PEER_LOCALMSPID=MEDSOSMSP" \
 		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@MEDSOS.example.com/msp" peer1.MEDSOS.example.com peer channel join \
 		-b ptwist.block
+
+
+	echo "3";
+	docker exec \
+		-e "CORE_PEER_LOCALMSPID=MEDSOSMSP" \
+		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@MEDSOS.example.com/msp" peer0.MEDSOS.example.com peer channel update \
+		-o orderer.example.com:7050 \
+		-c ptwist \
+		-f /etc/hyperledger/configtx/MEDSOSMSPanchors.tx
+
+
+
+
+	echo "4";
+	docker exec \
+		-e "CORE_PEER_LOCALMSPID=HSLUMSP" \
+		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@HSLU.example.com/msp" peer0.HSLU.example.com peer channel join \
+		-b ptwist.block
+
+
+	echo "5";
+	docker exec \
+		-e "CORE_PEER_LOCALMSPID=HSLUMSP" \
+		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@HSLU.example.com/msp" peer0.HSLU.example.com peer channel update \
+		-o orderer.example.com:7050 \
+		-c ptwist \
+		-f /etc/hyperledger/configtx/HSLUPanchors.tx
 
 }
 

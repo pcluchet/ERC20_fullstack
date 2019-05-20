@@ -48,6 +48,14 @@ function generate {
 		-channelID					${CHANNEL_NAME} \
 		-asOrg						MEDSOSMSP \
 		|| _err						"anchor peer update for MEDSOSMSP"
+
+	configtxgen \
+		-profile					OneOrgChannel \
+		-outputAnchorPeersUpdate	./config/HSLUPanchors.tx \
+		-channelID					${CHANNEL_NAME} \
+		-asOrg						HSLUMSP \
+		|| _err						"anchor peer update for MEDSOSMSP"
+
 }
 
 ################################################################################
