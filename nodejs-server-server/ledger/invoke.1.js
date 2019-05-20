@@ -141,7 +141,7 @@ return Fabric_Client.newDefaultKeyValueStore({ path: store_path
 		// get an eventhub once the fabric client has a user assigned. The user
 		// is required bacause the event registration must be signed
 		//let event_hub = fabric_client.newEventHub();
-		let event_hub = channel.newChannelEventHub();
+		let event_hub = channel.newChannelEventHub(peer);
 		//event_hub.setPeerAddr(peerListenerAddr);//'grpc://localhost:7053');
 
 		// using resolve the promise so that result status may be processed
