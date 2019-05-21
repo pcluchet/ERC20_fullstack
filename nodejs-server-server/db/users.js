@@ -87,6 +87,27 @@ exports.search = function search(regex, cb) {
 */
 
 
+exports.searchpubkeys = function searchpubkeys(list, cb) {
+	//console.log(users.find({zip:{'$regex' : regex, '$options' : 'i'}});
+	//users.find({"_id" : new RegExp(regex, 'i') }, cb);
+	console.log("haha");
+	if (!list)
+		list = [];
+	users.find({
+		"selector": {
+		   "pubkey": { "$in" : list} 
+ 
+		},
+		"fields": [
+			"_id",
+			"pubkey"
+		  ]
+	 }, cb);
+};
+
+
+
+
 
 exports.searchpubkey = function searchpubkey(regex, cb) {
 	//console.log(users.find({zip:{'$regex' : regex, '$options' : 'i'}});
