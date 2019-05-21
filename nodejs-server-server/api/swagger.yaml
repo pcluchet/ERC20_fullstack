@@ -175,13 +175,13 @@ paths:
             type: "string"
       x-swagger-router-controller: "GetMisc"
 
-  /users/getusername:
+  /users/getusernames:
     get:
       tags:
       - "Identity management"
-      summary: "get a user name given his public key"
+      summary: "get usernames given a list of public keys"
       description: ""
-      operationId: "GetUsername"
+      operationId: "GetUsernames"
       produces:
       - "application/json"
       - "text/plain"
@@ -208,9 +208,9 @@ paths:
         required: false
         type: "string"
         format: "string"
-      - name: "pubkey"
+      - name: "pubkeys"
         in: "header"
-        description: "public key of the user"
+        description: "publickeys of the users, format : [\"pubkey1\",\"pubkey2\"]"
         required: false
         type: "string"
         format: "string"
@@ -221,11 +221,7 @@ paths:
           description: "username/pw missing or incorrect"
           schema:
             type: "string"
-        404:
-          description: "public key not found"
-          schema:
-            type: "string"
-      x-swagger-router-controller: "GetUsername"
+      x-swagger-router-controller: "GetUsernames"
   /users/search:
     get:
       tags:
