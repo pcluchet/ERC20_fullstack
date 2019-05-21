@@ -541,11 +541,11 @@ export default class App extends Component {
       ongoingbilltotal: 0,
       invoiceEdit: true,
       qrcode: '',
-      password: 'cbpassword',
-      pubkey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE9jIOB0TL1GFwlYc4Fdxsue8FYW7ir0JFBvtWUC5QCraRrZHXbiZ54URFrJz1m1C4N17syx4PTKJmXai9fznQLA==',
-      logged: true,
+      password: '',
+      pubkey: '',
+      logged: false,
       name: '',
-      username: 'centralbank',
+      username: '',
       register: false,
       balance: '0.00',
       transferamount: '', // nom de la bière
@@ -1471,8 +1471,10 @@ transfer = () => {
         <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               
+              returnKeyType='done'
               value={String(this.state.transferamount_display)}
               keyboardType='numeric'
+              autoCapitalize="none"
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
                 textAlign: "center",
@@ -1652,25 +1654,13 @@ qrdata_ask = () => {
                        padding : 10,
                        backgroundColor : 'rgba(255, 255, 255, 0.5)',
                      }}>
-                      <View style={{ 
-                       flex: 12,
-                       padding : 10,
-                       alignItems : "center",
-                       justifyContent : "center"
-                     }}>
-        <QRCode
-            value={this.qrdata_ask()}
-            size={ 250}
-            style={styles.qrcode}
-            bgColor="black"
-            fgColor="white"
-          />
-        </View>
         <Text style={{ flex: 1, fontSize : 18}}> Amount to request</Text>
         <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               value={`${this.state.HowMuchIsAsked_display}`}
               keyboardType='numeric'
+              returnKeyType='done'
+              autoCapitalize="none"
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
                 textAlign: "center",
@@ -1728,6 +1718,23 @@ qrdata_ask = () => {
             />
           </View>
 
+
+                      <View style={{ 
+                       flex: 12,
+                       padding : 10,
+                       alignItems : "center",
+                       justifyContent : "center"
+                     }}>
+
+
+        <QRCode
+            value={this.qrdata_ask()}
+            size={ 250}
+            style={styles.qrcode}
+            bgColor="black"
+            fgColor="white"
+          />
+        </View>
   </View>
   );
 
@@ -1888,7 +1895,6 @@ qrdata_ask = () => {
     ar.splice(index,1);
     this.setState({ contactlist : JSON.stringify(ar)})
   }
-
   setTransferFromClist = (item) => {
       this.setState({
             ManualTransfer: false,
@@ -2134,16 +2140,29 @@ qrdata_ask = () => {
   };
 
   BasicScanIface = () => {
+    const { height, width } = Dimensions.get('window');
+    const maskRowHeight = Math.round((((height/14) * 20) - (2/3) * (height/14) * 20) / 30);
+    const maskColWidth = (width - 300) / 2;
   return (
       <View style={{ flex : 16, backgroundColor :'rgba(255, 255, 255, 0.5)'}}>
 
         <View style={{ flex: 14 }}>
         <Camera
-          style={{ flex : 14}}
+          style={[{ flex : 14}, styles.cameraView]}
           onBarCodeRead={this.onBarCodeRead}
           aspect={Camera.constants.Aspect.fill}
           orientation='auto'
-        />
+        >
+        <View style={styles.maskOutter}>
+            <View style={[{ flex: maskRowHeight  }, styles.maskRow, styles.maskFrame]} />
+             <View style={[{ flex: 30 }, styles.maskCenter]}>
+             <View style={[{ width: maskColWidth }, styles.maskFrame]} />
+             <View style={styles.maskInner} />
+            <View style={[{ width: maskColWidth }, styles.maskFrame]} />
+          </View>
+        <View style={[{ flex: maskRowHeight }, styles.maskRow, styles.maskFrame]} />
+      </View>
+      </Camera>
         </View>
         {/*
        aspect={Camera.constants.Aspect.fill}
@@ -4342,6 +4361,32 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
   },
+  cameraView: {
+    flex: 1,
+    justifyContent: 'flex-start',
+  },
+  maskOutter: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  maskInner: {
+    width: 300,
+    backgroundColor: 'transparent',
+    borderColor: 'white',
+    borderWidth: 1,
+  },
+  maskFrame: {
+    backgroundColor: 'rgba(1,1,1,0.6)',
+  },
+  maskRow: {
+    width: '100%',
+  },
+  maskCenter: { flexDirection: 'row' },
   qrcodecontainer: {
     justifyContent: 'center',
     alignItems: 'center',
