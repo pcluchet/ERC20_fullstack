@@ -83,6 +83,7 @@ type ShopItem struct {
 	Latitude     float64
 	Longitude    float64
 	Weight       int
+	City         string
 	Uploader     string
 }
 
@@ -91,6 +92,7 @@ type ShopItemSubmission struct {
 	Bidable     bool
 	Pictures    []string
 	Name        string
+	City        string
 	Detail      string
 	Price       uint64
 	Quantity    uint64
