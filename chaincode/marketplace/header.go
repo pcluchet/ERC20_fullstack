@@ -83,6 +83,7 @@ type ShopItem struct {
 	Latitude     float64
 	Longitude    float64
 	Weight       int
+	Uploader     string
 }
 
 type ShopItemSubmission struct {
