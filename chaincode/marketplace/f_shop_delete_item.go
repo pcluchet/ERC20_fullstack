@@ -17,6 +17,7 @@ func shopDeleteItem(args []string) (string, error) {
 	var item ShopItem
 	var userKey string
 	var indexInItemList int
+	var LedgerAdmin bool
 
 	var shopBytes []byte
 	/*
@@ -47,10 +48,11 @@ func shopDeleteItem(args []string) (string, error) {
 	}
 
 	shop, err = getShop(item.ShopId)
+	LedgerAdmin, err = isLedgerAdmin()
 
 	if err != nil {
 		return "", fmt.Errorf("Cannot get shop informations.")
-	} else if isShopAdmin(shop, userKey) == false {
+	} else if isShopAdmin(shop, userKey) == false && LedgerAdmin == false {
 		return "", fmt.Errorf("You are not authorized to modify this item (not admin of item shop)")
 	}
 
