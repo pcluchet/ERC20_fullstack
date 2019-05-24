@@ -75,6 +75,7 @@ func shopAddItem(args []string) (string, error) {
 	newItem.Biddable = itemToAdd.Bidable
 	newItem.DocType = "ShopItem"
 	newItem.Price = itemToAdd.Price
+	newItem.City = itemToAdd.City
 	endtime = itemToAdd.Duration * 3600
 
 	/// CREATE ITEM TIMESTAMP
