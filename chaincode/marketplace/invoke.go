@@ -32,6 +32,8 @@ func (t *SimpleAsset) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 		ret, err = newUser(argv)
 	case "buy_item":
 		ret, err = buyItem(argv)
+	case "buy_items":
+		ret, err = buyItems(argv)
 	case "buy_raw":
 		ret, err = buyRaw(argv)
 	case "make_bid":

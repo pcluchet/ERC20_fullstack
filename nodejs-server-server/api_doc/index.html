@@ -457,6 +457,57 @@ BUY ITEM
 
 <!--
 ==================================================
+BUY ITEMS
+==================================================
+-->
+
+	<button class="collapsible">buy_item <div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+
+			This function makes the user buy the given items.
+			</br></br>
+
+			<h5>Parameters : </h5>
+
+			<ol>
+				<li>
+					List of item purchase in json (ex:
+					<code>
+					[
+						{
+							"ItemId":"EG54...",
+							"Quantity": 2,
+							"ShopId": "Shop42"
+						},
+						{
+							"ItemId":"E894...",
+							"Quantity": 1,
+							"ShopId": "Shop42"
+						}
+					]
+
+					</code>)
+				</li>
+			</ol>
+
+			<h5>Payload : </h5>
+
+			If the opperation works, it returns the transaction IDs (all the sames), separated by "|".</br>
+			If the transaction fails, it returns this string :
+			<code>
+				At least one of the sale submissions was unsuccessfull (x) no sales have been commited to the ledger
+			</code>
+			The number between the parenthesis is the index of the first sale submission being rejected.
+			</br></br>
+
+		</p>
+	</div>
+
+
+
+<!--
+==================================================
 BUY RAW
 ==================================================
 -->
