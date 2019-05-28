@@ -13,6 +13,75 @@ tags:
     description: "Find out more"
     url: "http://swagger.io"
 paths:
+  /users/{username}/resetpass/{token}:
+    get:
+      tags:
+      - "Identity management"
+      summary: "reset user password with a valid token sent by email"
+      description: ""
+      operationId: "ResetPassToken"
+      produces:
+      - "application/json"
+      - "text/plain"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "Username of the user you want to authenticate"
+        required: true
+        type: "string"
+        format: "uuid"
+      - name: "token"
+        in: "path"
+        description: "Valid pass change token sent by email"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success : password updated"
+          schema:
+            $ref: "#/definitions/inline_response_200"
+        401:
+          description: "wrong token"
+          schema:
+            type: "string"
+    x-swagger-router-controller: "ResetPassToken"
+  /users/{username}/resetpass:
+    post:
+      tags:
+      - "Identity management"
+      summary: "reset user password (email validated)"
+      description: ""
+      operationId: "ResetPass"
+      produces:
+      - "application/json"
+      - "text/plain"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "Username of the user you want to authenticate"
+        required: true
+        type: "string"
+        format: "uuid"
+      - name: "X-request-newpass"
+        in: "header"
+        description: "new password for this user"
+        required: true
+        type: "string"
+      - name: "X-request-email"
+        in: "header"
+        description: "user email, have to match with email given in registration"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success : user will have to read his mails to update the password"
+          schema:
+            $ref: "#/definitions/inline_response_200"
+        404:
+          description: "username not found or no correlation between username and email given"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "ResetPass"
   /users/{username}/updatepass:
     patch:
       tags:

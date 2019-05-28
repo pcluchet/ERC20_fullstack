@@ -181,6 +181,20 @@ function erase_val_token(user, cb) {
 	});
 };
 
+exports.actually_reset_pass = actually_reset_pass;
+function actually_reset_pass(user, cb) {
+	users.get(user, function (err, result) {
+		console.log("IN HERE");
+		console.log("RESULT HERE :" + JSON.stringify(result));
+		result.newpass_token = '0';
+		result.password = result.new_password;
+		users.insert(result, user).then(function () {
+		cb(result);
+		});
+	});
+};
+
+
 
 
 
@@ -201,6 +215,23 @@ function updpassword(user, newpass, cb) {
 			});
 		});
 };
+
+exports.addnewpass = addnewpass;
+function addnewpass(user, newpass, cb) {
+	users.get(user, function (err, result) {
+		console.log("IN HERE");
+		console.log("RESULT HERE :" + JSON.stringify(result));
+
+		result.new_password = newpass;
+		result.newpass_token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+		users.insert(result, user).then(
+			function () 
+			{ 
+				cb(result); 
+			});
+		});
+};
+
 
 
 exports.updmisc = updmisc;
