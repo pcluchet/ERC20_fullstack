@@ -88,12 +88,18 @@ func makeBid(args []string) (string, error) {
 	}
 
 	itm.BidList = append(itm.BidList, newBidId)
-	//if the bid price is inferior to the currently winning bid, make an auto bid on behalf of the current winner
+	//if the bid price is inferior than the currently winning bid, make an auto bid on behalf of the current winner
+
+	fmt.Println("win owner :" + winningBid.Owner + "userkey : " + userKey)
 	var autoBid Bid
 	var autoBidId string
 	if winningBid.Price != 0 {
-
 		if winningBid.Price > bidToAdd.Price {
+			//forbid users to auto outbid themselves
+			fmt.Println("win owner :" + winningBid.Owner + "userkey : " + userKey)
+			if winningBid.Owner == userKey {
+				return "", fmt.Errorf("You cannot bid lower than your previous winning bid")
+			}
 			autoBidCase = true
 			autoBidId = newBidId + "_auto"
 			autoBid.Price = bidToAdd.Price + 1
@@ -108,9 +114,12 @@ func makeBid(args []string) (string, error) {
 			itm.Winner = winningBid.Owner
 			bidToAdd.ShownPrice = bidToAdd.Price
 		} else {
+			//case where user outbid himself, doesnt take into account the previous lower bid
+			if winningBid.Owner != userKey {
+				itm.Price = winningBid.Price + 1
+				bidToAdd.ShownPrice = itm.Price
+			}
 			itm.Winner = bidToAdd.Owner
-			itm.Price = winningBid.Price + 1
-			bidToAdd.ShownPrice = itm.Price
 		}
 	} else {
 
