@@ -150,6 +150,40 @@ paths:
             type: "string"
       x-swagger-router-controller: "GetMisc"
 
+  /users/{username}/validate/{token}:
+    get:
+      tags:
+      - "Identity management"
+      summary: "confirm account via a link sent by e-mail"
+      description: ""
+      operationId: "Validate"
+      produces:
+      - "application/json"
+      - "text/plain"
+      parameters:
+        - name: "username"
+          in: "path"
+          description: "Username of the user validating his account"
+          required: true
+          type: "string"
+          format: "uuid"
+        - name: "token"
+          in: "path"
+          description: "unique token sent by email"
+          required: true
+          type: "string"
+          format: "uuid"
+      responses:
+        200:
+          description: "User misc data successfully retreived"
+          schema:
+            $ref: "#/definitions/inline_response_200"
+        404:
+          description: "username not found"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Validate"
+
   /users/getusernames:
     get:
       tags:

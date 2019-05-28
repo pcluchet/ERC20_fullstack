@@ -169,6 +169,20 @@ function updLastLogin(user, cb) {
 	});
 };
 
+exports.erase_val_token = erase_val_token;
+function erase_val_token(user, cb) {
+	users.get(user, function (err, result) {
+		console.log("IN HERE");
+		console.log("RESULT HERE :" + JSON.stringify(result));
+		result.validation_token = '0';
+		users.insert(result, user).then(function () {
+		cb(result);
+		});
+	});
+};
+
+
+
 
 //newpass should be already hashed
 
@@ -340,7 +354,7 @@ exports.comparepwd = function get(id, pwd, cb) {
 			cb(err, false);
 		}
 		else {
-			if (gen_hash == result.password) {
+			if (gen_hash == result.password && (result.validation_token === '0' || typeof result.validation_token == undefined)) {
 				console.log("pass ok")
 				cb(err, true);
 			}
@@ -364,7 +378,6 @@ exports.comparepwd_pub = function get(id, pwd, cb) {
 	//Creating the hash in the required format
 	gen_hash = data.digest('hex');
 
-
 	var retu = {
 		valid: false,
 		pubkey: "",
@@ -377,7 +390,7 @@ exports.comparepwd_pub = function get(id, pwd, cb) {
 			cb(err, retu);
 		}
 		else {
-			if (gen_hash == result.password) {
+			if (gen_hash == result.password && (result.validation_token === '0' || typeof result.validation_token == undefined)) {
 				console.log("pass ok")
 				retu.pubkey = result.pubkey;
 				retu.fulluser = result;
