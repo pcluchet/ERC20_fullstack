@@ -29,8 +29,11 @@ module.exports.getUserInfos = function getUserInfos(req, res, next) {
     else {
       console.log('user :' + JSON.stringify(result));
       if (result.valid) {
+
+        users.updLastLogin(username, function cb(lastlogin) {
         var body = {
           "pubkey": result.pubkey,
+          "last_login": lastlogin,
           "misc_public": result.fulluser.misc_public,
           "misc_private": result.fulluser.misc_private
         };
@@ -62,7 +65,10 @@ module.exports.getUserInfos = function getUserInfos(req, res, next) {
         //returnResponse(res, 200, {"pubkey": result.pubkey});
         //res.send(util.format('{"status" : "ok", "payload" : "", "message" : "", "pubkey" : "%s" }',result.pubkey));
         console.log('succesfully identified');
-        }   
+        }  
+          
+        });
+ 
       }
       else {
         res.writeHead(401, { "Content-Type": "text/plain" });

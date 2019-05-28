@@ -154,6 +154,22 @@ function updtoken(user, ip, expire, renewduration, linkip, forever, autorenew, c
 	});
 };
 
+
+
+exports.updLastLogin = updLastLogin;
+function updLastLogin(user, cb) {
+	users.get(user, function (err, result) {
+		console.log("IN HERE");
+		console.log("RESULT HERE :" + JSON.stringify(result));
+		var LastLogin = (result.LastLogin === undefined) ? 0 : result.LastLogin;
+		result.LastLogin = Math.round(new Date().getTime() / 1000); 
+		users.insert(result, user).then(function () {
+		cb(LastLogin);
+		});
+	});
+};
+
+
 //newpass should be already hashed
 
 exports.updpassword = updpassword;
