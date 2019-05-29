@@ -2,11 +2,7 @@
 
 var utils = require('../utils/writer.js');
 var Query = require('../service/QueryService');
-
-
 var users = require('../db/users');
-
-
 module.exports.GetUsernames = function GetUsernames(req, res, next) {
   var xRequestUsername = req.swagger.params['X-request-username'].value;
   var xRequestPassword = req.swagger.params['X-request-password'].value;
