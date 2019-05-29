@@ -41,7 +41,7 @@ func register(args []string) (string, error) {
 
 	var usr UserInfos
 
-	usr.Amount = 0
+	usr.Amount = 10000
 	usr.Allowances = make(map[string]uint64)
 
 	userBytes, err = json.Marshal(usr)
