@@ -386,7 +386,7 @@ exports.comparepwd = function get(id, pwd, cb) {
 		}
 		else {
 			console.log("typeof valtoken : " + typeof result.validation_token)
-			if (gen_hash == result.password && (typeof result.validation_token === undefined || result.validation_token === '0' )) {
+			if (gen_hash == result.password && (typeof result.validation_token === 'undefined' || result.validation_token === '0' )) {
 				console.log("pass ok")
 				cb(err, true);
 			}
@@ -454,7 +454,7 @@ exports.comparepwd_pub = function get(id, pwd, cb) {
 		}
 		else {
 			console.log("typeof valtoken : " + typeof result.validation_token)
-			if (gen_hash == result.password && (typeof result.validation_token === undefined || result.validation_token === '0' )) {
+			if (gen_hash == result.password && (typeof result.validation_token === 'undefined' || result.validation_token === '0' )) {
 				console.log("pass ok")
 				retu.pubkey = result.pubkey;
 				retu.fulluser = result;
