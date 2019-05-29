@@ -541,18 +541,21 @@ export default class App extends Component {
       ongoingbilltotal: 0,
       invoiceEdit: true,
       qrcode: '',
+      // You can set these value manually for dev purposes, this way when login is set to true you
+      // dont have to login every time you change something to test
+      username: '',
       password: '',
       pubkey: '',
       logged: false,
+      ////////////////////////////
       name: '',
-      username: '',
       register: false,
       balance: '0.00',
-      transferamount: '', // nom de la bière
-      transferamount_display: '', // nom de la bière
-      transferfrom: '', // nom de la bière
-      transferto: '', // nom de la bière
-      description: '', // sa description
+      transferamount: '', 
+      transferamount_display: '',
+      transferfrom: '',
+      transferto: '',
+      description: '',
       spenderApprove: '',
       tokensApprove: '',
       transferPending: false,
@@ -565,8 +568,8 @@ export default class App extends Component {
       OngoingRegister: false,
       scanningBill: false,
       ManualContact: false,
-      BalanceIsLoading: false, // la requête API est-elle en cours ?
-      UserListIsLoading: false, // la requête API est-elle en cours ?
+      BalanceIsLoading: false,
+      UserListIsLoading: false,
       contactlist: '[{"username" : "john", "pubkey" : "abc" }]',
       home : true,
       scan : false,
@@ -952,7 +955,7 @@ transfer = () => {
               style={styles.textInput}
               placeholder="Amount"
               onChangeText={transferamount => this.setState({ transferamount })}
-              value={this.state.transferamount}
+              value={this.state.transferamount.toString()}
             />
           </View>
         </View>
@@ -1473,7 +1476,7 @@ transfer = () => {
               
               returnKeyType='done'
               value={String(this.state.transferamount_display)}
-              keyboardType='numeric'
+              keyboardType='default'
               autoCapitalize="none"
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
@@ -1495,6 +1498,8 @@ transfer = () => {
                   let amount= 0;
                   console.log("received : " + transferamount_display);
                   transferamount_display = transferamount_display.replace(",", ".");
+                  transferamount_display = transferamount_display.replace(/[^\d.]/g, '');
+
 
                   console.log("onlypoint : " + transferamount_display);
 
@@ -1658,7 +1663,7 @@ qrdata_ask = () => {
         <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               value={`${this.state.HowMuchIsAsked_display}`}
-              keyboardType='numeric'
+              keyboardType='default'
               returnKeyType='done'
               autoCapitalize="none"
               style={{
@@ -1681,6 +1686,8 @@ qrdata_ask = () => {
                   let amount= 0;
                   console.log("received : " + HowMuchIsAsked_display);
                   HowMuchIsAsked_display = HowMuchIsAsked_display.replace(",", ".");
+
+                  HowMuchIsAsked_display = HowMuchIsAsked_display.replace(/[^\d.]/g, '');
 
                   console.log("onlypoint : " + HowMuchIsAsked_display);
 
@@ -4012,7 +4019,6 @@ other guy
                 fontSize: 29,
                 color: 'rgba(255, 255, 255, 0.8)',
                 textAlign: "center",
-
                 backgroundColor: 'rgba(52, 52, 52, 0.5)',
                 //backgroundColor: '#e6e6e6',
                 //  borderColor : '#fff',
@@ -4051,6 +4057,8 @@ other guy
               value={this.state.email}
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="E-mail"
+              autoCorrect={false}
+              autoCapitalize={'none'}
               secureTextEntry={false}
              onSubmitEditing={ () => {
                 this.refs.input_3.focus();
@@ -4075,6 +4083,8 @@ other guy
                 height: "100%",
                 fontWeight: '200'
               }}
+              autoCorrect={false}
+              autoCapitalize={'none'}
               placeholder="Password"
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               onChangeText={password => this.setState({ password })}
@@ -4104,6 +4114,8 @@ other guy
                 height: "100%",
                 fontWeight: '100'
               }}
+              autoCorrect={false}
+              autoCapitalize={'none'}
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="Confirm password"
               secureTextEntry={true}
