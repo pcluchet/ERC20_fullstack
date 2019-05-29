@@ -385,7 +385,8 @@ exports.comparepwd = function get(id, pwd, cb) {
 			cb(err, false);
 		}
 		else {
-			if (gen_hash == result.password && (result.validation_token === '0' || typeof result.validation_token == undefined)) {
+			console.log("typeof valtoken : " + typeof result.validation_token)
+			if (gen_hash == result.password && (typeof result.validation_token === undefined || result.validation_token === '0' )) {
 				console.log("pass ok")
 				cb(err, true);
 			}
