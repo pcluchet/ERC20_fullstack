@@ -89,7 +89,7 @@ module.exports.invoke = function invoke(req, res, next) {
   else
   {
 
-  users.comparepwd(xRequestUsername, xRequestPassword, function (err, result) {
+  users.comparepwd_invoke(xRequestUsername, xRequestPassword, function (err, result) {
     if (err) {
       res.writeHead(401, { "Content-Type": "text/plain" });
       return res.end("Unauthorized");

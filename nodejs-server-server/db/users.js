@@ -397,6 +397,37 @@ exports.comparepwd = function get(id, pwd, cb) {
 	});
 };
 
+exports.comparepwd_invoke = function get(id, pwd, cb) {
+
+	var crypto = require('crypto');
+	var hash = crypto.createHash('whirlpool');
+	//passing the data to be hashed
+	data = hash.update(pwd, 'utf-8');
+	//Creating the hash in the required format
+	gen_hash = data.digest('hex');
+
+
+	users.get(id, function (err, result) {
+		console.log("result : " + JSON.stringify(result))
+		if (!result || !result.password) {
+			console.log("user not found or request problem")
+			cb(err, false);
+		}
+		else {
+			if (gen_hash == result.password) {
+				console.log("pass ok")
+				cb(err, true);
+			}
+			else {
+				console.log("pass not ok")
+				cb(err, false);
+			}
+		}
+	});
+};
+
+
+
 
 
 
