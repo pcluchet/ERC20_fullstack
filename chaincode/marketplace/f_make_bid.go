@@ -119,6 +119,7 @@ func makeBid(args []string) (string, error) {
 				itm.Price = winningBid.Price + 1
 				bidToAdd.ShownPrice = itm.Price
 			}
+			bidToAdd.ShownPrice = itm.Price
 			itm.Winner = bidToAdd.Owner
 		}
 	} else {
