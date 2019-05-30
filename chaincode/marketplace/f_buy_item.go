@@ -30,14 +30,14 @@ func getSale(userKey string, arg string) (Sale, error) {
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-func	buyItem(args []string) (string, error) {
-	var	err			error
-	var	userKey		string
-	var	sale		Sale
-	var	shop		Shop
-	var	item		ShopItem
-	var	bytes		[]byte
-	var	txId		string
+func buyItem(args []string) (string, error) {
+	var err error
+	var userKey string
+	var sale Sale
+	var shop Shop
+	var item ShopItem
+	var bytes []byte
+	var txId string
 
 	/// CHECK ARGUMENTS
 	/// TODO : when better API, check this better
@@ -85,6 +85,12 @@ func	buyItem(args []string) (string, error) {
 	}
 	sale.Price = item.Price
 	item.Quantity -= sale.Quantity
+	/// CREATE SALE TIMESTAMP
+	txTimeStamp, err2 := STUB.GetTxTimestamp()
+	if err2 != nil {
+		return "", fmt.Errorf("Error :%s", err2)
+	}
+	sale.Timestamp = uint64(txTimeStamp.Seconds)
 
 	/// MONEY TRANSFER
 	err = transferMoneyItem(shop, item, sale)

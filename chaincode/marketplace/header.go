@@ -39,12 +39,35 @@ type Sale struct {
 	StateShop uint8 // When both states are TRUE,
 	StateUser uint8 // the Sale key is deleted.
 	DocType   string
+	Timestamp uint64
 }
 
 type SaleSubmission struct {
 	ItemId   string
 	ShopId   string
 	Quantity uint64
+}
+
+type SaleNotification struct {
+	Doctype   string
+	Timestamp uint64
+	Quantity  uint64
+	ItemId    string
+	SaleId    string
+	Item      ShopItem
+	Sale      Sale
+}
+
+type MangoResultsForShops []MangoResultForShops
+type MangoResultForShops struct {
+	Key    string
+	Record Shop
+}
+
+type MangoResultsForSales []MangoResultForSales
+type MangoResultForSales struct {
+	Key    string
+	Record Sale
 }
 
 type SalesSubmission []SaleSubmission
