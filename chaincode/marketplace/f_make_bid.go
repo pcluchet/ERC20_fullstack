@@ -3,6 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
+
+	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,6 +21,7 @@ func makeBid(args []string) (string, error) {
 	var bidBytes []byte
 	var itemBytes []byte
 	var autoBidCase bool
+	var userBalance uint64
 	autoBidCase = false
 
 	/// CHECK ARGUMENTS
@@ -68,12 +72,33 @@ func makeBid(args []string) (string, error) {
 		return "", fmt.Errorf("You cannot bid on that item")
 	}
 
+	if itm.Uploader == userKey {
+		return "", fmt.Errorf("You cannot bid on your own item")
+	}
+
 	if itm.Price >= bidToAdd.Price {
 		return "", fmt.Errorf("The price is already higher than you bid")
 	}
 
 	if itm.ExpireDate < bidToAdd.Timestamp {
 		return "", fmt.Errorf("Auctions for this item are over")
+	}
+
+	//Get user balance
+	var ccArgs [][]byte
+
+	ccArgs = toChaincodeArgs("balanceOf", userKey)
+	response := STUB.InvokeChaincode("ERC20", ccArgs, "")
+	if response.Status != shim.OK {
+		return "", fmt.Errorf("Cannot get user balance: %s", response.Message)
+	}
+	userBalance, err = strconv.ParseUint(string(response.Payload), 10, 64)
+	if err != nil {
+		return "", fmt.Errorf("Cannot parse user balance: %s", err)
+	}
+
+	if userBalance < bidToAdd.Price {
+		return "", fmt.Errorf("You don't have enough tokens to bid this much")
 	}
 
 	var winningBid Bid
