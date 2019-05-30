@@ -68,6 +68,7 @@ type ShippingFee struct {
 }
 
 type ShopItem struct {
+	Category     string
 	ReservePrice uint64
 	Biddable     bool
 	DocType      string
@@ -91,6 +92,7 @@ type ShopItem struct {
 }
 
 type ShopItemSubmission struct {
+	Category     string
 	Shipping     []ShippingFee
 	Bidable      bool
 	Pictures     []string

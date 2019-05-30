@@ -63,6 +63,7 @@ func shopAddItem(args []string) (string, error) {
 
 	newItem.Latitude = itemToAdd.Latitude
 	newItem.ReservePrice = itemToAdd.ReservePrice
+	newItem.Category = itemToAdd.Category
 	newItem.Uploader = userKey
 	newItem.Longitude = itemToAdd.Longitude
 	newItem.Name = itemToAdd.Name
