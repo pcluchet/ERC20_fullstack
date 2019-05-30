@@ -49,6 +49,10 @@ func settleBid(args []string) (string, error) {
 		return "", fmt.Errorf("Auctions on this item are not over")
 	}
 
+	if saidItem.ReservePrice > uint64(winningBid.ShownPrice) {
+		return "", fmt.Errorf("This bid cannot be settled : the reserve price haven't been reached")
+	}
+
 	//everything is ok, settle bid
 	var sale_spoof SaleSubmission
 

@@ -68,6 +68,7 @@ type ShippingFee struct {
 }
 
 type ShopItem struct {
+	ReservePrice uint64
 	Biddable     bool
 	DocType      string
 	Pictures     []string
@@ -90,19 +91,20 @@ type ShopItem struct {
 }
 
 type ShopItemSubmission struct {
-	Shipping    []ShippingFee
-	Bidable     bool
-	Pictures    []string
-	Name        string
-	City        string
-	Detail      string
-	Price       uint64
-	Quantity    uint64
-	MinQuantity uint64
-	Duration    uint64
-	Latitude    float64
-	Longitude   float64
-	Weight      int
+	Shipping     []ShippingFee
+	Bidable      bool
+	Pictures     []string
+	Name         string
+	City         string
+	Detail       string
+	Price        uint64
+	Quantity     uint64
+	MinQuantity  uint64
+	Duration     uint64
+	Latitude     float64
+	Longitude    float64
+	Weight       int
+	ReservePrice uint64
 }
 
 type ShopRaw struct {
