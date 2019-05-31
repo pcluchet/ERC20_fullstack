@@ -93,20 +93,6 @@ module.exports.register = function register(req, res, next) {
       console.log(gen_hash);
       user.password = gen_hash;
       user.validation_token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);;
-
-      try {
-        users.create(user, function (err) {
-          if (err) {
-            throw err;
-          }
-          else {
-            console.log('user inserted');
-          }
-        });
-      }
-      catch (e) {
-      }
-
       console.log(result);
 
       const body = {
@@ -142,11 +128,34 @@ module.exports.register = function register(req, res, next) {
 
         transporter.sendMail(mailOptions, function (error, info) {
           if (error) {
+
+        res.writeHead(500, { "Content-Type": "text/plain" });
+        return res.end("Email couldn't be sent");
+ 
             console.log(error);
           } else {
             console.log('Email sent: ' + info.response);
           }
         });
+
+
+      try {
+        users.create(user, function (err) {
+          if (err) {
+        res.writeHead(500, { "Content-Type": "text/plain" });
+        return res.end("User couldn't be created");
+ 
+            throw err;
+          }
+          else {
+            console.log('user inserted');
+          }
+        });
+      }
+      catch (e) {
+      }
+
+
 
         res.writeHead(200, { "Content-Type": "application/json" });
         return res.end(JSON.stringify(body));
