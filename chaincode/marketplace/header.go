@@ -112,6 +112,7 @@ type ShopItem struct {
 	Weight       int
 	City         string
 	Uploader     string
+	SellerMail   string
 }
 
 type ShopItemSubmission struct {
@@ -130,6 +131,7 @@ type ShopItemSubmission struct {
 	Longitude    float64
 	Weight       int
 	ReservePrice uint64
+	SellerMail   string
 }
 
 type ShopRaw struct {
