@@ -724,6 +724,183 @@ SHOP ADD USER
 
 <!--
 ==================================================
+GET BOUGHT
+==================================================
+-->
+
+	<button class="collapsible">get_bought <div class="R">Read Only</div></button>
+	<div class="collapsibleContent">
+		<p>
+			This function returns the sales where user is the buyer and their ascociated items, generated after a given timestamp</br>
+			</br></br>
+
+			<h5>Parameters : </h5>
+
+			<ol>
+				<li>
+					a timestamp
+				</li>
+			</ol>
+
+			<h5>Payload : </h5>
+
+			With a successful operation, the function returns either null if no items are returned, or this kind of json list (here win only one sale in the list):
+			<code>
+				[
+    {
+      "Doctype": "SaleNotification",
+      "Timestamp": 1559312614,
+      "Quantity": 0,
+      "ItemId": "1380bd46b8634b4245c79244634d460bc09b674bc85e0926b92018a9216d1539",
+      "SaleId": "172fe1a61cfb6ef58f592e167d354373af444d0a7f4c1902a56c1279c2c7ab0f",
+      "Item": {
+        "Category": "Toy",
+        "ReservePrice": 78,
+        "Biddable": false,
+        "DocType": "ShopItem",
+        "Pictures": [
+          "picA",
+          "picB"
+        ],
+        "Shipping": [
+          {
+            "To": "anywhere",
+            "Fee": 12
+          },
+          {
+            "To": "fr",
+            "Fee": 3
+          }
+        ],
+        "Name": "Meew item",
+        "Detail": "This is a wanderful item, really !",
+        "Price": 2,
+        "Quantity": 312,
+        "MinQuantity": 0,
+        "CreationDate": 1559312020,
+        "ExpireDate": 3736592020,
+        "ShopId": "6135ebcba3bdb84c9619b3ef212cef7ab22d83fd12d66e706b15161e9eab7cde",
+        "BidList": null,
+        "Winner": "",
+        "Latitude": 48.9070592,
+        "Longitude": 2.3371776,
+        "Weight": 45,
+        "City": "Athens",
+        "Uploader": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEoFAR2hm74650c3esZEHxkK59+9msNXvtnNflnRcIx6tFZjpL5ypQeTATtJIZaho4YdguupdgdRY9clb9OwuFLQ==",
+        "SellerMail": "a.b@c.com"
+      },
+      "Sale": {
+        "User": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEROeK4jnSbqnx2Q102ALbBY2uKlyxJWfKA38C5QzkOmxnNl4LHDZ4HsLHbi4UMM0nZ8xTMCNg0yTA6t0oXPzAkQ==",
+        "ItemId": "1380bd46b8634b4245c79244634d460bc09b674bc85e0926b92018a9216d1539",
+        "ShopId": "6135ebcba3bdb84c9619b3ef212cef7ab22d83fd12d66e706b15161e9eab7cde",
+        "Price": 2,
+        "Quantity": 2,
+        "StateShop": 0,
+        "StateUser": 0,
+        "DocType": "Sale",
+        "Timestamp": 1559312614
+      }
+    }
+  ]
+			</code>
+			</br></br>
+
+		</p>
+	</div>
+
+
+
+
+<!--
+==================================================
+GET SOLDS
+==================================================
+-->
+
+	<button class="collapsible">get_solds <div class="R">Read Only</div></button>
+	<div class="collapsibleContent">
+		<p>
+			This function returns the sales where user is the administrator of the sale's shop and their ascociated items, generated after a given timestamp</br>
+			</br></br>
+
+			<h5>Parameters : </h5>
+
+			<ol>
+				<li>
+					a timestamp
+				</li>
+			</ol>
+
+			<h5>Payload : </h5>
+
+			With a successful operation, the function returns either null if no items are returned, or this kind of json list (here win only one sale in the list):
+			<code>
+				[
+    {
+      "Doctype": "SaleNotification",
+      "Timestamp": 1559312614,
+      "Quantity": 0,
+      "ItemId": "1380bd46b8634b4245c79244634d460bc09b674bc85e0926b92018a9216d1539",
+      "SaleId": "172fe1a61cfb6ef58f592e167d354373af444d0a7f4c1902a56c1279c2c7ab0f",
+      "Item": {
+        "Category": "Toy",
+        "ReservePrice": 78,
+        "Biddable": false,
+        "DocType": "ShopItem",
+        "Pictures": [
+          "picA",
+          "picB"
+        ],
+        "Shipping": [
+          {
+            "To": "anywhere",
+            "Fee": 12
+          },
+          {
+            "To": "fr",
+            "Fee": 3
+          }
+        ],
+        "Name": "Meew item",
+        "Detail": "This is a wanderful item, really !",
+        "Price": 2,
+        "Quantity": 312,
+        "MinQuantity": 0,
+        "CreationDate": 1559312020,
+        "ExpireDate": 3736592020,
+        "ShopId": "6135ebcba3bdb84c9619b3ef212cef7ab22d83fd12d66e706b15161e9eab7cde",
+        "BidList": null,
+        "Winner": "",
+        "Latitude": 48.9070592,
+        "Longitude": 2.3371776,
+        "Weight": 45,
+        "City": "Athens",
+        "Uploader": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEoFAR2hm74650c3esZEHxkK59+9msNXvtnNflnRcIx6tFZjpL5ypQeTATtJIZaho4YdguupdgdRY9clb9OwuFLQ==",
+        "SellerMail": "a.b@c.com"
+      },
+      "Sale": {
+        "User": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEROeK4jnSbqnx2Q102ALbBY2uKlyxJWfKA38C5QzkOmxnNl4LHDZ4HsLHbi4UMM0nZ8xTMCNg0yTA6t0oXPzAkQ==",
+        "ItemId": "1380bd46b8634b4245c79244634d460bc09b674bc85e0926b92018a9216d1539",
+        "ShopId": "6135ebcba3bdb84c9619b3ef212cef7ab22d83fd12d66e706b15161e9eab7cde",
+        "Price": 2,
+        "Quantity": 2,
+        "StateShop": 0,
+        "StateUser": 0,
+        "DocType": "Sale",
+        "Timestamp": 1559312614
+      }
+    }
+  ]
+			</code>
+			</br></br>
+
+		</p>
+	</div>
+
+
+
+<!--
+==================================================
 SHOP ADD ITEM
 ==================================================
 -->
