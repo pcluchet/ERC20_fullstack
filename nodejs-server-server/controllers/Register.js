@@ -135,11 +135,7 @@ module.exports.register = function register(req, res, next) {
             console.log(error);
           } else {
             console.log('Email sent: ' + info.response);
-          }
-        });
-
-
-      try {
+     try {
         users.create(user, function (err) {
           if (err) {
         res.writeHead(500, { "Content-Type": "text/plain" });
@@ -155,10 +151,13 @@ module.exports.register = function register(req, res, next) {
       catch (e) {
       }
 
-
-
         res.writeHead(200, { "Content-Type": "application/json" });
         return res.end(JSON.stringify(body));
+          }
+        });
+
+
+ 
       }
       else {
         res.writeHead(401, { "Content-Type": "test/plain" });
