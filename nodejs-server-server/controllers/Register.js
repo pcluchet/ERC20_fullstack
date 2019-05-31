@@ -68,6 +68,8 @@ module.exports.register = function register(req, res, next) {
         pubkey: "",
       };
 
+      user.validation_token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);;
+
  
 
 
@@ -133,7 +135,6 @@ module.exports.register = function register(req, res, next) {
 
       console.log(gen_hash);
       user.password = gen_hash;
-      user.validation_token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);;
       console.log(result);
 
       const body = {
