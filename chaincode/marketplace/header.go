@@ -51,7 +51,6 @@ type SaleSubmission struct {
 type SaleNotification struct {
 	Doctype   string
 	Timestamp uint64
-	Quantity  uint64
 	ItemId    string
 	SaleId    string
 	Item      ShopItem
