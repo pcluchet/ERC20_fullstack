@@ -188,6 +188,29 @@ export const RegInERC20 = (username, password) => {
     });
 };
 
+export const ft_UserExist = async (username, password, pubkey, cb) => {
+  console.log("try");
+    if (username !== '') {
+      getUserBalance(
+        username,
+        password,
+        pubkey
+      )
+        .then(json => {
+  console.log("try2");
+    var jsonresp = json; //JSON.parse(json._bodyText);
+    console.log(jsonresp);
+    if (jsonresp.status != 500) {
+      console.log("okay");
+      cb(true);
+    } else cb(false);
+        })
+        .catch(error => console.log(error));
+    }
+  };
+
+
+
 export const getLatestTransfers = (username, password, pubkey) => {
   //var argarray = [];
   //argarray.push(encodeURI(pubkey));
@@ -618,12 +641,29 @@ export default class App extends Component {
     } catch (e) {
       console.log('shit happens');
     }
+    if (this.state.CheckUserExist) {
+      return;
+    }
+
     if (this.state.ContactToAdd_addr == "" || this.state.ContactToAdd_usr == "" ||
     this.state.ContactToAdd_addr == null || this.state.ContactToAdd_usr == null)
     {
       alert(' Both fields have to be filled ');
       return;
     }
+
+    this.setState ({ CheckUserExist : true});
+    ft_UserExist(this.state.username, this.state.password,this.state.ContactToAdd_addr, (ret) => 
+    {
+      console.log("WAIIIT");
+      if (!ret)
+      {
+      alert(' No user seems to have this address ❌ ');
+        this.setState ({ CheckUserExist : false});
+        return;
+      }
+
+        this.setState ({ CheckUserExist : false});
     var newusr = {
       username: this.state.ContactToAdd_usr,
       pubkey: this.state.ContactToAdd_addr,
@@ -643,6 +683,13 @@ export default class App extends Component {
     );
     this.setState({ ManualContact: false });
     this.RefreshContactList();
+
+
+    })
+
+
+
+
   };
 
   addContactFromQR = () => {
@@ -1381,6 +1428,34 @@ transfer = () => {
       );
     }
   }
+
+  addContactManualButton = () => {
+    if (this.state.CheckUserExist)
+    {
+      return (
+        <ActivityIndicator
+          size="large"
+          color='rgba(52, 52, 52, 0.8)'
+          style={{ textAlign: 'center', fontWeight: '100' }}
+        />
+      )
+    }
+    else
+    {
+     return (
+           <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 21,
+                fontWeight: '100',
+              }}>
+              Add
+            </Text>
+      );
+    }
+  }
+
+
 
   TransferToContactField = () => {
     //console.log("TRSTO:" + this.state.transferto);
@@ -2619,6 +2694,9 @@ qrdata_ask = () => {
     }
   };
 
+
+
+
   getsymbol = currtx => {
     if (currtx.value.From == this.state.pubkey) return '↖ Debit';
     else return '↘ Credit';
@@ -3728,15 +3806,8 @@ other guy
                 flex : 2,
           }}
  >
-            <Text
-              style={{
-                textAlign: 'center',
-                fontSize: 21,
-                fontWeight: '100',
-              }}>
-              Add
-            </Text>
-          </TouchableOpacity>
+   {this.addContactManualButton()}
+         </TouchableOpacity>
         </View>
       </View>
     );
