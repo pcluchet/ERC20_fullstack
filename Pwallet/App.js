@@ -341,7 +341,7 @@ export const TransferTokens = (username, password, to, amount) => {
         */
 };
 
-export const CreateAccount = (username, password, email) => {
+export const CreateAccount = (username, password, email, location) => {
   return fetch(`${APIURL}/users/${username}/auth`, {
     method: 'POST',
     headers: {
@@ -354,7 +354,8 @@ export const CreateAccount = (username, password, email) => {
           "web": {
             "firstname": "",
             "lastname": "",
-            "email": email
+            "email": email,
+            "location": location
           }
         }
       }),
@@ -541,21 +542,18 @@ export default class App extends Component {
       ongoingbilltotal: 0,
       invoiceEdit: true,
       qrcode: '',
-      // You can set these value manually for dev purposes, this way when login is set to true you
-      // dont have to login every time you change something to test
-      username: '',
       password: '',
       pubkey: '',
       logged: false,
-      ////////////////////////////
       name: '',
+      username: '',
       register: false,
       balance: '0.00',
-      transferamount: '', 
-      transferamount_display: '',
-      transferfrom: '',
-      transferto: '',
-      description: '',
+      transferamount: '', // nom de la bière
+      transferamount_display: '', // nom de la bière
+      transferfrom: '', // nom de la bière
+      transferto: '', // nom de la bière
+      description: '', // sa description
       spenderApprove: '',
       tokensApprove: '',
       transferPending: false,
@@ -568,8 +566,8 @@ export default class App extends Component {
       OngoingRegister: false,
       scanningBill: false,
       ManualContact: false,
-      BalanceIsLoading: false,
-      UserListIsLoading: false,
+      BalanceIsLoading: false, // la requête API est-elle en cours ?
+      UserListIsLoading: false, // la requête API est-elle en cours ?
       contactlist: '[{"username" : "john", "pubkey" : "abc" }]',
       home : true,
       scan : false,
@@ -916,6 +914,7 @@ writeAddressDemandToClipboard = async () => {
     }
   };
 
+
 transfer = () => {
   return (
       <View style={styles.container}>
@@ -955,7 +954,7 @@ transfer = () => {
               style={styles.textInput}
               placeholder="Amount"
               onChangeText={transferamount => this.setState({ transferamount })}
-              value={this.state.transferamount.toString()}
+              value={this.state.transferamount}
             />
           </View>
         </View>
@@ -1476,7 +1475,7 @@ transfer = () => {
               
               returnKeyType='done'
               value={String(this.state.transferamount_display)}
-              keyboardType='default'
+              keyboardType='numeric'
               autoCapitalize="none"
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
@@ -1498,8 +1497,6 @@ transfer = () => {
                   let amount= 0;
                   console.log("received : " + transferamount_display);
                   transferamount_display = transferamount_display.replace(",", ".");
-                  transferamount_display = transferamount_display.replace(/[^\d.]/g, '');
-
 
                   console.log("onlypoint : " + transferamount_display);
 
@@ -1663,7 +1660,7 @@ qrdata_ask = () => {
         <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               value={`${this.state.HowMuchIsAsked_display}`}
-              keyboardType='default'
+              keyboardType='numeric'
               returnKeyType='done'
               autoCapitalize="none"
               style={{
@@ -1686,8 +1683,6 @@ qrdata_ask = () => {
                   let amount= 0;
                   console.log("received : " + HowMuchIsAsked_display);
                   HowMuchIsAsked_display = HowMuchIsAsked_display.replace(",", ".");
-
-                  HowMuchIsAsked_display = HowMuchIsAsked_display.replace(/[^\d.]/g, '');
 
                   console.log("onlypoint : " + HowMuchIsAsked_display);
 
@@ -3894,14 +3889,17 @@ other guy
       this.setState({
         OngoingRegister: false
       });
-
-
-
+    } else if (this.state.selectedLocationType == 0) {
+      alert('You have to select your location ❌');
+      this.setState({
+        OngoingRegister: false
+      });
     } else
       CreateAccount(
         this.state.username,
         this.state.password,
         this.state.email,
+        this.state.selectedLocationType,
       )
         .then(json => {
           console.log('DEBUG: register :' + JSON.stringify(json));
@@ -3910,7 +3908,7 @@ other guy
             RegInERC20(this.state.username, this.state.password).then(
               resm => {
                 if (resm.status == 200) {
-                  alert('Registration successfull ! ✅');
+                  alert('Registration successfull, please confirm your e-mail address by clinking in the link sent to you.');
                   this.setState({
                     register: false,
                     OngoingRegister: false
@@ -3984,6 +3982,43 @@ other guy
   };
 
 
+  loadLocations() {
+    var clist = [
+      { "l" : "Thessaloniki"},
+      { "l" : "Lucerne"},
+      { "l" : "Rotterdam"},
+      { "l" : "Athens"}
+    ];
+      return clist.map(location => (
+        <Picker.Item
+          label={location.l}
+          value={location.l}
+          key={location.l}
+        />
+      ));
+  }
+
+  genLocationPicker = () => {
+    var k = this.loadLocations();
+      return (
+        <Picker
+          style={{ width : "100%", height: "100%"}}
+          itemStyle={{height: "100%"}}
+          selectedValue={this.state.selectedLocationType}
+          onValueChange={(itemValue, itemIndex) => {
+            this.setState({ selectedLocationType: itemValue });
+            this.setState({ location: itemValue });
+          }}>
+          <Picker.Item label="Please select a location..." value="0" />
+          {k}
+        </Picker>
+      );
+  };
+
+
+
+
+
   register = () => {
 
     signupbt = this.signupbtn();
@@ -4012,6 +4047,7 @@ other guy
               Plastic Token Wallet</Text>
 
           </View>
+          <View style={{ flex: 14}}>
           <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               style={{
@@ -4019,6 +4055,7 @@ other guy
                 fontSize: 29,
                 color: 'rgba(255, 255, 255, 0.8)',
                 textAlign: "center",
+
                 backgroundColor: 'rgba(52, 52, 52, 0.5)',
                 //backgroundColor: '#e6e6e6',
                 //  borderColor : '#fff',
@@ -4057,14 +4094,31 @@ other guy
               value={this.state.email}
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="E-mail"
-              autoCorrect={false}
-              autoCapitalize={'none'}
               secureTextEntry={false}
              onSubmitEditing={ () => {
                 this.refs.input_3.focus();
               }}
             //onChangeText={password => this.setState({ password })}
             />
+          </View>
+
+          <View style={{ flex: 2,
+                margin : 10,
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                borderRadius: 999,
+                fontSize: 29,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                //borderColor : '#fff',
+                //borderWidth : 1,
+
+                //height: "100%",
+                fontWeight: '100'
+          }}>
+ 
+            {this.genLocationPicker()}
+
+            <Text>HELOE</Text>
           </View>
 
           <View style={{ flex: 2, margin: 10 }}>
@@ -4083,8 +4137,6 @@ other guy
                 height: "100%",
                 fontWeight: '200'
               }}
-              autoCorrect={false}
-              autoCapitalize={'none'}
               placeholder="Password"
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               onChangeText={password => this.setState({ password })}
@@ -4114,8 +4166,6 @@ other guy
                 height: "100%",
                 fontWeight: '100'
               }}
-              autoCorrect={false}
-              autoCapitalize={'none'}
               placeholderTextColor='rgba(52, 52, 52, 0.5)'
               placeholder="Confirm password"
               secureTextEntry={true}
@@ -4127,12 +4177,7 @@ other guy
           </View>
 
 
-          <View style={[{ flex: 7 }]}>
-
-
-
-            <View style={[{ flexDirection: 'row', flex: 3.5, marginLeft: 10, marginRight: 10 }]}>
-            </View>
+          <View style={[{ flex: 2 }]}>
             <View style={[{ flexDirection: 'row', justifyContent: 'center', flex: 2.5 }]}>
               <TouchableOpacity onPress={this.cancelregister}
                 disabled={this.state.OngoingRegister}
@@ -4177,7 +4222,10 @@ other guy
             </View>
 
           </View>
-        </LinearGradient>
+ 
+
+        </View>
+       </LinearGradient>
       </View>
     )
 
