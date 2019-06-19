@@ -3,7 +3,7 @@
 var fs = require('fs'),
     path = require('path'),
     http = require('http'),
-	https = require('https');
+	  https = require('https');
 // Certificate
 const privateKey = fs.readFileSync(path.join(__dirname, '/_certs/privkey1.pem'), 'utf8');
 const certificate = fs.readFileSync(path.join(__dirname, '/_certs/cert1.pem'), 'utf8');
@@ -25,6 +25,11 @@ var serverPort = 80;
 app.use(cors());
 app.use(serveStatic("public"));
 app.use("/cc_docs",serveStatic(path.join(__dirname, '/api_doc')))
+app.use("/img/cropped-ptwist_logo_small.png",serveStatic(path.join(__dirname, '/img/cropped-ptwist_logo_small.png')))
+app.use("/img/European_Commission.png",serveStatic(path.join(__dirname, '/img/European_Commission.png')))
+app.use("/img/facebook_circle.png",serveStatic(path.join(__dirname, '/img/facebook_circle.png')))
+app.use("/img/monetization_icon.png",serveStatic(path.join(__dirname, '/img/monetization_icon.png')))
+app.use("/img/twitter_PNG39.png",serveStatic(path.join(__dirname, '/img/twitter_PNG39.png')))
 //app.use(serveStatic("public/api_doc"));
 //app.use('/cc_docs', app.static(__dirname + '/api_doc'))
 
