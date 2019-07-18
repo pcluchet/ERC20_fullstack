@@ -33,11 +33,11 @@ set -e
 
 ### Marketplace CC
 
-#	docker exec  -e "CORE_PEER_ADDRESS=peer1.MEDSOS.example.com:7051" -e "CORE_PEER_LOCALMSPID=MEDSOSMSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/MEDSOS.example.com/users/Admin@MEDSOS.example.com/msp" cli peer chaincode install -n marketplace -v 1.0 -p "$SHOP_USER_CC_SRC_PATH" -l "$LANGUAGE"
+	docker exec  -e "CORE_PEER_ADDRESS=peer1.MEDSOS.example.com:7051" -e "CORE_PEER_LOCALMSPID=MEDSOSMSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/MEDSOS.example.com/users/Admin@MEDSOS.example.com/msp" cli peer chaincode install -n marketplace -v 1.0 -p "$SHOP_USER_CC_SRC_PATH" -l "$LANGUAGE"
 
-#	docker exec -e "CORE_PEER_LOCALMSPID=MEDSOSMSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/MEDSOS.example.com/users/Admin@MEDSOS.example.com/msp" cli peer chaincode install -n marketplace -v 1.0 -p "$SHOP_USER_CC_SRC_PATH" -l "$LANGUAGE"
+	docker exec -e "CORE_PEER_LOCALMSPID=MEDSOSMSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/MEDSOS.example.com/users/Admin@MEDSOS.example.com/msp" cli peer chaincode install -n marketplace -v 1.0 -p "$SHOP_USER_CC_SRC_PATH" -l "$LANGUAGE"
 	
-#parsedkey="$(echo '[\"'"$1"'\"]')"
-#	docker exec -e "CORE_PEER_LOCALMSPID=MEDSOSMSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/MEDSOS.example.com/users/Admin@MEDSOS.example.com/msp" cli peer chaincode instantiate -o orderer.example.com:7050 -C ptwist -n marketplace -l "$LANGUAGE" -v 1.0 -c "{\"Args\":[\"$parsedkey\"]}" -P "OR ('MEDSOSMSP.member')" 
+parsedkey="$(echo '[\"'"$1"'\"]')"
+	docker exec -e "CORE_PEER_LOCALMSPID=MEDSOSMSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/MEDSOS.example.com/users/Admin@MEDSOS.example.com/msp" cli peer chaincode instantiate -o orderer.example.com:7050 -C ptwist -n marketplace -l "$LANGUAGE" -v 1.0 -c "{\"Args\":[\"$parsedkey\"]}" -P "OR ('MEDSOSMSP.member')" 
 	
 #	sleep 10
