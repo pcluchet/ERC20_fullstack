@@ -203,12 +203,12 @@ ERC20
 						the amount to cash Out
 					</li>
 					<li>
-						a secret, random, 8 character long string
+						a FNV3Aa hash of a secret string, hexa, padded with 0.
 					</li>
 				</ol>
 
 				<h5>Payload : </h5>
-				It returns a hashed (FNV32a) value of the transaction id, this value must be supplied to cashIn the generated voucher.
+				It returns the transaction id, this value must be supplied to cashIn the generated voucher.
 
 				</br>
 				Example:
@@ -226,10 +226,10 @@ ERC20
 				<h5>Parameters : </h5>
 				<ol>
 					<li>
-						the transaction id which created the cash voucher, hashed (FNV32a)
+						the transaction id which created the cash voucher
 					</li>
 					<li>
-						the secret string used to cashOut
+						the secret string used to generate the hash provided at cashOut
 					</li>
 				</ol>
 
