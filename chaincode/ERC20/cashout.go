@@ -25,29 +25,25 @@ func FNV32a(text string) uint32 {
 func cashOut(args []string) (string, error) {
 
 	var userInfos UserInfos
+	var voucher CashVoucher
 	var err error
 	var amount uint64
 	var newKey string
-	var txIdSum string
 	var userBytes []byte
+	var voucherBytes []byte
 
 	/// CHECK ARGUMENTS
 	if len(args) != 2 {
-		return "", fmt.Errorf("cashOut require two arguments, the amount to cash out and a secret, random, 8 char long string string")
+		return "", fmt.Errorf("cashOut require two arguments, the amount to cash out and a FNV32a hash of a secret string")
 	}
 
 	/// CHECK ARGUMENTS
 	if len(args[1]) != 8 {
-		return "", fmt.Errorf("the secret string must be 8 chars long")
+		return "", fmt.Errorf("the hash string must be 8 chars long")
 	}
+	voucher.Hash = args[1]
 
-	//generate a hexa version of the txId FNV32a checksum, always 8 char long padded with 0
-	fmt.Println("txId : " + STUB.GetTxID())
-	txIdSum = fmt.Sprintf("%08x", (FNV32a(STUB.GetTxID())))
-	fmt.Println("txidSum : " + txIdSum)
-
-	//generate a hexa version of the txId and secret concatenation FNV32a checksum, always 8 char long padded with 0
-	newKey = fmt.Sprintf("%08x", (FNV32a(args[1] + txIdSum)))
+	newKey = STUB.GetTxID()
 	fmt.Println("newKey : " + newKey)
 
 	userKey, err := getPublicKey()
@@ -65,6 +61,7 @@ func cashOut(args []string) (string, error) {
 	if amount, err = strconv.ParseUint(args[0], 10, 64); err != nil {
 		return "", err
 	}
+	voucher.Amount = amount
 
 	//check suffiscient funds
 	if userInfos.Amount < amount {
@@ -86,8 +83,14 @@ func cashOut(args []string) (string, error) {
 		return "", fmt.Errorf("Cannot update user informations: %s", err)
 	}
 
+	//parsing voucher
+	voucherBytes, err = json.Marshal(voucher)
+	if err != nil {
+		return "", fmt.Errorf("Cannot marshal voucher informations: %s", err)
+	}
+
 	//writing cash to ledger
-	err = STUB.PutState(newKey, []byte(args[0]))
+	err = STUB.PutState(newKey, voucherBytes)
 	if err != nil {
 		return "", fmt.Errorf("Cannot write cash: %s", err)
 	}
@@ -97,5 +100,5 @@ func cashOut(args []string) (string, error) {
 		return "", err
 	}
 
-	return txIdSum, nil
+	return newKey, nil
 }

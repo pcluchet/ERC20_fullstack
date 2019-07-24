@@ -10,6 +10,11 @@ type UserInfos struct {
 	Allowances map[string]uint64
 }
 
+type CashVoucher struct {
+	Amount uint64
+	Hash   string
+}
+
 type Events struct {
 	From    string
 	To      string
