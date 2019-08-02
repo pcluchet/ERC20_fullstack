@@ -565,11 +565,11 @@ export default class App extends Component {
       ongoingbilltotal: 0,
       invoiceEdit: true,
       qrcode: '',
+      name: '',
+      logged: false,
+      username: '',
       password: '',
       pubkey: '',
-      logged: false,
-      name: '',
-      username: '',
       register: false,
       balance: '0.00',
       transferamount: '', // nom de la bière
@@ -1000,8 +1000,8 @@ transfer = () => {
             <TextInput
               style={styles.textInput}
               placeholder="Amount"
-              onChangeText={transferamount => this.setState({ transferamount })}
-              value={this.state.transferamount}
+              onChangeText={transferamount_display => this.setState({ transferamount_display })}
+              value={this.state.transferamount_display}
             />
           </View>
         </View>
@@ -1199,6 +1199,11 @@ transfer = () => {
                      }}>
           <TouchableOpacity
             onPress={() => {
+            this.setState({
+            ScannedTokenDemand: false,
+            ScannedContact: false,
+          })
+ 
               this.setState({ home : true });
               this.setState({ scan : false });
               this.setState({ transfer : false });
@@ -1208,6 +1213,11 @@ transfer = () => {
          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
+            this.setState({
+            ScannedTokenDemand: false,
+            ScannedContact: false,
+          })
+ 
               this.setState({ home : false });
               this.setState({ scan : true });
               this.setState({ transfer : false });
@@ -1217,6 +1227,11 @@ transfer = () => {
          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
+            this.setState({
+            ScannedTokenDemand: false,
+            ScannedContact: false,
+          })
+ 
               this.setState({ home : false });
               this.setState({ scan : false });
               this.setState({ transfer : true });
@@ -1226,6 +1241,11 @@ transfer = () => {
          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
+            this.setState({
+            ScannedTokenDemand: false,
+            ScannedContact: false,
+          })
+ 
               this.setState({ home : false });
               this.setState({ scan : false });
               this.setState({ transfer : false });
@@ -1503,6 +1523,8 @@ transfer = () => {
 
   ScanInTransfer = () => {
     this.setState ({scanToInputAddress : true});
+              this.setState({ ScannedContact : false });
+              this.setState({ ScannedTokenDemand : false });
               this.setState({ home : false });
               this.setState({ scan : true });
               this.setState({ transfer : false });
@@ -1550,7 +1572,7 @@ transfer = () => {
               
               returnKeyType='done'
               value={String(this.state.transferamount_display)}
-              keyboardType='numeric'
+              keyboardType='default'
               autoCapitalize="none"
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
@@ -1569,16 +1591,15 @@ transfer = () => {
               onSubmitEditing={Keyboard.dismiss}
               onChangeText={
                 (transferamount_display) => {
-                  let amount= 0;
+                  let amount = 0;
                   console.log("received : " + transferamount_display);
                   transferamount_display = transferamount_display.replace(",", ".");
+                  transferamount_display = transferamount_display.replace(/[^\d.-]/g, '');
 
                   console.log("onlypoint : " + transferamount_display);
 
                   if (transferamount_display.includes("."))
                   {
-
-
                       var pieces = transferamount_display.split(".");
                       pieces[1] = pieces[1].substring(0,2);
                     if (this.decimalPlaces(transferamount_display) >= 2)
@@ -1735,7 +1756,7 @@ qrdata_ask = () => {
         <View style={{ flex: 2, margin: 10 }}>
             <TextInput
               value={`${this.state.HowMuchIsAsked_display}`}
-              keyboardType='numeric'
+              keyboardType='default'
               returnKeyType='done'
               autoCapitalize="none"
               style={{
@@ -1758,6 +1779,7 @@ qrdata_ask = () => {
                   let amount= 0;
                   console.log("received : " + HowMuchIsAsked_display);
                   HowMuchIsAsked_display = HowMuchIsAsked_display.replace(",", ".");
+                  transferamount_display = transferamount_display.replace(/[^\d.-]/g, '');
 
                   console.log("onlypoint : " + HowMuchIsAsked_display);
 
@@ -2223,7 +2245,7 @@ qrdata_ask = () => {
   return (
       <View style={{ flex : 16, backgroundColor :'rgba(255, 255, 255, 0.5)'}}>
 
-        <View style={{ flex: 14 }}>
+        <View style={{ flex: 16 }}>
         <Camera
           style={[{ flex : 14}, styles.cameraView]}
           onBarCodeRead={this.onBarCodeRead}
@@ -2245,28 +2267,7 @@ qrdata_ask = () => {
        aspect={Camera.constants.Aspect.fill}
                 orientation={Camera.constants.Orientation.landscapeLeft}
       */}
-        <View style={{ flex: 2, flexDirection : 'row', alignItems : "center", justifyContent : "center" }}>
-        <TouchableOpacity
-            onPress={() => alert("Beta version : This feature is not yet available")}
-            style = {{
-
-                  height : '65%',
-                  margin : 10,
-                  borderRadius: 999,
-                  backgroundColor: "#4CB676",
-                  textAlignVertical: "center",
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width : '80%',
-                flex : 2,
-          }}>
-          <View style = {{flexDirection : "row", alignItems : "center", justifyContent : "space-evenly"}}>
-            <Icon name="history" size={29} color='rgba(52, 52, 52, 0.75)' />
-            <Text> Recently scanned</Text>
-          </View>
-         </TouchableOpacity>
      </View>
-      </View>
     );
   }
 
@@ -2783,6 +2784,32 @@ qrdata_ask = () => {
     this.setState({ register: true });
   }
 
+  login_btn_content = () => {
+    if (this.state.OngoingLogin) {
+      return (
+        <ActivityIndicator
+          size="large"
+          color='rgba(52, 52, 52, 0.8)'
+          style={{ textAlign: 'center', fontWeight: '100' }}
+        />
+      );
+    } else {
+      return (
+        <Text
+          style={{
+            textAlign: 'center',
+            fontSize: 21,
+            fontWeight: '100',
+            color: 'rgba(52, 52, 52, 0.8)',
+          }}>
+          Login
+          </Text>
+      );
+    }
+  };
+
+
+
 
   login = () => {
     svg = SvgComponent({
@@ -2790,8 +2817,11 @@ qrdata_ask = () => {
       height: (Dimensions.get('window').height * 0.5) * 0.75,
       viewBox: '0 0 64 64'
     });
+    var btn_content = this.login_btn_content();
     return (
       <View style={{}}>
+
+
 
 <LinearGradient
   start={{x: 0.0, y: 0.25}} end={{x: 0.5, y: 1.0}}
@@ -2927,15 +2957,7 @@ qrdata_ask = () => {
                   alignItems: 'center'
                 }}
               >
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    fontSize: 21,
-                    fontWeight: '100',
-                    color: 'rgba(52, 52, 52, 0.8)',
-                  }}>
-                  Login
-              </Text>
+             {btn_content} 
               </TouchableOpacity>
 
 
@@ -3863,15 +3885,24 @@ other guy
   Login = () => {
     console.log('login trigger');
     console.log('lop before:' + this.state.logged);
+    this.setState({ OngoingLogin: true });
     AuthLogin(this.state.username, this.state.password).then(response => {
       console.log('RESPONSE LOGIN = ' + response);
+
+    this.setState({ OngoingLogin: false });
 
       //console.log("RESPONSE LOGddIN2 = " + JSON.stringify(response.json()));
 
 
 
       if (response != "Unauthorized") {
+        try {
         var respjson = JSON.parse(response);
+        }
+        catch(e) {
+        alert('Login failed ❌');
+        return;
+        }
         console.log('JSON rr = ' + JSON.stringify(respjson));
         this.setState({ pubkey: respjson.pubkey });
         this.setState({ logged: true });
@@ -4188,8 +4219,6 @@ other guy
           }}>
  
             {this.genLocationPicker()}
-
-            <Text>HELOE</Text>
           </View>
 
           <View style={{ flex: 2, margin: 10 }}>
@@ -4378,7 +4407,7 @@ other guy
             }
             if (this.state.ResetTransferFields)
             {
-              this.ft_resetfields_transfer(['transferamount']);
+              this.ft_resetfields_transfer(['transferamount','transferamount_display']); 
             }
 
             this.setState({ transferPending: false });
