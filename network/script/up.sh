@@ -18,7 +18,7 @@ set -e
 
 function up {
 	docker-compose -f ./docker-compose.yml down
-	docker-compose -f ./docker-compose.yml up -d ca.example.com orderer.example.com peer0.MEDSOS.example.com  peer0.HSLU.example.com couchdb peer1.MEDSOS.example.com api.MEDSOS.example.com cli webservices
+	docker-compose -f ./docker-compose.yml up -d
 	
 	export FABRIC_START_TIMEOUT=10
 	sleep ${FABRIC_START_TIMEOUT}
@@ -69,6 +69,11 @@ function addPeers {
 		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@HSLU.example.com/msp" peer0.HSLU.example.com peer channel join \
 		-b ptwist.block
 
+	echo "4_bis";
+	docker exec \
+		-e "CORE_PEER_LOCALMSPID=HSLUMSP" \
+		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@HSLU.example.com/msp" peer1.HSLU.example.com peer channel join \
+		-b ptwist.block
 
 	echo "5";
 	docker exec \
@@ -77,6 +82,28 @@ function addPeers {
 		-o orderer.example.com:7050 \
 		-c ptwist \
 		-f /etc/hyperledger/configtx/HSLUPanchors.tx
+
+	echo "6";
+	docker exec \
+		-e "CORE_PEER_LOCALMSPID=BLUECITYMSP" \
+		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@BLUECITY.example.com/msp" peer0.BLUECITY.example.com peer channel join \
+		-b ptwist.block
+
+	echo "6_bis";
+	docker exec \
+		-e "CORE_PEER_LOCALMSPID=BLUECITYMSP" \
+		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@BLUECITY.example.com/msp" peer1.BLUECITY.example.com peer channel join \
+		-b ptwist.block
+
+	echo "7";
+	docker exec \
+		-e "CORE_PEER_LOCALMSPID=BLUECITYMSP" \
+		-e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@BLUECITY.example.com/msp" peer0.BLUECITY.example.com peer channel update \
+		-o orderer.example.com:7050 \
+		-c ptwist \
+		-f /etc/hyperledger/configtx/BLUECITYPanchors.tx
+
+
 
 }
 

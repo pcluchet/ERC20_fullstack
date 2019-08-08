@@ -114,7 +114,7 @@ return Fabric_Client.newDefaultKeyValueStore({ path: store_path
     console.log("cert=",certif);
   return fabric_client.createUser(
      {username,
-     mspid: 'MEDSOSMSP',
+     mspid: process.env.MSPID,
      cryptoContent: { privateKeyPEM: enrollment.key.toBytes(), signedCertPEM: enrollment.certificate }
      });
 }).then((user) => {

@@ -19,3 +19,9 @@ PeerOrgs:
       Count: 4
     Users:
       Count: 0
+  - Name: BLUECITY
+    Domain: BLUECITY.example.com
+    Template:
+      Count: 4
+    Users:
+      Count: 0
