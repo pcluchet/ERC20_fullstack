@@ -35,7 +35,8 @@ module.exports.getUserInfos = function getUserInfos(req, res, next) {
           "pubkey": result.pubkey,
           "last_login": lastlogin,
           "misc_public": result.fulluser.misc_public,
-          "misc_private": result.fulluser.misc_private
+          "misc_private": result.fulluser.misc_private,
+          "projects": result.fulluser.projects
         };
 
 

@@ -13,6 +13,117 @@ tags:
     description: "Find out more"
     url: "http://swagger.io"
 paths:
+  /users/{username}/addproject:
+    post:
+      tags:
+      - "project management"
+      summary: "allow users to add a project to their profile"
+      description: ""
+      operationId: "AddProject"
+      produces:
+      - "application/json"
+      - "text/plain"
+      parameters:
+      - name: "X-request-use-token"
+        in: "header"
+        description: "boolean, true if a session token is used"
+        required: false
+        type: "boolean"
+      - name: "X-request-token"
+        in: "header"
+        description: "session token"
+        required: false
+        type: "string"
+      - name: "username"
+        in: "path"
+        description: "Username"
+        required: true
+        type: "string"
+        format: "uuid"
+      - name: "X-request-password"
+        in: "header"
+        description: "Password of the user"
+        required: false
+        type: "string"
+        format: "string"
+      - name: "X-request-project"
+        in: "header"
+        description: "project to add in user profile"
+        required: false
+        type: "string"
+        format: "string"
+ 
+      responses:
+        200:
+          description: "Project succesfully added to user profile"
+          schema:
+            $ref: "#/definitions/inline_response_200"
+        401:
+          description: "username/pw missing or incorrect"
+          schema:
+            type: "string"
+        404:
+          description: "username not found"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "AddProject"
+
+  /users/{username}/{projectid}/addreviewer:
+    patch:
+      tags:
+      - "project management"
+      summary: "allow users to invite reviewers to a project"
+      description: ""
+      operationId: "AddReviewerToProject"
+      produces:
+      - "application/json"
+      - "text/plain"
+      parameters:
+      - name: "X-request-use-token"
+        in: "header"
+        description: "boolean, true if a session token is used"
+        required: false
+        type: "boolean"
+      - name: "X-request-token"
+        in: "header"
+        description: "session token"
+        required: false
+        type: "string"
+      - name: "username"
+        in: "path"
+        description: "Username"
+        required: true
+        type: "string"
+        format: "uuid"
+      - name: "X-request-password"
+        in: "header"
+        description: "Password of the user"
+        required: false
+        type: "string"
+        format: "string"
+      - name: "projectid"
+        in: "path"
+        description: "projectid where to add a reviewer"
+        required: true
+        type: "string"
+        format: "string"
+ 
+      responses:
+        200:
+          description: "Reviewer link succesfully generated"
+          schema:
+            $ref: "#/definitions/inline_response_200"
+        401:
+          description: "wrong username/pw or wrong project"
+          schema:
+            type: "string"
+        404:
+          description: "username not found"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "AddReviewerToProject"
+ 
+ 
   /users/{username}/resetpass/{token}:
     get:
       tags:
@@ -448,6 +559,13 @@ paths:
         required: false
         type: "string"
         format: "string"
+      - name: "X-request-peer-review-token"
+        in: "header"
+        description: "To provide in the case someone has been invited as expert peer reviewer to a project"
+        required: false
+        type: "string"
+        format: "string"
+ 
       responses:
         200:
           description: "Username succesfully enrolled"

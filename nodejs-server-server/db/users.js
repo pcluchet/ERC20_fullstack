@@ -4,7 +4,6 @@ exports.create = function create(user, cb) {
 	users.insert(user, user.email, cb);
 };
 
-
 /*
 exports.search = function search(regex, cb) {
 	//console.log(users.find({zip:{'$regex' : regex, '$options' : 'i'}});
@@ -96,7 +95,6 @@ exports.searchpubkeys = function searchpubkeys(list, cb) {
 	users.find({
 		"selector": {
 		   "pubkey": { "$in" : list} 
- 
 		},
 		"fields": [
 			"_id",
@@ -104,10 +102,6 @@ exports.searchpubkeys = function searchpubkeys(list, cb) {
 		  ]
 	 }, cb);
 };
-
-
-
-
 
 exports.searchpubkey = function searchpubkey(regex, cb) {
 	//console.log(users.find({zip:{'$regex' : regex, '$options' : 'i'}});
@@ -117,8 +111,27 @@ exports.searchpubkey = function searchpubkey(regex, cb) {
 	users.find({
 		"selector": {
 		   "pubkey": regex 
- 
 		},
+		"fields": [
+			"_id",
+			"pubkey"
+		  ]
+	 }, cb);
+};
+
+exports.getUsernameByReviewToken = function (token, cb) {
+	users.find({
+		"selector": {
+			"projects": {
+			   $elemMatch: {
+				  "review_tokens": {
+					 $elemMatch: {
+						"token": token
+					 }
+				  }
+			   }
+			}
+		 },
 		"fields": [
 			"_id",
 			"pubkey"
@@ -154,7 +167,36 @@ function updtoken(user, ip, expire, renewduration, linkip, forever, autorenew, c
 	});
 };
 
+exports.UseReviewToken = function useReviewToken(user, registredAs, token, cb) {
+	console.log("here");
+	users.get(user, function (err, result) {
 
+	console.log("there");
+	console.log(result);
+		
+		for (key in result.projects)
+		{
+
+		for (key2 in result.projects[key].review_tokens)
+		{
+			if (result.projects[key].review_tokens[key2].token == token)
+			{
+				if ( result.projects[key].review_tokens[key2].registred_as != null)
+				{
+					cb(true)
+				}
+				console.log("FOUND");
+				result.projects[key].review_tokens[key2].registred_as = registredAs
+			}
+		}
+		console.log("la");
+		}
+
+		users.insert(result, user).then(function () {
+			cb(false);
+		});
+	});
+};
 
 exports.updLastLogin = updLastLogin;
 function updLastLogin(user, cb) {
@@ -193,8 +235,6 @@ function actually_reset_pass(user, cb) {
 		});
 	});
 };
-
-
 
 
 
@@ -263,8 +303,340 @@ function updmisc(user, newpublic, newprivate, cb) {
 };
 
 
-exports.updatetoken = updtoken;
+function get_multiplier_transport(kilometers)
+{
+	if (kilometers <= 0)
+		return 0;
+	if (kilometers < 5)
+	{
+		return 2.0
+	}
+	if (kilometers < 20)
+	{
+		return 1.5 
+	}
+	if (kilometers < 70)
+	{
+		return 1.2 
+	}
+	if (kilometers >= 70)
+	{
+		return 1.0 
+	}
+	return 0;
+}
 
+
+function calc_ptp_stk(project)
+{
+	var pt_peoples = 0;
+	var pt_innov = 0;
+	var pt_material = 0;
+	var pt_transport = 0;
+	var pt_impact = 0;
+
+	var w_pt_peoples = 0;
+	var w_pt_innov = 0;
+	var w_pt_material = 0;
+	var w_pt_transport = 0;
+	var w_pt_impact = 0;
+
+
+
+	//Peoples
+	var direct_peoples_sum = project.PeoplesData.OwnersDirect +
+	project.PeoplesData.PartnersDirect +
+	project.PeoplesData.CustomersDirect +
+	project.PeoplesData.CollectorsDirect +
+	project.PeoplesData.MakersDirect +
+	project.PeoplesData.ParticipantsDirect +
+	project.PeoplesData.OthersDirect;
+
+	if (direct_peoples_sum >= 1 && direct_peoples_sum <= 20)
+	{
+		pt_peoples = 200;
+	}
+	else if (direct_peoples_sum >= 21 && direct_peoples_sum <= 100)
+	{
+		pt_peoples = 500;
+	}
+	else if (direct_peoples_sum >= 101 && direct_peoples_sum <= 2000)
+	{
+		pt_peoples = 800;
+	}
+	else if (direct_peoples_sum >= 2000)
+	{
+		pt_peoples = 1000;
+	}
+
+	//Innovation
+
+	var amount_of_yes = 0;
+	for (var propName in project.InnovationData)
+	{
+		if (project.InnovationData[propName])
+		{
+			amount_of_yes++;
+		}
+	}
+	  switch(amount_of_yes){
+		  case 0:
+			  pt_innov = 200;
+			  break;
+		  case 1:
+			  pt_innov = 500;
+			  break;
+		  case 2:
+			  pt_innov = 700;
+			  break;
+		  case 3:
+			  pt_innov = 1000;
+			  break;
+		  default : 
+		      break;
+	  }
+
+	  //Material
+
+	  if (project.MaterialData.PETEorPET.present)
+	  {
+		  pt_material += project.MaterialData.PETEorPET.RecyclingMultiplier * 1000; 
+	  }
+	  if (project.MaterialData.HDPE.present)
+	  {
+		  pt_material += project.MaterialData.HDPE.RecyclingMultiplier * 800; 
+	  }
+	  if (project.MaterialData.PVC.present)
+	  {
+		  pt_material += project.MaterialData.PVC.RecyclingMultiplier * 400; 
+	  }
+      if (project.MaterialData.LDPE.present)
+	  {
+		  pt_material += project.MaterialData.LDPE.RecyclingMultiplier * 600; 
+	  }
+      if (project.MaterialData.PP.present)
+	  {
+		  pt_material += project.MaterialData.PP.RecyclingMultiplier * 300; 
+	  }
+	  if (project.MaterialData.SP.present)
+	  {
+		  pt_material += project.MaterialData.SP.RecyclingMultiplier * 200; 
+	  }
+
+	  //Transport
+
+	  console.log("BOJH");
+	  console.log(get_multiplier_transport(project.TransportData.NoFueledVehicle) * 100);
+	  
+	  pt_transport +=  get_multiplier_transport(project.TransportData.NoFueledVehicle) * 100;
+
+	  console.log(pt_transport);
+	  pt_transport +=  get_multiplier_transport(project.TransportData.ElectricVehicle) * 80;
+
+	  console.log(pt_transport);
+	  pt_transport +=  get_multiplier_transport(project.TransportData.GasVehicle) * 70;
+
+	  console.log(pt_transport);
+	  pt_transport +=  get_multiplier_transport(project.TransportData.Hybrid) * 60;
+
+	  console.log(pt_transport);
+	  pt_transport +=  get_multiplier_transport(project.TransportData.PublicTransport) * 50;
+
+	  console.log(pt_transport);
+	  pt_transport +=  get_multiplier_transport(project.TransportData.DieselVehicle) * 20;
+
+	  console.log(pt_transport);
+	  pt_transport +=  get_multiplier_transport(project.TransportData.SeaFreight) * 10;
+
+	  console.log(pt_transport);
+	  pt_transport +=  get_multiplier_transport(project.TransportData.AirFreight) * 10;
+
+	  console.log(pt_transport);
+
+	  //Impact
+
+	  if (project.AmountOfPlasticRemoved < 5)
+	  {
+		  pt_impact = 200;
+	  }
+	  else  if (project.AmountOfPlasticRemoved < 100)
+	  {
+		  pt_impact = 500;
+	  }
+	  else  if (project.AmountOfPlasticRemoved < 1000)
+	  {
+		  pt_impact = 700;
+	  }
+	  else  if (project.AmountOfPlasticRemoved < 10000)
+	  {
+		  pt_impact = 900;
+	  }
+	  else  if (project.AmountOfPlasticRemoved >= 10000)
+	  {
+		  pt_impact = 1000;
+	  }
+
+	  if (project.DurationOfTheCycle < 6)
+	  {
+		  pt_impact *= 2;
+	  }
+	  else if (project.DurationOfTheCycle < 12)
+	  {
+		  pt_impact *= 1.5;
+	  }
+	  else if (project.DurationOfTheCycle < 36)
+	  {
+		  pt_impact *= 1.3;
+	  }
+	  else if (project.DurationOfTheCycle >= 36)
+	  {
+		  pt_impact *= 1.5;
+	  }
+
+	  //Relative weights
+	project.StakeHoldersEvaluations.forEach(
+		  function (element)
+		  {
+			 w_pt_peoples += element.People;
+			 w_pt_innov += element.Innovation;
+			 w_pt_material += element.Material;
+			 w_pt_transport += element.Transport;
+			 w_pt_impact += element.Impact;
+		  }
+
+	  );
+
+
+	w_pt_peoples /= 5;
+	w_pt_innov /= 5;
+	w_pt_material /= 5;
+	w_pt_transport /= 5;
+	w_pt_impact /= 5;
+
+	//ptp stakeholders (finally)
+	ptp_stk = pt_peoples * w_pt_peoples + 
+	pt_innov * w_pt_innov + 
+	pt_impact * w_pt_impact +
+	pt_material * w_pt_material +
+	pt_transport * w_pt_transport;
+
+	console.log("pt_peoples");
+	console.log(pt_peoples);
+	console.log("pt_innov");
+	console.log(pt_innov);
+	console.log("pt_material");
+	console.log(pt_material);
+	console.log("pt_transport");
+	console.log(pt_transport);
+	console.log("pt_impact");
+	console.log(pt_impact);
+
+	console.log("w_pt_peoples");
+	console.log(w_pt_peoples);
+	console.log("w_pt_innov");
+	console.log(w_pt_innov);
+	console.log("w_pt_material");
+	console.log(w_pt_material);
+	console.log("w_pt_transport");
+	console.log(w_pt_transport);
+	console.log("w_pt_impact");
+	console.log(w_pt_impact);
+
+
+
+
+	return (ptp_stk);
+
+}
+
+exports.addproject = addproject;
+function addproject(user, project, cb) {
+	users.get(user, function (err, result) {
+		console.log("IN HERE");
+		console.log("RESULT HERE :" + JSON.stringify(result));
+
+		console.log("NEWUSR :", result);
+		console.log("projects :", result.projects);
+		console.log("typeof projects :", typeof result.projects);
+
+		if (typeof result.projects == "undefined")
+		{
+		 	result.projects = [];
+		}
+
+		var ptp_stakeholder_result = calc_ptp_stk(project);
+
+		var prj = new Object();
+		prj.ptp_stakeholder_result = ptp_stakeholder_result;
+		prj.data = project;
+		prj.id = Math.random().toString(36).substr(2, 9);
+		prj.calc_outcome = {
+			ptp_stakeholders : ptp_stakeholder_result,
+			ptp_reviewers: 0
+		} 
+		prj.review_tokens = [];
+		prj.reviews = [];
+		result.projects.push(prj);
+
+
+		console.log("NEWUSR :", result);
+		users.insert(result, user).then(
+			function () 
+			{ 
+				var ret = "success";
+				cb(prj); 
+			});
+		});
+};
+
+exports.addReviewer = addReviewer;
+function addReviewer(user, projectid, cb) {
+	users.get(user, function (err, result) {
+		console.log("IN HERE");
+		console.log("RESULT HERE :" + JSON.stringify(result));
+		console.log("NEWUSR :", result);
+		console.log("projects :", result.projects);
+		console.log("typeof projects :", typeof result.projects);
+
+		if (typeof result.projects == "undefined")
+		{
+		 	cb("error");
+		}
+
+		var found = false;
+		var tk = Math.random().toString(36).substr(2, 9);
+		var rv_token = {
+			token : tk,
+			registred_as : null
+		}
+
+		for (index in result.projects){
+		if (result.projects[index].id == projectid)
+		{
+			result.projects[index].review_tokens.push(rv_token);
+			found = true;
+		}
+		}
+
+		if (!found)
+		{
+			cb("error");
+		}
+
+
+		console.log("NEWUSR :", result);
+		users.insert(result, user).then(
+			function () 
+			{ 
+				var ret = "success";
+				cb(rv_token); 
+			});
+		});
+};
+
+
+
+exports.updatetoken = updtoken;
 exports.get = function get(id, cb) {
 	users.get(id, cb);
 };
