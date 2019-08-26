@@ -190,28 +190,106 @@ if (typeof ReviewToken !== 'undefined') {
         );
       }
     });
+    });
+    }
+    });
+  }
+  else
+  {
 
-
-
-
-
-
-
-          
-        });
-
-
+    //validation mail
+    var nodemailer = require('nodemailer');
+    var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'ptwistmail@gmail.com',
+        pass: passwordfromfile
       }
     });
 
+    var mailOptions = {
+      from: 'ptwistmail@gmail.com',
+      to: misc_private.nuro.web.email,
+      subject: 'Ptwist Platform validation e-mail',
+      text: 'Hello, you just created an account on the Ptwist platform, please click on this link to validate your account : ' +
+        'https://api.plastictwist.com/users/' + username + '/validate/' + user.validation_token,
+    };
 
-    //do something
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+
+        res.writeHead(500, { "Content-Type": "text/plain" });
+        return res.end("Email couldn't be sent" + error);
+
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+        //  var caAddr = "http://localhost:7054";
+
+        var caAddr = process.env.CA_ADDR;
+        console.log("caAddr=", caAddr);
+        //console.log(req.body.param2);
+        var query = require('../db/registerUser.1.js');
+        query.ca_register(username, caAddr).then(
+          (result) => {
+            console.log("res:" + result);
+
+            if (JSON.parse(result).status == "failed") {
+              res.writeHead(409, { "Content-Type": "text/plain" });
+              return res.end("username already exists");
+            }
+            user.pubkey = JSON.parse(result).pubkey;
+
+            console.log("pw:" + user.email);
+
+            var crypto = require('crypto');
+            var hash = crypto.createHash('whirlpool');
+            //passing the data to be hashed
+            var data = hash.update(user.password, 'utf-8');
+            //Creating the hash in the required format
+            var gen_hash = data.digest('hex');
+
+            console.log(gen_hash);
+            user.password = gen_hash;
+            console.log(result);
+            user.reviewables = [];
+
+            const body = {
+              "pubkey": JSON.parse(result).pubkey
+            };
+
+            try {
+              users.create(user, function (err) {
+                if (err) {
+                  res.writeHead(500, { "Content-Type": "text/plain" });
+                  return res.end("User couldn't be created");
+
+                  throw err;
+                }
+                else {
+                  console.log('user inserted');
+                }
+              });
+            }
+            catch (e) {
+            }
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify(body));
+
+            //return examples;
+            //return res.status(404);
+            //return "ok";
+            //res.send(util.format("{\"status\" : \"ok\", \"message\": \"User registered successfully\", \"pubkey\" : \"%s\"}",JSON.parse(result).pubkey))
+          }
+        );
+      }
+    });
+
   }
   }
   else {
     res.writeHead(401, { "Content-Type": "test/plain" });
     return res.end("Given misc private must have the correct format");
   }
-
-
 };

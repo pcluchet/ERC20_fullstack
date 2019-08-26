@@ -171,6 +171,39 @@ exports.UseReviewToken = function useReviewToken(user, registredAs, token, cb) {
 	console.log("here");
 	users.get(user, function (err, result) {
 
+	var projectid;
+	console.log("there");
+	console.log(result);
+		
+		for (key in result.projects)
+		{
+
+		for (key2 in result.projects[key].review_tokens)
+		{
+			if (result.projects[key].review_tokens[key2].token == token)
+			{
+				projectid = result.projects[key].id;
+				if ( result.projects[key].review_tokens[key2].registred_as != null)
+				{
+					cb(true)
+				}
+				console.log("FOUND");
+				result.projects[key].review_tokens[key2].registred_as = registredAs
+			}
+		}
+		console.log("la");
+		}
+
+		users.insert(result, user).then(function () {
+			cb(false, projectid );
+		});
+	});
+};
+
+exports.submitReview = function (user, projectid, review, cb) {
+	console.log("here");
+	users.get(user, function (err, result) {
+
 	console.log("there");
 	console.log(result);
 		
@@ -197,6 +230,7 @@ exports.UseReviewToken = function useReviewToken(user, registredAs, token, cb) {
 		});
 	});
 };
+
 
 exports.updLastLogin = updLastLogin;
 function updLastLogin(user, cb) {
