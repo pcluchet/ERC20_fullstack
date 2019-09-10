@@ -79,15 +79,5 @@ module.exports.AddReviewerToProject = function (req, res, next) {
       }
     }
   });
-
-  /*
-  Query.query(xRequestUsername,xRequestPassword,channel,chaincode,_function,params)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-    */
-  }
+ }
 };

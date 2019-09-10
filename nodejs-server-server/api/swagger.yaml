@@ -13,6 +13,35 @@ tags:
     description: "Find out more"
     url: "http://swagger.io"
 paths:
+  /getprojectbytoken:
+    post:
+      tags:
+      - "Project management"
+      summary: "allow anyone to see the data about a project if they have a reviewer token"
+      description: ""
+      operationId: "GetProjectByToken"
+      produces:
+      - "application/json"
+      - "text/plain"
+      parameters:
+      - name: "token"
+        in: "header"
+        description: "reviewer token"
+        required: true
+        type: "string"
+        format: "string"
+      responses:
+        200:
+          description: "Project succesfully retreived"
+          schema:
+            $ref: "#/definitions/inline_response_200"
+        404:
+          description: "Project not found"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "GetProjectByToken"
+
+ 
   /users/{username}/addproject:
     post:
       tags:

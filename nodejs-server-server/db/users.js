@@ -49,7 +49,7 @@ exports.search = function search(regex, cb) {
 			"pubkey"
 		  ],
 		  "limit": batchSize,
-        "skip": batchCount*batchSize
+        "skip": batchCount * batchSize
 			}).then(function(batch){
 				if (batch.docs.length === 0){
 					// there are no (more) search results, so we can return what we have
@@ -75,16 +75,6 @@ exports.search = function search(regex, cb) {
 			cb(null,result);
 		})
 };
-
-/*
-
-		search(batchCount, batchSize).then(function(result){
-			// you can handle the searchresults
-		
-		})
-
-*/
-
 
 exports.searchpubkeys = function searchpubkeys(list, cb) {
 	//console.log(users.find({zip:{'$regex' : regex, '$options' : 'i'}});
@@ -119,6 +109,18 @@ exports.searchpubkey = function searchpubkey(regex, cb) {
 	 }, cb);
 };
 
+function getUsernameByProjectId(projectid, cb) {
+	users.find({
+		"selector": {
+			"projects": {
+			   $elemMatch: {
+				  "id": projectid
+			   }
+			}
+		 }
+	 }, cb);
+};
+
 exports.getUsernameByReviewToken = function (token, cb) {
 	users.find({
 		"selector": {
@@ -131,11 +133,7 @@ exports.getUsernameByReviewToken = function (token, cb) {
 				  }
 			   }
 			}
-		 },
-		"fields": [
-			"_id",
-			"pubkey"
-		  ]
+		 }
 	 }, cb);
 };
 
@@ -183,7 +181,7 @@ exports.UseReviewToken = function useReviewToken(user, registredAs, token, cb) {
 			if (result.projects[key].review_tokens[key2].token == token)
 			{
 				projectid = result.projects[key].id;
-				if ( result.projects[key].review_tokens[key2].registred_as != null)
+				if (result.projects[key].review_tokens[key2].registred_as != null)
 				{
 					cb(true)
 				}
@@ -193,9 +191,8 @@ exports.UseReviewToken = function useReviewToken(user, registredAs, token, cb) {
 		}
 		console.log("la");
 		}
-
 		users.insert(result, user).then(function () {
-			cb(false, projectid );
+			cb(false, projectid);
 		});
 	});
 };
@@ -203,31 +200,63 @@ exports.UseReviewToken = function useReviewToken(user, registredAs, token, cb) {
 exports.submitReview = function (user, projectid, review, cb) {
 	console.log("here");
 	users.get(user, function (err, result) {
+    getUsernameByProjectId(projectid, function (err, ret) {
+      console.log("RESRERSRERS:");
+      console.log(ret);
+      if (ret.docs.length == 0) {
+		  cb("error");
+		  return;
+	  }
 
-	console.log("there");
+
 	console.log(result);
+
+	console.log("jhjhegtesg");
+	if (typeof result.reviewable == "undefined")
+	{
+		cb("error");
+		return;
+	}
+
+	console.log("egtesg");
+	if ( typeof result.reviewable.projectid == "undefined")
+	{
+	if (result.reviewable.projectid != projectid)
+		{
+		cb("error");
+		return;
+	
+		}
+		cb("error");
+		return;
+	}
+
+	console.log("Hi there");
+	result.reviewable.done = true;
+
+	var reviewAndSomeMeta = new Object();
+	reviewAndSomeMeta.review = review;
+	reviewAndSomeMeta.submited_by = user;
+
+
+	console.log("Hi there");
 		
-		for (key in result.projects)
+		for (key in ret.docs[0].projects)
 		{
-
-		for (key2 in result.projects[key].review_tokens)
-		{
-			if (result.projects[key].review_tokens[key2].token == token)
+			if (ret.docs[0].projects[key].id == projectid)
 			{
-				if ( result.projects[key].review_tokens[key2].registred_as != null)
-				{
-					cb(true)
-				}
-				console.log("FOUND");
-				result.projects[key].review_tokens[key2].registred_as = registredAs
+				ret.docs[0].projects[key].reviews.push(reviewAndSomeMeta);
 			}
+		console.log("la_");
 		}
-		console.log("la");
-		}
+		users.insert(ret.docs[0], ret.docs[0]._id).then(function () {
 
-		users.insert(result, user).then(function () {
-			cb(false);
+			users.insert(result, user).then(function () {
+				cb("ok");
+			});
+	
 		});
+	  });
 	});
 };
 

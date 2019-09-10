@@ -96,12 +96,16 @@ if (typeof ReviewToken !== 'undefined') {
         return res.end("Invalid reviewer token provided");
       }
       else {
-        users.UseReviewToken(ret.docs[0]._id, username, ReviewToken, function (err) {
+        users.UseReviewToken(ret.docs[0]._id, username, ReviewToken, function (err, pro) {
           if (err)
           {
             res.writeHead(400, { "Content-Type": "text/plain" });
             return res.end("Expired reviewer token provided");
           }
+
+    //link new user-> reviewables
+
+    user.reviewable = { projectid : pro, done : false};
     //validation mail
     var nodemailer = require('nodemailer');
     var transporter = nodemailer.createTransport({
