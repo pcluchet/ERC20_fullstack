@@ -14,7 +14,7 @@ tags:
     url: "http://swagger.io"
 paths:
   /getprojectbytoken:
-    post:
+    get:
       tags:
       - "Project management"
       summary: "allow anyone to see the data about a project if they have a reviewer token"
@@ -138,7 +138,7 @@ paths:
         format: "string"
       - name: "projectid"
         in: "path"
-        description: "projectid where to add a reviewer"
+        description: "projectid where to add a review"
         required: true
         type: "string"
         format: "string"
@@ -161,7 +161,7 @@ paths:
  
 
   /users/{username}/{projectid}/addreviewer:
-    post:
+    patch:
       tags:
       - "Project management"
       summary: "allow users to invite reviewers to a project"
@@ -214,7 +214,31 @@ paths:
           schema:
             type: "string"
       x-swagger-router-controller: "AddReviewerToProject"
+
+  /users/searchprojects:
+    get:
+      tags:
+      - "Project management"
+      summary: "return a list projects which name match the given name"
+      description: ""
+      operationId: "SearchProjects"
+      produces:
+      - "application/json"
+      - "text/plain"
+      parameters:
+      - name: "X-request-search"
+        in: "header"
+        description: "search"
+        required: false
+        type: "string"
+        format: "string"
  
+      responses:
+        200:
+          description: "Search worked"
+          schema:
+            $ref: "#/definitions/inline_response_200"
+      x-swagger-router-controller: "SearchProjects"
  
   /users/{username}/resetpass/{token}:
     get:
