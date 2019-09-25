@@ -513,6 +513,48 @@ BUY ITEM
 		</p>
 	</div>
 
+
+<!--
+==================================================
+SUBMIT REVIEW
+==================================================
+-->
+
+	<button class="collapsible">submit_review<div class="RW">Read + Write</div></button>
+	<div class="collapsibleContent">
+		<p>
+			This function allow users to submit a review on an item
+			</br></br>
+
+			<h5>Parameters : </h5>
+
+			<ol>
+				<li>
+					Item review in json (ex:
+					<code>
+							{
+								"ItemId": "a9eccc430a9e68068864c4ae2642cee31163ca272a3057eeb8be672710d2d089",
+								"Grade": 4,
+								"Comment": "Great product !"
+							}
+					</code>)
+				</li>
+			</ol>
+
+			<h5>Payload : </h5>
+
+			If the opperation works, it returns a plain text string saying it worked :
+			<code>
+				Review successfully Added
+			</code>
+			</br></br>
+
+		</p>
+	</div>
+
+
+
+
 <!--
 ==================================================
 BUY ITEMS

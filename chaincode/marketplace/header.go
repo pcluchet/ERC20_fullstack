@@ -89,7 +89,21 @@ type ShippingFee struct {
 	Fee uint64
 }
 
+type ReviewSubmission struct {
+	ItemId  string
+	Grade   int
+	Comment string
+}
+
+type Review struct {
+	Grade     int
+	Comment   string
+	Timestamp uint64
+	Author    string
+}
+
 type ShopItem struct {
+	Reviews      []Review
 	Category     string
 	ReservePrice uint64
 	Biddable     bool
