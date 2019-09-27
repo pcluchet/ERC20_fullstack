@@ -33,7 +33,11 @@ func CountHistory(stub shim.ChaincodeStubInterface, args []string) (int, error) 
 func getlatest(stub shim.ChaincodeStubInterface, args []string) (string, error) {
 
 	count, errc := CountHistory(stub, args)
-	if count == 0 || errc != nil {
+	if count == 0 {
+		return "[]", nil
+	}
+
+	if errc != nil {
 		return "", fmt.Errorf("Failed to get history : %s", errc)
 	}
 
@@ -42,6 +46,7 @@ func getlatest(stub shim.ChaincodeStubInterface, args []string) (string, error) 
 	if err != nil {
 		return "", fmt.Errorf("Failed to get asset: %s with error: %s", args[0], err)
 	}
+
 	if value == nil {
 		return "", fmt.Errorf("Asset not found: %s", args[0])
 	}
