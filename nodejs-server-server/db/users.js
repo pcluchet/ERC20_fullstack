@@ -644,6 +644,7 @@ function addReviewer(user, projectid, cb) {
 
 		if (typeof result.projects == "undefined") {
 			cb("error");
+			return;
 		}
 
 		var found = false;
@@ -662,6 +663,7 @@ function addReviewer(user, projectid, cb) {
 
 		if (!found) {
 			cb("error");
+			return;
 		}
 
 
@@ -670,6 +672,7 @@ function addReviewer(user, projectid, cb) {
 			function () {
 				var ret = "success";
 				cb(rv_token);
+				return;
 			});
 	});
 };
