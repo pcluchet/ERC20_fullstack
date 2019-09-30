@@ -4,12 +4,51 @@ var utils = require('../utils/writer.js');
 var Query = require('../service/QueryService');
 var users = require('../db/users');
 
+function SendMailToInviteReviewer(reviewer_mail,review_token, next)
+{
+  var fs = require('fs');
+  var passwordfromfile = fs.readFileSync('./mail_pass.txt', 'utf8');
+
+   //validation mail
+   var nodemailer = require('nodemailer');
+   var transporter = nodemailer.createTransport({
+     service: 'gmail',
+     auth: {
+       user: 'ptwistmail@gmail.com',
+       pass: passwordfromfile
+     }
+   });
+
+   var mailOptions = {
+     from: 'ptwistmail@gmail.com',
+     to: reviewer_mail,
+     subject: 'Ptwist platform project review invitation',
+     text: 'Hello, you have been invited to review a project on the Ptwist platform, please click on this link to validate your account : ' +
+       'https://api.plastictwist.com/users/' + 'xyz' + '/review/' + review_token,
+   };
+
+   transporter.sendMail(mailOptions, function (error, info) {
+     if (error) {
+      console.log(error);
+      next("error");
+       return;
+     } else {
+       console.log('Email sent: ' + info.response);
+      next("ok");
+      return;
+ 
+     }
+    });
+
+}
+
 module.exports.AddReviewerToProject = function (req, res, next) {
   var username = req.swagger.params['username'].value;
   var xRequestPassword = req.swagger.params['X-request-password'].value;
   var xRequestUseToken = req.swagger.params['X-request-use-token'].value;
   var xRequestToken = req.swagger.params['X-request-token'].value;
   var projectid = req.swagger.params['projectid'].value;
+  var reviewer_mail = req.swagger.params['reviewer_mail'].value;
   if (xRequestUseToken)
   {
     var clientIP = req.connection.remoteAddress;
@@ -32,9 +71,29 @@ module.exports.AddReviewerToProject = function (req, res, next) {
               res.writeHead(400, { "Content-Type": "plain/text" });
               return res.end("Error, maybe you don't have rights for this project");
             }
-            res.writeHead(200, { "Content-Type": "application/json" });
-            return res.end(JSON.stringify(retz));
 
+            if (typeof reviewer_mail != "undefined") {
+            SendMailToInviteReviewer(
+              reviewer_mail,
+              retz.token,
+              function (mailok){
+
+                if (mailok == "error")
+                {
+                    res.writeHead(500, { "Content-Type": "text/plain" });
+                    return res.end("Error : Email couldnt be sent");
+                }
+                else
+                {
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify(retz));
+                }
+              }
+            );
+            } else {
+                     res.writeHead(200, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify(retz));
+            }
            });
       }
     })
@@ -63,9 +122,29 @@ module.exports.AddReviewerToProject = function (req, res, next) {
             res.writeHead(400, { "Content-Type": "plain/text" });
             return res.end("Error, maybe you don't have rights for this project");
             }
-            res.writeHead(200, { "Content-Type": "application/json" });
-            return res.end(JSON.stringify(retz));
+ 
+            if (typeof reviewer_mail != "undefined") {
+            SendMailToInviteReviewer(
+              reviewer_mail,
+              retz.token,
+              function (mailok){
 
+                if (mailok == "error")
+                {
+                    res.writeHead(500, { "Content-Type": "text/plain" });
+                    return res.end("Error : Email couldnt be sent");
+                }
+                else
+                {
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify(retz));
+                }
+              }
+            );
+            } else {
+                     res.writeHead(200, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify(retz));
+            }
            });
  
 

@@ -199,6 +199,13 @@ paths:
         required: true
         type: "string"
         format: "string"
+      - name: "reviewer_mail"
+        in: "header"
+        description: "e-mail of the reviewer, an email will be sent to this address"
+        required: false
+        type: "string"
+        format: "string"
+ 
  
       responses:
         200:
