@@ -5,6 +5,11 @@ var Register = require('../service/RegisterService');
 
 var users = require('../db/users');
 
+function validateEmail(email) {
+  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+}
+
 module.exports.register = function register(req, res, next) {
   var username = req.swagger.params['username'].value;
   var xRequestPassword = req.swagger.params['X-request-password'].value;
@@ -39,10 +44,15 @@ module.exports.register = function register(req, res, next) {
   ) {
   }
   else {
-    res.writeHead(401, { "Content-Type": "test/plain" });
+    res.writeHead(401, { "Content-Type": "text/plain" });
     return res.end("Given misc private must have the correct format");
   }
 
+  if ( !validateEmail(misc_private.nuro.web.email))
+  {
+    res.writeHead(400, { "Content-Type": "text/plain" });
+    return res.end("Given email address is not a valid email address");
+  }
 
   var misc_public = req.swagger.params['X-request-misc-public'].value;
 
@@ -124,15 +134,7 @@ if (typeof ReviewToken !== 'undefined') {
         'https://api.plastictwist.com/users/' + username + '/validate/' + user.validation_token,
     };
 
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
 
-        res.writeHead(500, { "Content-Type": "text/plain" });
-        return res.end("Email couldn't be sent");
-
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info.response);
         //  var caAddr = "http://localhost:7054";
 
         var caAddr = process.env.CA_ADDR;
@@ -177,14 +179,27 @@ if (typeof ReviewToken !== 'undefined') {
                 }
                 else {
                   console.log('user inserted');
+
+    ///////////////////////::
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+
+        res.writeHead(500, { "Content-Type": "text/plain" });
+        return res.end("Email couldn't be sent");
+
+        console.log(error);
+      } else {
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify(body));
+      }
+    });
+    /////////////////////////:::
                 }
               });
             }
             catch (e) {
             }
-
-            res.writeHead(200, { "Content-Type": "application/json" });
-            return res.end(JSON.stringify(body));
 
             //return examples;
             //return res.status(404);
@@ -192,8 +207,7 @@ if (typeof ReviewToken !== 'undefined') {
             //res.send(util.format("{\"status\" : \"ok\", \"message\": \"User registered successfully\", \"pubkey\" : \"%s\"}",JSON.parse(result).pubkey))
           }
         );
-      }
-    });
+
     });
     }
     });
@@ -219,15 +233,7 @@ if (typeof ReviewToken !== 'undefined') {
         'https://api.plastictwist.com/users/' + username + '/validate/' + user.validation_token,
     };
 
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
 
-        res.writeHead(500, { "Content-Type": "text/plain" });
-        return res.end("Email couldn't be sent" + error);
-
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info.response);
         //  var caAddr = "http://localhost:7054";
 
         var caAddr = process.env.CA_ADDR;
@@ -272,14 +278,27 @@ if (typeof ReviewToken !== 'undefined') {
                 }
                 else {
                   console.log('user inserted');
+
+    ///////////////////////::
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+
+        res.writeHead(500, { "Content-Type": "text/plain" });
+        return res.end("Email couldn't be sent");
+
+        console.log(error);
+      } else {
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify(body));
+      }
+    });
+    /////////////////////////:::
                 }
               });
             }
             catch (e) {
             }
-
-            res.writeHead(200, { "Content-Type": "application/json" });
-            return res.end(JSON.stringify(body));
 
             //return examples;
             //return res.status(404);
@@ -287,8 +306,6 @@ if (typeof ReviewToken !== 'undefined') {
             //res.send(util.format("{\"status\" : \"ok\", \"message\": \"User registered successfully\", \"pubkey\" : \"%s\"}",JSON.parse(result).pubkey))
           }
         );
-      }
-    });
 
   }
   }
