@@ -23,8 +23,8 @@ function SendMailToInviteReviewer(reviewer_mail,review_token, next)
      from: 'ptwistmail@gmail.com',
      to: reviewer_mail,
      subject: 'Ptwist platform project review invitation',
-     text: 'Hello, you have been invited to review a project on the Ptwist platform, please click on this link to validate your account : ' +
-       'https://api.plastictwist.com/users/' + 'xyz' + '/review/' + review_token,
+     text: 'Hello, you have been invited to review a project on the Ptwist platform, please click on this link to register and submit your review : ' +
+       'http://my.ptwist.eu/projects/review/'+ review_token,
    };
 
    transporter.sendMail(mailOptions, function (error, info) {
