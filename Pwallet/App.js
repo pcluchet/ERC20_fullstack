@@ -19,7 +19,7 @@ import {
 //import { Constants } from 'expo';
 import Swiper from 'react-native-swiper';
 import TimerMixin from 'react-timer-mixin';
-import QRCode from 'react-native-qrcode';
+import QRCode from 'react-native-qrcode-svg';
 import Camera from 'react-native-camera';
 import Dimensions from 'Dimensions';
 import { Switch } from 'react-native-switch';
@@ -1779,7 +1779,7 @@ qrdata_ask = () => {
                   let amount= 0;
                   console.log("received : " + HowMuchIsAsked_display);
                   HowMuchIsAsked_display = HowMuchIsAsked_display.replace(",", ".");
-                  transferamount_display = transferamount_display.replace(/[^\d.-]/g, '');
+                  HowMuchIsAsked_display = HowMuchIsAsked_display.replace(/[^\d.-]/g, '');
 
                   console.log("onlypoint : " + HowMuchIsAsked_display);
 
@@ -1934,6 +1934,7 @@ qrdata_ask = () => {
 
 
         <Text style={{ flex: 1, fontSize : 18}}> My address</Text>
+        
           <QRCode
             style={[styles.qrcode,
             {
@@ -1944,6 +1945,7 @@ qrdata_ask = () => {
             bgColor="black"
             fgColor="white"
           />
+        
         <TextInput
           style={{
     color: 'rgba(255, 255, 255, 0.8)',
@@ -3014,6 +3016,7 @@ qrdata_ask = () => {
 
 
         <View style={styles.qrcodecontainer}>
+          {/*
           <QRCode
             style={styles.qrcode}
             value={this.qrdata()}
@@ -3021,6 +3024,7 @@ qrdata_ask = () => {
             bgColor="black"
             fgColor="white"
           />
+          */}
         </View>
       </View>
     );
@@ -4146,8 +4150,8 @@ other guy
               height: (Dimensions.get('window').height * 0.25) * 0.15,
               width: (Dimensions.get('window').width)
             }}>
-              Plastic Token Wallet</Text>
-
+              Plastic Token Wallet
+              </Text>
           </View>
           <View style={{ flex: 14}}>
           <View style={{ flex: 2, margin: 10 }}>
@@ -4157,7 +4161,6 @@ other guy
                 fontSize: 29,
                 color: 'rgba(255, 255, 255, 0.8)',
                 textAlign: "center",
-
                 backgroundColor: 'rgba(52, 52, 52, 0.5)',
                 //backgroundColor: '#e6e6e6',
                 //  borderColor : '#fff',

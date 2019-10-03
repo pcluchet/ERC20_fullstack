@@ -1,4 +1,4 @@
-package com.pwallet;
+package eu.ptwist;
 
 import android.app.Application;
 

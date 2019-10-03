@@ -1,4 +1,4 @@
-package com.pwallet;
+package eu.ptwist;
 
 import com.facebook.react.ReactActivity;
 
