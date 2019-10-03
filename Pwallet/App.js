@@ -308,6 +308,34 @@ export const getAllowancesTo = username => {
     });
 };
 
+
+export const UsernameToPubKey = (username, password, username_to_resolve) => {
+  return fetch(`${APIURL}/users/${username_to_resolve}/getpublic`, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'X-request-username': username,
+      'X-request-password': password,
+    },
+ })
+    .then(response => {
+      if (response.status == 200)
+      {
+      return response.json().pubkey;
+      }
+      else
+      {
+      return "failed";
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
+};
+
+
+
 export const TransferTokens = (username, password, to, amount) => {
   var argarray = [];
   argarray[0] = to;
@@ -566,10 +594,10 @@ export default class App extends Component {
       invoiceEdit: true,
       qrcode: '',
       name: '',
-      logged: false,
-      username: '',
-      password: '',
-      pubkey: '',
+      logged: true,
+      username: 'centralbank',
+      password: 'cbpassword',
+      pubkey: 'abc',
       register: false,
       balance: '0.00',
       transferamount: '', // nom de la bière
@@ -1521,6 +1549,33 @@ transfer = () => {
           </View>);
   }
 
+  TransferUsernameField = () => {
+    return (
+        <View style={{ flex: 7, margin: 10 }}>
+            <TextInput
+              value={this.state.transferto_un}
+              style={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                textAlign: "center",
+                borderRadius: 999,
+                fontSize: 15,
+                backgroundColor: 'rgba(52, 52, 52, 0.5)',
+                //borderColor : '#fff',
+                //borderWidth : 1,
+
+                height: "100%",
+                fontWeight: '100'
+              }}
+              placeholderTextColor='rgba(52, 52, 52, 0.5)'
+              placeholder="Username"
+              secureTextEntry={false}
+              onChangeText={transferto_un => this.setState({ transferto_un })}
+            />
+          </View>);
+  }
+
+
+
   ScanInTransfer = () => {
     this.setState ({scanToInputAddress : true});
               this.setState({ ScannedContact : false });
@@ -1557,6 +1612,10 @@ transfer = () => {
     if (this.state.ManualTransfer)
     {
       TransferToField = this.TransferManualField()
+    }
+    if (this.state.UsernameTransfer)
+    {
+      TransferToField = this.TransferUsernameField()
     }
     return(
   <View style={{ 
@@ -1659,8 +1718,35 @@ transfer = () => {
 
             <View style={[{ flexDirection: 'row', flex: 1, marginLeft: 10, marginRight: 10 }]}>
               <Switch
+                value={this.state.UsernameTransfer}
+                onValueChange={(val) => this.setState({ UsernameTransfer: val, ManualTransfer : !val})}
+                disabled={false}
+                circleSize={30}
+                barHeight={30}
+                borderColor="white"
+                circleBorderWidth={1}
+                backgroundActive='rgba(255, 255, 255, 0.5)'
+                backgroundInactive='rgba(52, 52, 52, 0.5)'
+                circleActiveColor={'#30a566'}
+                circleInActiveColor='rgba(52, 52, 52, 0.8)'
+                changeValueImmediately={true}
+                innerCircleStyle={{ borderColor: 'rgba(52, 52, 52, 0.0)', alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
+                outerCircleStyle={{ borderColor: 'white' }} // style for outer animated circle
+                renderActiveText={false}
+                renderInActiveText={false}
+                switchLeftPx={2} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
+                switchRightPx={2} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
+                switchWidthMultiplier={2} // multipled by the `circleSize` prop to calculate total width of the Switch
+              />
+              <Text style={{ fontSize: 16, textAlign: 'center', marginLeft: 10, color: 'rgba(52, 52, 52, 0.8)' }}>
+                Input username instead of address
+            </Text>
+            </View>
+ 
+            <View style={[{ flexDirection: 'row', flex: 1, marginLeft: 10, marginRight: 10 }]}>
+              <Switch
                 value={this.state.ManualTransfer}
-                onValueChange={(val) => this.setState({ ManualTransfer: val })}
+                onValueChange={(val) => this.setState({ ManualTransfer: val, UsernameTransfer: !val })}
                 disabled={false}
                 circleSize={30}
                 barHeight={30}
@@ -1683,7 +1769,7 @@ transfer = () => {
                 Manually input the address
             </Text>
             </View>
-            <View style={[{ flexDirection: 'row', flex: 2.5, marginLeft: 10, marginRight: 10, paddingTop : 10 }]}>
+            <View style={[{ flexDirection: 'row', flex: 1.5, marginLeft: 10, marginRight: 10, paddingTop : 10 }]}>
               <Switch
                 value={this.state.ResetTransferFields}
                 onValueChange={(val) => this.setState({ ResetTransferFields: val })}
@@ -4387,7 +4473,84 @@ other guy
 
   ft_transfer = () => {
     this.setState({ transferPending: true });
+    
+    if (this.state.UsernameTransfer) {
 
+
+    UsernameToPubKey(this.state.username, this.state.password, this.state.transferto_un).then (
+      pk => { 
+        if (pk == "failed")
+        {
+          this.setState({ transferto: '0' });
+        }
+        else
+        {
+          this.setState({ transferto: pk });
+        }
+
+    if (this.state.transferfrom == '') {
+      console.log('transfer normal');
+      if (this.state.transferto == '0') {
+        alert('You must specify a valid username ❌');
+        this.setState({ transferPending: false });
+      } else
+        TransferTokens(
+          this.state.username,
+          this.state.password,
+          this.state.transferto,
+          this.state.transferamount
+        )
+          .then(json => {
+            console.log('DEBUG: transfer :' + JSON.stringify(json));
+            var jsonresp = (json);
+            if (jsonresp.status == '200') {
+              alert('Transfer successfull ! ✅');
+            } else {
+              alert('Transfer failed! ❌');
+            }
+            if (this.state.ResetTransferFields)
+            {
+              this.ft_resetfields_transfer(['transferamount','transferamount_display','transferto_un']); 
+            }
+            this.setState({ transferPending: false });
+          })
+          .catch(error => console.log(error));
+    } else {
+      console.log('transfer from');
+      TransferTokensFrom(
+        this.state.username,
+        this.state.transferto,
+        this.state.transferamount,
+        this.state.transferfrom
+      )
+        .then(json => {
+          console.log('DEBUG: jsontransfer :' + json);
+          console.log('DEBUG: jsontransferst :' + json.result);
+          if (json.result == '200') {
+            alert('Transfer successfull ! ✅');
+          } else {
+            alert('Transfer failed! ❌');
+          }
+
+          this.ft_resetfields_transfer([
+            'transferfrom',
+            'transferto',
+            'transferamount',
+          ]);
+          this.setState({ transferPending: false });
+        })
+        .catch(error => console.log(error));
+    }
+ 
+
+
+      }
+    );
+    
+    
+    }
+    else
+    {
     if (this.state.transferfrom == '') {
       console.log('transfer normal');
       if (this.state.transferto == '0') {
@@ -4442,6 +4605,7 @@ other guy
         })
         .catch(error => console.log(error));
     }
+  }
   };
 
   ft_approve = () => {
