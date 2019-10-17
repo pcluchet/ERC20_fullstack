@@ -4,7 +4,9 @@ var utils = require('../utils/writer.js');
 var Query = require('../service/QueryService');
 var users = require('../db/users');
 
-var reviewSchema ={
+
+var reviewSchema =
+{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
@@ -22,6 +24,9 @@ var reviewSchema ={
     },
     "Impact": {
       "type": "number"
+    },
+    "Comment": {
+      "type": "string"
     }
   },
   "required": [
@@ -29,9 +34,10 @@ var reviewSchema ={
     "Innovation",
     "Material",
     "Transport",
-    "Impact"
+    "Impact",
+    "Comment"
   ]
-}; 
+};
 
 module.exports.SubmitReview = function (req, res, next) {
   var username = req.swagger.params['username'].value;
