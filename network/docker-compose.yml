@@ -10,7 +10,7 @@ networks:
 
 services:
   ca.medsos.com:
-    image: hyperledger/fabric-ca
+    image: hyperledger/fabric-ca:1.4.1
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca.medsos.com
@@ -29,7 +29,7 @@ services:
       - ptwist
 
   ca.bluecity.com:
-    image: hyperledger/fabric-ca
+    image: hyperledger/fabric-ca:1.4.1
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca.bluecity.com
@@ -53,7 +53,7 @@ services:
 
 
   ca.hslu.com:
-    image: hyperledger/fabric-ca
+    image: hyperledger/fabric-ca:1.4.1
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca.hslu.com
@@ -76,7 +76,7 @@ services:
 
   orderer.example.com:
     container_name: orderer.example.com
-    image: hyperledger/fabric-orderer
+    image: hyperledger/fabric-orderer:1.4.1
     environment:
       - GODEBUG=netdns=go
       - ORDERER_GENERAL_LOGLEVEL=info
@@ -98,7 +98,7 @@ services:
 
   peer0.MEDSOS.example.com:
     container_name: peer0.MEDSOS.example.com
-    image: hyperledger/fabric-peer
+    image: hyperledger/fabric-peer:1.4.1
     environment:
       - GODEBUG=netdns=go
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
@@ -138,7 +138,7 @@ services:
 
   peer1.MEDSOS.example.com:
     container_name: peer1.MEDSOS.example.com
-    image: hyperledger/fabric-peer
+    image: hyperledger/fabric-peer:1.4.1
     environment:
       - GODEBUG=netdns=go
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
@@ -179,7 +179,7 @@ services:
 
   peer0.HSLU.example.com:
     container_name: peer0.HSLU.example.com
-    image: hyperledger/fabric-peer
+    image: hyperledger/fabric-peer:1.4.1
     environment:
       - GODEBUG=netdns=go
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
@@ -220,7 +220,7 @@ services:
 
   peer1.HSLU.example.com:
     container_name: peer1.HSLU.example.com
-    image: hyperledger/fabric-peer
+    image: hyperledger/fabric-peer:1.4.1
     environment:
       - GODEBUG=netdns=go
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
@@ -263,7 +263,7 @@ services:
 
   peer0.BLUECITY.example.com:
     container_name: peer0.BLUECITY.example.com
-    image: hyperledger/fabric-peer
+    image: hyperledger/fabric-peer:1.4.1
     environment:
       - GODEBUG=netdns=go
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
@@ -303,7 +303,7 @@ services:
 
   peer1.BLUECITY.example.com:
     container_name: peer1.BLUECITY.example.com
-    image: hyperledger/fabric-peer
+    image: hyperledger/fabric-peer:1.4.1
     environment:
       - GODEBUG=netdns=go
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
@@ -462,7 +462,7 @@ services:
 
   cli:
     container_name: cli
-    image: hyperledger/fabric-tools
+    image: hyperledger/fabric-tools:1.4.1
     tty: true
     environment:
       - GOPATH=/opt/gopath
