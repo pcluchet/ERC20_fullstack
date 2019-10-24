@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  KeyboardAvoidingView,
   Clipboard,
   Text,
   TextInput,
@@ -597,7 +598,7 @@ export default class App extends Component {
       logged: false,
       username: '',
       password: '',
-      pubkey: '',
+      pubkey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEz45koUQF9SYjHKEtS3S0GeJ0gVVEp5k6d8OdMMlj1UTtY9P46NVDELnGVLaflUGHPC1Zbj5DaySl9b6gNSVOPw==',
       register: false,
       balance: '0.00',
       transferamount: '', // nom de la bière
@@ -2388,8 +2389,8 @@ qrdata_ask = () => {
                      }}>
 
 
-        <Text style={{ flex: 1, fontSize : 18}}> You have scanned a token demand</Text>
-        <Text style={{ flex: 1, fontSize : 18}}> This Address  </Text>
+       <Text style={{ flex: 1, fontSize : 18}}> You have scanned a token demand</Text>
+       <Text style={{ flex: 1, fontSize : 18}}> The following address would like to receive {this.state.TokenDemandAmount} Tokens :</Text>
        <TextInput
           style={{
                 color: 'rgba(255, 255, 255, 0.8)',
@@ -2404,10 +2405,7 @@ qrdata_ask = () => {
           }}
           value={this.state.TokenDemandAddr}
         />
-        <Text style={{ flex: 1, fontSize : 18}}> would like to receive </Text>
-        <Text style={{ flex: 2, fontSize : 30}}> {this.state.TokenDemandAmount} </Text>
-        <Text style={{ flex: 1, fontSize : 18}}> Tokens </Text>
-        <View style ={{flex : 2, flexDirection : "row", alignItems : "center", justifyContent : "center"}}>
+       <View style ={{flex : 2, flexDirection : "row", alignItems : "center", justifyContent : "center"}}>
         <TouchableOpacity
           onPress={this.writeAddressDemandToClipboard}
           style = {{
@@ -2453,7 +2451,7 @@ qrdata_ask = () => {
               fontSize: 18,
               fontWeight: '100',
             }}>
-            Go to transfer page
+            Complete transaction
             </Text>
         </TouchableOpacity>
         </View>
@@ -2487,17 +2485,14 @@ qrdata_ask = () => {
               fontSize: 18,
               fontWeight: '100',
             }}>
-            Back To Scan
+            Scan another Address
             </Text>
         </TouchableOpacity>
         </View>
           </View>);
   }
 
-
-
   ScannedContactIface = () => {
-
     return (
         <View style={{ 
                        flex: 16,
@@ -2506,8 +2501,6 @@ qrdata_ask = () => {
                        justifyContent : "center",
                        alignItems : "center",
                      }}>
-
-
         <Text style={{ flex: 1, fontSize : 18}}> You have scanned a contact</Text>
         <Text style={{ flex: 1, fontSize : 18}}> Contact name </Text>
        <TextInput
@@ -2589,7 +2582,6 @@ qrdata_ask = () => {
             </Text>
         </TouchableOpacity>
         </View>
-
         <View style ={{flex : 3, flexDirection : "row", alignItems : "center", justifyContent : "center"}}>
         </View>
         <View style ={{flex : 2, flexDirection : "row", alignItems : "center", justifyContent : "center"}}>
@@ -2623,9 +2615,7 @@ qrdata_ask = () => {
             </Text>
         </TouchableOpacity>
         </View>
-
-
-          </View>);
+        </View>);
   }
 
   ScannerIface = () => {
@@ -2660,6 +2650,8 @@ qrdata_ask = () => {
         iface = this.ScannerIface();
 
     return (
+      <KeyboardAvoidingView
+      behavior="position">
 <LinearGradient
   start={{x: 0.0, y: 0.25}} end={{x: 0.5, y: 1.0}}
   locations={[0,1]}
@@ -2671,6 +2663,7 @@ qrdata_ask = () => {
           {navbar}
         </View>
 </LinearGradient>
+</KeyboardAvoidingView>
     );
   };
 
@@ -2907,6 +2900,8 @@ qrdata_ask = () => {
     });
     var btn_content = this.login_btn_content();
     return (
+      <KeyboardAvoidingView
+      behavior="position">
       <View style={{}}>
 
 
@@ -3055,6 +3050,7 @@ qrdata_ask = () => {
 
 </LinearGradient>
       </View>
+</KeyboardAvoidingView>
     );
   };
 
@@ -4220,7 +4216,10 @@ other guy
       viewBox: '0 0 64 64'
     });
     return (
-      <View style={{}}>
+
+<KeyboardAvoidingView
+behavior="position">
+<View style={{}}>
 <LinearGradient
   start={{x: 0.0, y: 0.25}} end={{x: 0.5, y: 1.0}}
   locations={[0,1]}
@@ -4416,6 +4415,8 @@ other guy
         </View>
        </LinearGradient>
       </View>
+
+      </KeyboardAvoidingView>
     )
 
     return (
