@@ -104,6 +104,7 @@ type Review struct {
 
 type ShopItem struct {
 	Reviews      []Review
+	ReviewsMean  float64
 	Category     string
 	ReservePrice uint64
 	Biddable     bool

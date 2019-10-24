@@ -8,6 +8,21 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
+func updateReviewMean(itm ShopItem) ShopItem {
+
+	if len(itm.Reviews) == 0 {
+		return itm
+	}
+
+	var result float64
+	for _, element := range itm.Reviews {
+		result += float64(element.Grade)
+		// element is the element from someSlice for where we are
+	}
+	itm.ReviewsMean = result / float64(len(itm.Reviews))
+
+	return itm
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
@@ -63,6 +78,7 @@ func submitReview(args []string) (string, error) {
 	}
 
 	itm.Reviews = append(itm.Reviews, ReviewToAdd)
+	itm = updateReviewMean(itm)
 
 	//commit item key
 	itemBytes, err = json.Marshal(itm)
