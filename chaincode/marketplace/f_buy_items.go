@@ -50,7 +50,7 @@ func buyItems(args []string) (string, error) {
 			full_payload += " | " + temp_payload
 		}
 		if err != nil {
-			return full_payload, fmt.Errorf("At least one of the sale submissions was unsuccessfull (" + strconv.Itoa(index) + ") no sales have been commited to the ledger")
+			return full_payload, fmt.Errorf("At least one of the sale submissions was unsuccessfull (" + strconv.Itoa(index) + " : " + err.Error() + ") no sales have been commited to the ledger")
 		}
 	}
 	return full_payload, nil
