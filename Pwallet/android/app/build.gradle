@@ -101,8 +101,8 @@ android {
         applicationId "eu.ptwist"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 16
-        versionName "2.9"
+        versionCode 19
+        versionName "2.93"
         ndk {
             abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }

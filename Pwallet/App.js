@@ -26,6 +26,7 @@ import Dimensions from 'Dimensions';
 import { Switch } from 'react-native-switch';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
+import SwitchSelector from "react-native-switch-selector";
 
 
 import Svg, {
@@ -323,7 +324,11 @@ export const UsernameToPubKey = (username, password, username_to_resolve) => {
     .then(response => {
       if (response.status == 200)
       {
-      return response.json().pubkey;
+      return response.json().then(
+        json => {
+          return json.pubkey;
+        }
+      );
       }
       else
       {
@@ -595,10 +600,11 @@ export default class App extends Component {
       invoiceEdit: true,
       qrcode: '',
       name: '',
+      sendtoiface: 'contact',
       logged: false,
       username: '',
       password: '',
-      pubkey: 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEz45koUQF9SYjHKEtS3S0GeJ0gVVEp5k6d8OdMMlj1UTtY9P46NVDELnGVLaflUGHPC1Zbj5DaySl9b6gNSVOPw==',
+      pubkey: '',
       register: false,
       balance: '0.00',
       transferamount: '', // nom de la bière
@@ -831,7 +837,7 @@ export default class App extends Component {
               this.setState({ transfer : true });
               this.setState({ contacts : false });
               this.setState({ transferto : a.a });
-              this.setState({ ManualTransfer : true });
+              this.setState({ sendtoiface : 'address' });
               this.setState({ scanToInputAddress : false });
               }
 
@@ -1554,6 +1560,8 @@ transfer = () => {
     return (
         <View style={{ flex: 7, margin: 10 }}>
             <TextInput
+              autoCapitalize={'none'}
+              autoComplete={'off'}
               value={this.state.transferto_un}
               style={{
                 color: 'rgba(255, 255, 255, 0.8)',
@@ -1609,6 +1617,26 @@ transfer = () => {
   }
 
   TransferSendIface = () => {
+    var TransferToField;
+    var initial_val;
+    switch (this.state.sendtoiface) {
+      case 'contact':
+        TransferToField = this.TransferToContactField();
+        initial_val = 0;
+        break;
+      case 'username':
+        TransferToField = this.TransferUsernameField()
+        initial_val = 1;
+        break;
+      case 'address':
+        TransferToField = this.TransferManualField()
+        initial_val = 2;
+        break;
+      default:
+        TransferToField = this.TransferToContactField();
+        initial_val = 0;
+    }
+    /*
     var TransferToField = this.TransferToContactField();
     if (this.state.ManualTransfer)
     {
@@ -1618,6 +1646,12 @@ transfer = () => {
     {
       TransferToField = this.TransferUsernameField()
     }
+    */
+    const options = [
+      { label: "Contact", value: "contact" },
+      { label: "Username", value: "username" },
+      { label: "Address", value: "address" }
+    ];
     return(
   <View style={{ 
                        flex: 15,
@@ -1652,12 +1686,13 @@ transfer = () => {
               onChangeText={
                 (transferamount_display) => {
                   let amount = 0;
+                  let i = 0;
                   console.log("received : " + transferamount_display);
                   transferamount_display = transferamount_display.replace(",", ".");
+                  transferamount_display = transferamount_display.replace("-", '');
+                  transferamount_display = transferamount_display.replace(/\./g, m  => !i++ ? m : '');
                   transferamount_display = transferamount_display.replace(/[^\d.-]/g, '');
-
                   console.log("onlypoint : " + transferamount_display);
-
                   if (transferamount_display.includes("."))
                   {
                       var pieces = transferamount_display.split(".");
@@ -1677,23 +1712,14 @@ transfer = () => {
                   this.setState({ transferamount_display : transferamount_display});
                     amount = transferamount_display * this.state.divideby;
                   }
-
-
                   console.log("AMOUNTTRS :" + amount);
-
                   this.setState({ transferamount : amount});
-
-                
                 }
-              
               }
             />
           </View>
-
           <Text style={{ flex: 1, fontSize : 18}}> To</Text>
           <View style={{ flex: 2, margin: 10, flexDirection : 'row'}}>
-
-
               {TransferToField}
               <TouchableOpacity onPress={this.ScanInTransfer}
                 style={{
@@ -1715,8 +1741,24 @@ transfer = () => {
 
           <View style={[{ flex: 6 }]}>
 
+            <View style={[{ flexDirection: 'row', flex: 1, marginLeft: 10, marginRight: 10, justifyContent: 'center' }]}>
 
+              <Text style={{ fontSize: 16, textAlign: 'center', color: 'rgba(52, 52, 52, 0.8)', justifyContent: 'center' }}>
+                Send tokens to :
+            </Text>
+ 
 
+            </View>
+            <SwitchSelector
+  textColor='rgba(52, 52, 52, 0.8)'
+  options={options}
+  backgroundColor='rgba(255, 255, 255, 0.5)'
+  buttonColor={'#30a566'}
+  initial={initial_val}
+  onPress={value => this.setState({sendtoiface : value})}
+/>
+
+{/*
             <View style={[{ flexDirection: 'row', flex: 1, marginLeft: 10, marginRight: 10 }]}>
               <Switch
                 value={this.state.UsernameTransfer}
@@ -1770,7 +1812,8 @@ transfer = () => {
                 Manually input the address
             </Text>
             </View>
-            <View style={[{ flexDirection: 'row', flex: 1.5, marginLeft: 10, marginRight: 10, paddingTop : 10 }]}>
+*/}           
+            <View style={[{ flexDirection: 'row', flex: 1.5, marginLeft: 10, marginRight: 10, paddingTop : 10, alignItems : "center"}]}>
               <Switch
                 value={this.state.ResetTransferFields}
                 onValueChange={(val) => this.setState({ ResetTransferFields: val })}
@@ -1864,8 +1907,12 @@ qrdata_ask = () => {
               onChangeText={
                 (HowMuchIsAsked_display) => {
                   let amount= 0;
+                  let i=0;
                   console.log("received : " + HowMuchIsAsked_display);
                   HowMuchIsAsked_display = HowMuchIsAsked_display.replace(",", ".");
+                  HowMuchIsAsked_display = HowMuchIsAsked_display.replace("-", '');
+                  HowMuchIsAsked_display = HowMuchIsAsked_display.replace(/\./g, m  => !i++ ? m : '');
+ 
                   HowMuchIsAsked_display = HowMuchIsAsked_display.replace(/[^\d.-]/g, '');
 
                   console.log("onlypoint : " + HowMuchIsAsked_display);
@@ -2085,7 +2132,7 @@ qrdata_ask = () => {
   }
   setTransferFromClist = (item) => {
       this.setState({
-            ManualTransfer: false,
+            sendtoiface: 'contact',
             transferto : item.pubkey,
             selectedUserType : item.pubkey,
           })
@@ -2228,6 +2275,7 @@ qrdata_ask = () => {
         </View>
   <View style={{ 
                        flex: 2,
+                       flexDirection : "row",
                        padding : 10,
                        justifyContent : "center",
                        alignItems : "center"
@@ -2237,12 +2285,14 @@ qrdata_ask = () => {
               this.setState({ scanningContact: false, ManualContact: true })
             }
           style = {{
+            marginRight : '10%',
                   borderRadius: 999,
                   backgroundColor: "#4CB676",
                   textAlignVertical: "center",
                   justifyContent: 'center',
                   alignItems: 'center',
-                  width : '80%',
+                  width : '40%',
+                  height : '100%',
                 flex : 2,
           }}
             >
@@ -2255,6 +2305,36 @@ qrdata_ask = () => {
               Add a contact manually
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => 
+            {
+              this.setState({ home : false });
+              this.setState({ scan : true });
+              this.setState({ transfer : false });
+              this.setState({ contacts : false });
+            }
+            }
+          style = {{
+                  borderRadius: 999,
+                  backgroundColor: "#4CB676",
+                  textAlignVertical: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width : '40%',
+                  height : '100%',
+                flex : 2,
+          }}
+            >
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 21,
+                fontWeight: '100',
+              }}>
+              Scan a contact
+            </Text>
+          </TouchableOpacity>
+
 </View>
       </View>
   );
@@ -2363,7 +2443,7 @@ qrdata_ask = () => {
 
   setTransferFromDemand = () => {
       this.setState({
-            ManualTransfer: true,
+            sendtoiface: 'address',
             transferto : this.state.TokenDemandAddr,
             transferamount_display : this.state.TokenDemandAmount, 
             transferamount : this.state.TokenDemandAmount * this.state.divideby, 
@@ -4062,6 +4142,7 @@ other guy
   };
 
   submRegister = () => {
+    var regex_mail = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
     console.log("Attempting to register");
     if (this.state.OngoingRegister) {
       console.log("Ongoing registration, please wait");
@@ -4082,7 +4163,27 @@ other guy
       this.setState({
         OngoingRegister: false
       });
-    } else
+    }  else if (this.state.username.length < 3) {
+      alert('Username must be at least 3 characters long ❌');
+      this.setState({
+        OngoingRegister: false
+      });
+    }  else if ( !this.state.username.match("^[A-Za-z0-9]+$")) {
+      alert('Username must contains only letters or numbers ❌');
+      this.setState({
+        OngoingRegister: false
+      });
+    }  else if ( this.state.password.length < 8 ) {
+      alert('Password must be at least 8 characters long ❌');
+      this.setState({
+        OngoingRegister: false
+      });
+    }  else if ( ! regex_mail.test(this.state.email.toLowerCase()) ) {
+      alert('Email Address seems invalid ❌');
+      this.setState({
+        OngoingRegister: false
+      });
+    }  else
       CreateAccount(
         this.state.username,
         this.state.password,
@@ -4175,7 +4276,8 @@ other guy
       { "l" : "Thessaloniki"},
       { "l" : "Lucerne"},
       { "l" : "Rotterdam"},
-      { "l" : "Athens"}
+      { "l" : "Athens"},
+      { "l" : "Istanbul"}
     ];
       return clist.map(location => (
         <Picker.Item
@@ -4202,9 +4304,6 @@ other guy
         </Picker>
       );
   };
-
-
-
 
 
   register = () => {
@@ -4317,11 +4416,7 @@ behavior="position">
                 fontSize: 29,
                 color: 'rgba(255, 255, 255, 0.8)',
                 textAlign: "center",
-
                 backgroundColor: 'rgba(52, 52, 52, 0.5)',
-                //backgroundColor: '#e6e6e6',
-                //  borderColor : '#fff',
-                //borderWidth : 1,
                 height: "100%",
                 fontWeight: '200'
               }}
@@ -4471,15 +4566,21 @@ behavior="position">
     );
   }
 
-
   ft_transfer = () => {
     this.setState({ transferPending: true });
-    
-    if (this.state.UsernameTransfer) {
 
+    if (this.state.transferamount == 0)
+    {
+     alert('You cannot transfer 0 tokens ❌');
+        this.setState({ transferPending: false });
+        return;
+    }
 
+    if (this.state.sendtoiface == 'username') 
+    {
     UsernameToPubKey(this.state.username, this.state.password, this.state.transferto_un).then (
       pk => { 
+      console.log("PKKKTO USERNAME pk =" + pk);
         if (pk == "failed")
         {
           this.setState({ transferto: '0' });
@@ -4488,13 +4589,23 @@ behavior="position">
         {
           this.setState({ transferto: pk });
         }
-
     if (this.state.transferfrom == '') {
       console.log('transfer normal');
       if (this.state.transferto == '0') {
         alert('You must specify a valid username ❌');
         this.setState({ transferPending: false });
-      } else
+      } else {
+
+        ft_UserExist(this.state.username, this.state.password, this.state.transferto, userexist => {
+          console.log("USER EXIST :" + userexist);
+
+          if (!userexist)
+          {
+            alert('Specified address is invalid ❌');
+            this.setState({ transferPending: false });
+          } else {
+          
+
         TransferTokens(
           this.state.username,
           this.state.password,
@@ -4516,35 +4627,13 @@ behavior="position">
             this.setState({ transferPending: false });
           })
           .catch(error => console.log(error));
-    } else {
-      console.log('transfer from');
-      TransferTokensFrom(
-        this.state.username,
-        this.state.transferto,
-        this.state.transferamount,
-        this.state.transferfrom
-      )
-        .then(json => {
-          console.log('DEBUG: jsontransfer :' + json);
-          console.log('DEBUG: jsontransferst :' + json.result);
-          if (json.result == '200') {
-            alert('Transfer successfull ! ✅');
-          } else {
-            alert('Transfer failed! ❌');
-          }
-
-          this.ft_resetfields_transfer([
-            'transferfrom',
-            'transferto',
-            'transferamount',
-          ]);
-          this.setState({ transferPending: false });
-        })
-        .catch(error => console.log(error));
+        }
+        
+        }
+        
+        )
+       }
     }
- 
-
-
       }
     );
     
@@ -4557,7 +4646,17 @@ behavior="position">
       if (this.state.transferto == '0') {
         alert('You must specify a user ❌');
         this.setState({ transferPending: false });
-      } else
+      } else {
+        ft_UserExist(this.state.username, this.state.password, this.state.transferto, userexist => {
+          console.log("USER EXIST :" + userexist);
+
+          if (!userexist)
+          {
+            alert('Specified address is invalid ❌');
+            this.setState({ transferPending: false });
+            return;
+          }
+
         TransferTokens(
           this.state.username,
           this.state.password,
@@ -4574,12 +4673,13 @@ behavior="position">
             }
             if (this.state.ResetTransferFields)
             {
-              this.ft_resetfields_transfer(['transferamount','transferamount_display']); 
+              this.ft_resetfields_transfer(['transferamount','transferamount_display','transferto_un']); 
             }
-
             this.setState({ transferPending: false });
           })
           .catch(error => console.log(error));
+        })
+        }
     } else {
       console.log('transfer from');
       TransferTokensFrom(
