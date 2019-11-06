@@ -2729,6 +2729,26 @@ qrdata_ask = () => {
       else if (this.state.scan)
         iface = this.ScannerIface();
 
+
+        if (this.state.transfer)
+        {
+        return (
+<LinearGradient
+  start={{x: 0.0, y: 0.25}} end={{x: 0.5, y: 1.0}}
+  locations={[0,1]}
+  colors={['#82B95E', '#12947A']}
+  style={styles.imgBackground}>
+        <View style={{ width : '100%', height : '100%', flex : 20 }}>
+          {logoutButton}
+          {iface}
+          {navbar}
+        </View>
+</LinearGradient>
+    );
+      
+        }
+        else
+   {     
     return (
       <KeyboardAvoidingView
       behavior="position">
@@ -2745,6 +2765,7 @@ qrdata_ask = () => {
 </LinearGradient>
 </KeyboardAvoidingView>
     );
+   }
   };
 
   logoutButton = st => {
