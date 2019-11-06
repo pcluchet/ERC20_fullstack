@@ -159,7 +159,7 @@ paths:
       x-swagger-router-controller: "SubmitReview"
 
   /users/{username}/grantReviewRights:
-    post:
+    patch:
       tags:
       - "Project management"
       summary: "allow an existing user to become reviewer"

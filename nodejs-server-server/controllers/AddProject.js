@@ -38,9 +38,6 @@ module.exports.AddProject = function (req, res, next) {
     "DurationOfTheCycle": {
       "type": "integer"
     },
-    "Stage": {
-      "type": "integer"
-    },
     "StakeHoldersEvaluations": {
       "type": "array",
       "items": [
@@ -412,7 +409,6 @@ module.exports.AddProject = function (req, res, next) {
     "plastic_category",
     "AmountOfPlasticRemoved",
     "DurationOfTheCycle",
-    "Stage",
     "StakeHoldersEvaluations",
     "InnovationData",
     "TransportData",
@@ -434,7 +430,6 @@ module.exports.AddProject = function (req, res, next) {
   }
 
   //var projectobj  = JSON.parse(projectdata);
-
   //var validate = require('jsonschema').validate;
 
   var Validator = require('jsonschema').Validator;
@@ -476,7 +471,7 @@ module.exports.AddProject = function (req, res, next) {
             console.log("mouai");
 
             res.writeHead(200, { "Content-Type": "application/json" });
-            return res.end("");
+            return res.end(JSON.stringify(retz));
 
            });
       }

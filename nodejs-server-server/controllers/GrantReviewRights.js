@@ -35,7 +35,7 @@ module.exports.GrantReviewRights = function (req, res, next) {
             if (retz == "error")
             {
               res.writeHead(400, { "Content-Type": "plain/text" });
-              return res.end("Error, invalid or already used review token provided");
+              return res.end("Error, invalid or expired review token provided");
             }
             res.writeHead(200, { "Content-Type": "plain/text" });
             return res.end("Your reviewing rights have been successfully updated");
@@ -63,7 +63,7 @@ module.exports.GrantReviewRights = function (req, res, next) {
             if (retz == "error")
             {
             res.writeHead(400, { "Content-Type": "plain/text" });
-            return res.end("Error, maybe you don't have rights for this project");
+            return res.end("Error, invalid or expired review token provided");
             }
             res.writeHead(200, { "Content-Type": "plain/text" });
             return res.end("Your review has been successfully processed");
