@@ -122,7 +122,7 @@ if (typeof ReviewToken !== 'undefined') {
 
     //link new user-> reviewables
 
-    user.reviewable = { projectid : pro, done : false};
+    user.reviewables = [{projectid : pro, done : false}];
     //validation mail
     var nodemailer = require('nodemailer');
     var transporter = nodemailer.createTransport({

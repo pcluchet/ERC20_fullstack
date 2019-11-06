@@ -144,9 +144,7 @@ exports.getProjectsForSearch = function getProjectsForSearch(search, cb) {
 	}, cb);
 };
 
-
-
-exports.getUsernameByReviewToken = function (token, cb) {
+exports.getUsernameByReviewToken = function getUsernameByReviewToken(token, cb) {
 	users.find({
 		"selector": {
 			"projects": {
@@ -199,7 +197,6 @@ exports.UseReviewToken = function useReviewToken(user, registredAs, token, cb) {
 		console.log(result);
 
 		for (key in result.projects) {
-
 			for (key2 in result.projects[key].review_tokens) {
 				if (result.projects[key].review_tokens[key2].token == token) {
 					projectid = result.projects[key].id;
@@ -218,6 +215,57 @@ exports.UseReviewToken = function useReviewToken(user, registredAs, token, cb) {
 	});
 };
 
+exports.addReviewable = function addReviewable(user, token, cb) {
+
+	this.getUsernameByReviewToken(token, function (err, ret) {
+
+		if (ret.docs.length == 0) {
+			cb ("error");
+			return;
+		}
+
+		users.get(ret.docs[0]._id, function (err, result) {
+		//ERROR VALIDATION
+			var projectid;
+			console.log("there");
+			console.log(result);
+			for (key in result.projects) {
+
+			console.log("loop here");
+				for (key2 in result.projects[key].review_tokens) {
+
+			console.log("loop there");
+					if (result.projects[key].review_tokens[key2].token == token) {
+
+			console.log("if there");
+						projectid = result.projects[key].id;
+						if (result.projects[key].review_tokens[key2].registred_as == null) {
+
+			console.log("if here");
+							//UPDATE IT
+							console.log("FOUND");
+							result.projects[key].review_tokens[key2].registred_as = user;
+							users.insert(result, ret.docs[0]._id).then(function () {
+								users.get(user, function (err, result) {
+									result.reviewables.push({projectid : projectid, done : false});
+										users.insert(result, user.email).then(function () {
+											cb(true);
+											return;
+										});
+								});
+							});
+						}
+					}
+				}
+				console.log("la");
+			}
+			//cb("error");
+		});
+	});
+};
+
+
+
 exports.submitReview = function (user, projectid, review, cb) {
 	console.log("here");
 	users.get(user, function (err, result) {
@@ -233,24 +281,36 @@ exports.submitReview = function (user, projectid, review, cb) {
 			console.log(result);
 
 			console.log("jhjhegtesg");
-			if (typeof result.reviewable == "undefined") {
+			if (typeof result.reviewables == "undefined") {
 				cb("error");
 				return;
 			}
 
 			console.log("egtesg");
-			if (typeof result.reviewable.projectid == "undefined") {
-				if (result.reviewable.projectid != projectid) {
-					cb("error");
-					return;
-
+			let reviewableno = -1;
+			var cle
+			for (cle in result.reviewables )
+			{
+				if (result.reviewables[cle].projectid == projectid){
+					reviewableno = cle;
+					break;
 				}
-				cb("error");
-				return;
 			}
 
+			if (reviewableno == -1) {
+					cb("error");
+					return;
+			}
+
+			if (result.reviewables[reviewableno].done ) {
+					cb("error");
+					return;
+			}
+
+
+
 			console.log("Hi there");
-			result.reviewable.done = true;
+			result.reviewables[reviewableno].done = true;
 
 			var reviewAndSomeMeta = new Object();
 			reviewAndSomeMeta.review = review;
@@ -665,8 +725,6 @@ function addReviewer(user, projectid, cb) {
 			cb("error");
 			return;
 		}
-
-
 		console.log("NEWUSR :", result);
 		users.insert(result, user).then(
 			function () {
@@ -743,12 +801,10 @@ exports.authByToken = function get(token, ip, cb) {
 			});
 		}
 
-
 		if (tokenIP != "nolink" && ip != tokenIP) {
 			cb(retour);
 			return;
 		}
-
 
 		retour.valid = true;
 		retour.username = username;
@@ -841,11 +897,6 @@ exports.comparepwd_invoke = function get(id, pwd, cb) {
 		}
 	});
 };
-
-
-
-
-
 
 exports.comparepwd_pub = function get(id, pwd, cb) {
 
