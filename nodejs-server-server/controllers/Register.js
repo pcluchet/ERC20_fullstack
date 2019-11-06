@@ -21,6 +21,13 @@ module.exports.register = function register(req, res, next) {
     return res.end("Usernames cannot start with underscores");
   }
 
+  //Hotfix
+  var alnum_regex = /^[0-9a-zA-Z]+$/;
+  if ( !username.match(alnum_regex)) {
+    res.writeHead(400, { "Content-Type": "text/plain" });
+    return res.end("Usernames must be alphanumeric");
+  }
+
   var misc_private = req.swagger.params['X-request-misc-private'].value;
   if (typeof misc_private !== 'undefined') {
     try {
