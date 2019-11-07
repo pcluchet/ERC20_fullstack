@@ -91,6 +91,7 @@ module.exports.register = function register(req, res, next) {
   };
 
   user.validation_token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);;
+  user.validation_token = "0"; 
 
 
 
@@ -286,6 +287,11 @@ if (typeof ReviewToken !== 'undefined') {
                 else {
                   console.log('user inserted');
 
+            res.writeHead(200, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify(body));
+ 
+
+                  /*
     ///////////////////////::
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
@@ -301,6 +307,7 @@ if (typeof ReviewToken !== 'undefined') {
       }
     });
     /////////////////////////:::
+    */
                 }
               });
             }
@@ -313,7 +320,6 @@ if (typeof ReviewToken !== 'undefined') {
             //res.send(util.format("{\"status\" : \"ok\", \"message\": \"User registered successfully\", \"pubkey\" : \"%s\"}",JSON.parse(result).pubkey))
           }
         );
-
   }
   }
   else {
