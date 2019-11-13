@@ -219,10 +219,49 @@ exports.addReviewable = function addReviewable(user, token, cb) {
 
 	this.getUsernameByReviewToken(token, function (err, ret) {
 
+		console.log("hello");
 		if (ret.docs.length == 0) {
 			cb ("error");
 			return;
 		}
+		if (ret.docs[0]._id == user) {
+			cb ("error");
+			return;
+		}
+
+		for (key99 in ret.docs[0].projects) {
+
+			console.log("loop her_e");
+				for (key999 in ret.docs[0].projects[key99].review_tokens) {
+
+			console.log("loop the_re");
+					if (ret.docs[0].projects[key99].review_tokens[key999].token == token) {
+
+
+					if (ret.docs[0].projects[key99].review_tokens[key999].registred_as != null) {
+			cb ("error");
+			return;
+	
+					
+					}
+					}
+				}
+		}
+
+		let var99 = 0;
+		for (key99 in ret.docs[0].review_tokens)
+		{
+			console.log(ret.docs[0].review_tokens[key99]);
+			if (ret.docs[0].review_tokens[key99].registred_as != null) {
+				cb ("error");
+				return;
+			}
+		}
+
+
+
+
+
 
 		users.get(ret.docs[0]._id, function (err, result) {
 		//ERROR VALIDATION
@@ -249,7 +288,7 @@ exports.addReviewable = function addReviewable(user, token, cb) {
 								users.get(user, function (err, result) {
 									result.reviewables.push({projectid : projectid, done : false});
 										users.insert(result, user.email).then(function () {
-											cb(true);
+											cb(projectid);
 											return;
 										});
 								});

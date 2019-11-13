@@ -37,7 +37,7 @@ module.exports.getUserInfos = function getUserInfos(req, res, next) {
           "misc_public": result.fulluser.misc_public,
           "misc_private": result.fulluser.misc_private,
           "projects": result.fulluser.projects,
-          "reviewable": result.fulluser.reviewable
+          "reviewables": result.fulluser.reviewables
         };
 
 

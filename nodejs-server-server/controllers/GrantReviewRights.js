@@ -25,7 +25,7 @@ module.exports.GrantReviewRights = function (req, res, next) {
       if (!retu.valid)
       {
         res.writeHead(401, { "Content-Type": "text/plain" });
-        return res.end("Invalid/Expired token provided");
+        return res.end("Unauthorized");
       }
       else
       {
@@ -35,10 +35,10 @@ module.exports.GrantReviewRights = function (req, res, next) {
             if (retz == "error")
             {
               res.writeHead(400, { "Content-Type": "plain/text" });
-              return res.end("Error, invalid or expired review token provided");
+              return res.end("Error, invalid or expired review token provided, you also cannot grant yourself review rights for a project you created");
             }
             res.writeHead(200, { "Content-Type": "plain/text" });
-            return res.end("Your reviewing rights have been successfully updated");
+            return res.end("Your reviewing rights have been successfully updated for project id: "+retz);
            });
       }
     })
@@ -63,10 +63,10 @@ module.exports.GrantReviewRights = function (req, res, next) {
             if (retz == "error")
             {
             res.writeHead(400, { "Content-Type": "plain/text" });
-            return res.end("Error, invalid or expired review token provided");
+            return res.end("Error, invalid or expired review token provided, you also cannot grant yourself review rights for a project you created");
             }
             res.writeHead(200, { "Content-Type": "plain/text" });
-            return res.end("Your review has been successfully processed");
+            return res.end("Your reviewing rights have been successfully updated for project id: "+retz);
            });
       }
       else
