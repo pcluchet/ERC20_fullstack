@@ -480,16 +480,16 @@ function get_multiplier_transport(kilometers) {
 	if (kilometers <= 0)
 		return 0;
 	if (kilometers < 5) {
-		return 2.0
+		return 1.0
 	}
 	if (kilometers < 20) {
-		return 1.5
-	}
-	if (kilometers < 70) {
 		return 1.2
 	}
+	if (kilometers < 70) {
+		return 1.5
+	}
 	if (kilometers >= 70) {
-		return 1.0
+		return 2.0
 	}
 	return 0;
 }
@@ -520,16 +520,16 @@ function calc_ptp_stk(project) {
 		project.PeoplesData.OthersDirect;
 
 	if (direct_peoples_sum >= 1 && direct_peoples_sum <= 20) {
-		pt_peoples = 200;
+		pt_peoples = 2000;
 	}
 	else if (direct_peoples_sum >= 21 && direct_peoples_sum <= 100) {
-		pt_peoples = 500;
+		pt_peoples = 5000;
 	}
 	else if (direct_peoples_sum >= 101 && direct_peoples_sum <= 2000) {
-		pt_peoples = 800;
+		pt_peoples = 8000;
 	}
 	else if (direct_peoples_sum >= 2000) {
-		pt_peoples = 1000;
+		pt_peoples = 10000;
 	}
 
 	//Innovation
@@ -542,16 +542,16 @@ function calc_ptp_stk(project) {
 	}
 	switch (amount_of_yes) {
 		case 0:
-			pt_innov = 200;
+			pt_innov = 2000;
 			break;
 		case 1:
-			pt_innov = 500;
+			pt_innov = 5000;
 			break;
 		case 2:
-			pt_innov = 700;
+			pt_innov = 7000;
 			break;
 		case 3:
-			pt_innov = 1000;
+			pt_innov = 10000;
 			break;
 		default:
 			break;
@@ -560,51 +560,53 @@ function calc_ptp_stk(project) {
 	//Material
 
 	if (project.MaterialData.PETEorPET.present) {
-		pt_material += project.MaterialData.PETEorPET.RecyclingMultiplier * 1000;
+		pt_material += project.MaterialData.PETEorPET.RecyclingMultiplier * 10000;
 	}
 	if (project.MaterialData.HDPE.present) {
-		pt_material += project.MaterialData.HDPE.RecyclingMultiplier * 800;
+		pt_material += project.MaterialData.HDPE.RecyclingMultiplier * 8000;
 	}
 	if (project.MaterialData.PVC.present) {
-		pt_material += project.MaterialData.PVC.RecyclingMultiplier * 400;
+		pt_material += project.MaterialData.PVC.RecyclingMultiplier * 4000;
 	}
 	if (project.MaterialData.LDPE.present) {
-		pt_material += project.MaterialData.LDPE.RecyclingMultiplier * 600;
+		pt_material += project.MaterialData.LDPE.RecyclingMultiplier * 6000;
 	}
 	if (project.MaterialData.PP.present) {
-		pt_material += project.MaterialData.PP.RecyclingMultiplier * 300;
+		pt_material += project.MaterialData.PP.RecyclingMultiplier * 3000;
 	}
 	if (project.MaterialData.SP.present) {
-		pt_material += project.MaterialData.SP.RecyclingMultiplier * 200;
+		pt_material += project.MaterialData.SP.RecyclingMultiplier * 2000;
 	}
 
 	//Transport
 
 	console.log("BOJH");
-	console.log(get_multiplier_transport(project.TransportData.NoFueledVehicle) * 100);
+	//console.log(get_multiplier_transport(project.TransportData.NoFueledVehicle) * 1000);
 
-	pt_transport += get_multiplier_transport(project.TransportData.NoFueledVehicle) * 100;
-
-	console.log(pt_transport);
-	pt_transport += get_multiplier_transport(project.TransportData.ElectricVehicle) * 80;
+	//pt_transport += get_multiplier_transport(project.TransportData.NoFueledVehicle) * 1000;
 
 	console.log(pt_transport);
-	pt_transport += get_multiplier_transport(project.TransportData.GasVehicle) * 70;
+	pt_transport += get_multiplier_transport(project.TransportData.ElectricVehicle) * 100;
 
 	console.log(pt_transport);
-	pt_transport += get_multiplier_transport(project.TransportData.Hybrid) * 60;
+	pt_transport += get_multiplier_transport(project.TransportData.GasVehicle) * 300;
 
 	console.log(pt_transport);
-	pt_transport += get_multiplier_transport(project.TransportData.PublicTransport) * 50;
+	pt_transport += get_multiplier_transport(project.TransportData.Hybrid) * 400;
 
 	console.log(pt_transport);
-	pt_transport += get_multiplier_transport(project.TransportData.DieselVehicle) * 20;
+	pt_transport += get_multiplier_transport(project.TransportData.PublicTransport) * 500;
 
 	console.log(pt_transport);
-	pt_transport += get_multiplier_transport(project.TransportData.SeaFreight) * 10;
+	pt_transport += get_multiplier_transport(project.TransportData.DieselVehicle) * 500;
 
 	console.log(pt_transport);
-	pt_transport += get_multiplier_transport(project.TransportData.AirFreight) * 10;
+	pt_transport += get_multiplier_transport(project.TransportData.SeaFreight) * 600;
+
+	console.log(pt_transport);
+	pt_transport += get_multiplier_transport(project.TransportData.AirFreight) * 1000;
+
+	pt_transport *= (-1);
 
 	console.log(pt_transport);
 
@@ -623,7 +625,7 @@ function calc_ptp_stk(project) {
 		pt_impact = 900;
 	}
 	else if (project.AmountOfPlasticRemoved >= 10000) {
-		pt_impact = 1000;
+		pt_impact = 10000;
 	}
 
 	if (project.DurationOfTheCycle < 6) {
@@ -636,7 +638,7 @@ function calc_ptp_stk(project) {
 		pt_impact *= 1.3;
 	}
 	else if (project.DurationOfTheCycle >= 36) {
-		pt_impact *= 1.5;
+		pt_impact *= 1.0;
 	}
 
 	//Relative weights
