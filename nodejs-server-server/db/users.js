@@ -528,24 +528,24 @@ function calc_ptp_stk(project) {
 
 
 	//Peoples
-	var direct_peoples_sum = project.PeoplesData.OwnersDirect +
-		project.PeoplesData.PartnersDirect +
-		project.PeoplesData.CustomersDirect +
-		project.PeoplesData.CollectorsDirect +
-		project.PeoplesData.MakersDirect +
-		project.PeoplesData.ParticipantsDirect +
-		project.PeoplesData.OthersDirect;
 
-	if (direct_peoples_sum >= 1 && direct_peoples_sum <= 20) {
+	var peoples_sum = 0;
+    project.PeoplesData.forEach(
+		function(element){
+			peoples_sum += element.Count;
+		}
+	);
+
+	if (peoples_sum >= 1 && peoples_sum <= 20) {
 		pt_peoples = 2000;
 	}
-	else if (direct_peoples_sum >= 21 && direct_peoples_sum <= 100) {
+	else if (peoples_sum >= 21 && peoples_sum <= 100) {
 		pt_peoples = 5000;
 	}
-	else if (direct_peoples_sum >= 101 && direct_peoples_sum <= 2000) {
+	else if (peoples_sum >= 101 && peoples_sum <= 2000) {
 		pt_peoples = 8000;
 	}
-	else if (direct_peoples_sum >= 2000) {
+	else if (peoples_sum >= 2000) {
 		pt_peoples = 10000;
 	}
 

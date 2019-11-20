@@ -806,66 +806,113 @@ module.exports.AddProject = function (req, res, next) {
         ]
       },
       "PeoplesData": {
-        "type": "object",
-        "properties": {
-          "OwnersIndirect": {
-            "type": "integer"
+        "type": "array",
+        "items": [
+          {
+            "type": "object",
+            "properties": {
+              "PeoplesCategory": {
+                "type": "string"
+              },
+              "Count": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "PeoplesCategory",
+              "Count"
+            ]
           },
-          "PartnersIndirect": {
-            "type": "integer"
+          {
+            "type": "object",
+            "properties": {
+              "PeoplesCategory": {
+                "type": "string"
+              },
+              "Count": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "PeoplesCategory",
+              "Count"
+            ]
           },
-          "CustomersIndirect": {
-            "type": "integer"
+          {
+            "type": "object",
+            "properties": {
+              "PeoplesCategory": {
+                "type": "string"
+              },
+              "Count": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "PeoplesCategory",
+              "Count"
+            ]
           },
-          "CollectorsIndirect": {
-            "type": "integer"
+          {
+            "type": "object",
+            "properties": {
+              "PeoplesCategory": {
+                "type": "string"
+              },
+              "Count": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "PeoplesCategory",
+              "Count"
+            ]
           },
-          "MakersIndirect": {
-            "type": "integer"
+          {
+            "type": "object",
+            "properties": {
+              "PeoplesCategory": {
+                "type": "string"
+              },
+              "Count": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "PeoplesCategory",
+              "Count"
+            ]
           },
-          "ParticipantsIndirect": {
-            "type": "integer"
+          {
+            "type": "object",
+            "properties": {
+              "PeoplesCategory": {
+                "type": "string"
+              },
+              "Count": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "PeoplesCategory",
+              "Count"
+            ]
           },
-          "OthersIndirect": {
-            "type": "integer"
-          },
-          "OwnersDirect": {
-            "type": "integer"
-          },
-          "PartnersDirect": {
-            "type": "integer"
-          },
-          "CustomersDirect": {
-            "type": "integer"
-          },
-          "CollectorsDirect": {
-            "type": "integer"
-          },
-          "MakersDirect": {
-            "type": "integer"
-          },
-          "ParticipantsDirect": {
-            "type": "integer"
-          },
-          "OthersDirect": {
-            "type": "integer"
+          {
+            "type": "object",
+            "properties": {
+              "PeoplesCategory": {
+                "type": "string"
+              },
+              "Count": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "PeoplesCategory",
+              "Count"
+            ]
           }
-        },
-        "required": [
-          "OwnersIndirect",
-          "PartnersIndirect",
-          "CustomersIndirect",
-          "CollectorsIndirect",
-          "MakersIndirect",
-          "ParticipantsIndirect",
-          "OthersIndirect",
-          "OwnersDirect",
-          "PartnersDirect",
-          "CustomersDirect",
-          "CollectorsDirect",
-          "MakersDirect",
-          "ParticipantsDirect",
-          "OthersDirect"
         ]
       }
     },
@@ -884,7 +931,8 @@ module.exports.AddProject = function (req, res, next) {
       "PeoplesData"
     ]
   };
-  
+
+
   
   if (typeof projectdata !== 'undefined')
   {
