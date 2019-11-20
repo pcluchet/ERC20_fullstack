@@ -494,6 +494,23 @@ function get_multiplier_transport(kilometers) {
 	return 0;
 }
 
+function get_recyclability_multiplier(times_recyclable) {
+	if (times_recyclable <= 0)
+		return 0;
+	if (times_recyclable < 3) {
+		return 1.2
+	}
+	if (times_recyclable < 5) {
+		return 1.5
+	}
+	if (times_recyclable < 20) {
+		return 1.8
+	}
+	if (times_recyclable >= 20) {
+		return 2.0
+	}
+	return 0;
+}
 
 function calc_ptp_stk(project) {
 	var pt_peoples = 0;
@@ -559,24 +576,35 @@ function calc_ptp_stk(project) {
 
 	//Material
 
-	if (project.MaterialData.PETEorPET.present) {
-		pt_material += project.MaterialData.PETEorPET.RecyclingMultiplier * 10000;
+	project.MaterialData.forEach(
+		function (element) {
+
+			console.log("heyy");
+		console.log(JSON.stringify(element));
+	if (element.PETEorPET.present) {
+		pt_material += get_recyclability_multiplier(element.PETEorPET.Recyclability) * 10000;
+		console.log("PET Recyclability:" + element.PETEorPET.Recyclabilty);
+		console.log("PET multiplier :" + get_recyclability_multiplier(element.PETEorPET.Recyclabilty));
 	}
-	if (project.MaterialData.HDPE.present) {
-		pt_material += project.MaterialData.HDPE.RecyclingMultiplier * 8000;
+	if (element.HDPE.present) {
+		pt_material += get_recyclability_multiplier(element.HDPE.Recyclability) * 8000;
 	}
-	if (project.MaterialData.PVC.present) {
-		pt_material += project.MaterialData.PVC.RecyclingMultiplier * 4000;
+	if (element.PVC.present) {
+		pt_material += get_recyclability_multiplier(element.PVC.Recyclability) * 4000;
 	}
-	if (project.MaterialData.LDPE.present) {
-		pt_material += project.MaterialData.LDPE.RecyclingMultiplier * 6000;
+	if (element.LDPE.present) {
+		pt_material += get_recyclability_multiplier(element.LDPE.Recyclability) * 6000;
 	}
-	if (project.MaterialData.PP.present) {
-		pt_material += project.MaterialData.PP.RecyclingMultiplier * 3000;
+	if (element.PP.present) {
+		pt_material += get_recyclability_multiplier(element.PP.Recyclability) * 3000;
 	}
-	if (project.MaterialData.SP.present) {
-		pt_material += project.MaterialData.SP.RecyclingMultiplier * 2000;
+	if (element.SP.present) {
+		pt_material += get_recyclability_multiplier(element.SP.Recyclability) * 2000;
 	}
+		}
+
+	);
+
 
 	//Transport
 
@@ -613,16 +641,16 @@ function calc_ptp_stk(project) {
 	//Impact
 
 	if (project.AmountOfPlasticRemoved < 5) {
-		pt_impact = 200;
+		pt_impact = 2000;
 	}
 	else if (project.AmountOfPlasticRemoved < 100) {
-		pt_impact = 500;
+		pt_impact = 5000;
 	}
 	else if (project.AmountOfPlasticRemoved < 1000) {
-		pt_impact = 700;
+		pt_impact = 7000;
 	}
 	else if (project.AmountOfPlasticRemoved < 10000) {
-		pt_impact = 900;
+		pt_impact = 9000;
 	}
 	else if (project.AmountOfPlasticRemoved >= 10000) {
 		pt_impact = 10000;
