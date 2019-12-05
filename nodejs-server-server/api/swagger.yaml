@@ -740,6 +740,13 @@ paths:
         required: false
         type: "string"
         format: "string"
+      - name: "X-request-nomail"
+        in: "header"
+        description: "secret string to skip email validation"
+        required: false
+        type: "string"
+        format: "string"
+ 
  
       responses:
         200:
