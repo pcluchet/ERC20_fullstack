@@ -320,6 +320,22 @@ If you enter bad credentials, you wont be able to invoke the blockchain is all, 
 There you can edit your invoice, do not forget to open the customer interface (there is a button) before pressing create invoice, since you can't open it anymore in the process page.
 
 
+# Notes on backup/restore 
+
+
+Go problem:
+	clone this "https://github.com/hyperledger/fabric.git" for branch "release-1.4" in ./network/go/src/github.com/hyperledger
+	Make sure not to have conflicting directories in either $GOPATH or $GOROOT
+
+Blockchain redeployment:
+	https://medium.com/@jariarud/hyperledger-fabric-backup-and-restore-3263561e259e
+
+Couchdb Backup:
+	copy /opt/couchdb/data from the couchdb container you want to backup, map it there with a docker volume in the new machine.
+	This is important because the API use couchdb to store user credentials and misc infos, on top of the ledger infos handled by the peers.
+
+
+
 
 
 
