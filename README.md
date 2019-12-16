@@ -335,6 +335,8 @@ Couchdb Backup:
 	This is important because the API use couchdb to store user credentials and misc infos, on top of the ledger infos handled by the peers.
 
 
+Delete admin in the hfc-key-store backup'd for the API, and enrollAdmin again.
+
 
 
 
