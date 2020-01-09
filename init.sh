@@ -101,10 +101,10 @@ success "Go dependencies imported"
 ### DOCKER IMAGES
 ##################################################
 
-docker_pull	peer	1.2.0
-docker_pull	orderer	1.2.0
-docker_pull	ccenv	1.2.0
-docker_pull	tools	1.2.0
+docker_pull	peer	1.4.0
+docker_pull	orderer	1.4.0
+docker_pull	ccenv	1.4.0
+docker_pull	tools	1.4.0
 docker_pull	couchdb	0.4.10
-docker_pull	ca		1.2.0
+docker_pull	ca		1.4.0
 success "Docker images pulled"

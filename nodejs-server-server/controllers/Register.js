@@ -2,7 +2,6 @@
 
 var utils = require('../utils/writer.js');
 var Register = require('../service/RegisterService');
-
 var users = require('../db/users');
 
 function validateEmail(email) {
@@ -12,6 +11,12 @@ function validateEmail(email) {
 
 //this is the string to provide to skip email validation
 var SECRET_NOMAIL = "ABCDZ123";
+
+//WP account sync parameters
+var ENABLE_WP_REGISTRATION = true;
+var WP_HOSTNAME = 'plastictwist.twanneman.com';
+var WP_PORT = 443;
+var WP_PATH = '/wp-json/wp/v2/users/register';
 
 module.exports.register = function register(req, res, next) {
   var username = req.swagger.params['username'].value;
@@ -239,6 +244,7 @@ if (typeof ReviewToken !== 'undefined') {
     });
   }
   else
+  //NO MAIL FLOW BELOW
   {
 
     //validation mail
@@ -305,6 +311,48 @@ if (typeof ReviewToken !== 'undefined') {
                 else {
                   console.log('user inserted');
 
+
+
+  if (ENABLE_WP_REGISTRATION)
+  {
+                  const https = require('https')
+
+                  const data = JSON.stringify(
+                    {
+                      username: username ,
+                      email: misc_private.nuro.web.email ,
+                      password: xRequestPassword
+                    }
+                 );
+                  
+                  const options = {
+                    hostname: WP_HOSTNAME,
+                    port: WP_PORT,
+                    path: WP_PATH,
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Accept' : 'application/json',
+                      'Content-Length': data.length
+                    }
+                  }
+                  
+                  const req = https.request(options, (res) => {
+                    console.log(` WP REG : statusCode: ${res.statusCode}`)
+                  
+                    res.on('data', (d) => {
+                      //process.stdout.write(d)
+                    })
+                  })
+                  
+                  req.on('error', (error) => {
+                    console.error(error)
+                  })
+                  
+                  req.write(data)
+                  req.end()
+  }
+
     ///////////////////////::
     if (user.validation_token == "0")
     {
@@ -313,7 +361,6 @@ if (typeof ReviewToken !== 'undefined') {
     }
     else
    {
- 
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
 
