@@ -27,7 +27,7 @@
   "devDependencies": {
     "babel-jest": "23.4.2",
     "babel-preset-react-native": "5.0.2",
-    "jest": "23.4.2",
+    "jest": "29.3.1",
     "react-test-renderer": "16.4.1",
     "schedule": "^0.4.0"
   },
